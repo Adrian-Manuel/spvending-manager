@@ -4,7 +4,7 @@ import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.ports.in.UpdateTenantUseCase;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoIn;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutPreview;
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantMapper;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper.TenantMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

@@ -2,8 +2,9 @@ package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.rest.controller
 
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.ports.in.RetrieveTenantUseCase;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutPreview;
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantMapper;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper.TenantMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,9 +33,9 @@ public class GetTenantController {
     }
 
     @GetMapping("/{tenantId}")
-    public ResponseEntity<TenantDtoOutPreview> getTenantById(@PathVariable UUID tenantId){
+    public ResponseEntity<TenantDtoOutDetail> getTenantById(@PathVariable UUID tenantId){
         Tenant tenantRequest=retrieveTenantUseCase.getTenantById(tenantId);
-        return new ResponseEntity<>(TenantMapper.toDtoPreview(tenantRequest), HttpStatus.OK);
+        return new ResponseEntity<>(TenantMapper.toDtoDetail(tenantRequest), HttpStatus.OK);
     }
 
 
