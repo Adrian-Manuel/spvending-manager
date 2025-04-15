@@ -1,0 +1,52 @@
+package com.SmartPadel.spvendingManagerApi.shared;
+
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundException;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+    @ExceptionHandler(NotResourcesFoundException.class)
+    public ResponseEntity<Map<String, String>> handleNotResourcesFoundException(NotResourcesFoundException ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    public ResponseEntity<Map<String, String>> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(errors);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<Map<String, String>> ResourceNotFoundException(ResourceNotFoundException ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex){
+        Map<String, String> errors=new HashMap<>();
+        ex.getBindingResult().getFieldErrors().forEach(error ->
+                errors.put(error.getField(), error.getDefaultMessage()));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Map<String, String>> handleGenericException(Exception ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", "An unexpected error ocurred: "+ ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
+    }
+}
