@@ -28,5 +28,4 @@ public class Club {
     private TenantEntity tenantEntity;
     private List<Machine> machines;
     private List<UserManager> userManagers;
-
 }

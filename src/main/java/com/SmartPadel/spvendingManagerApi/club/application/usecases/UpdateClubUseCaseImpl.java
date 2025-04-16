@@ -12,10 +12,10 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UpdateClubUseCaseImpl implements UpdateClubUseCase {
 
-    ClubRepositoryPort clubRepositoryPort;
+    private final ClubRepositoryPort clubRepositoryPort;
 
     @Override
-    public Club updateClub(UUID clubId, Club updateClub) {
-        return clubRepositoryPort.update(clubId, updateClub);
+    public Club updateClub(UUID tenantId,UUID clubId, Club updateClub) {
+        return clubRepositoryPort.update(tenantId,clubId, updateClub);
     }
 }

@@ -1,33 +1,39 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.dto;
+
+import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.validation.annotation.Validated;
 
+import java.util.List;
 import java.util.UUID;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Validated
-@Schema(description = "DTO containing information about a clubs, including contact info and associated clubs.")
-public class ClubDtoIn {
+public class ClubDtoOutDetail {
+    @Schema(
+            description = "id of the club",
+            example = "1231343254"
+    )
+    private UUID clubId;
 
     @NotNull(message = "The name of the club is required")
-    @Size(min = 1,max = 100, message = "must be at least 1 letter and cannot exceed 100 characters")
+    @Size(max = 100, message = "The number of characters cannot exceed 100")
     @Schema(
             description = "Name of the club",
             example = "PadelPrixOurense"
     )
     private String name;
 
-    @NotNull(message = "the cif is required")
+
     @Schema(
             description = "Tax Identification Code (CIF) of the club",
             example = "A345F"
@@ -48,8 +54,7 @@ public class ClubDtoIn {
     private String phone;
 
 
-    @Pattern(regexp = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
-            message = "The email must be composed of a text string followed by @, another text string, a period and another text string, example: example@email.com")
+    @Email(message = "Invalid email")
     @Schema(
             description = "Contact email of the club",
             example = "info@clubs.com"
@@ -62,12 +67,24 @@ public class ClubDtoIn {
     )
     private String remark;
 
-    private String micronId;
-
-    private UUID tenantId;
-
     @NotNull(message = "accountingId is required")
     @Schema(description = "ID used for accounting purposes", example = "ACC-4567")
     private String accountingId;
+
+    private String micronId;
+
+    @NotNull(message = "You must register a tenant before you can register this club.")
+    @Schema(
+            description = "Tenant to whom this club belongs",
+            implementation = TenantEntity.class
+    )
+    private String tenantEntityName;
+
+    @Schema(
+            description = "Users manager associated with this club, if any",
+            implementation = UserManager.class
+    )
+    private List<String> userManagers;
+
 
 }

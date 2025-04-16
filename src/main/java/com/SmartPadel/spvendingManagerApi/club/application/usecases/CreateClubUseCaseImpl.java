@@ -6,12 +6,14 @@ import com.SmartPadel.spvendingManagerApi.club.domain.ports.out.ClubRepositoryPo
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class CreateClubUseCaseImpl implements CreateClubUseCase {
 
-    ClubRepositoryPort clubRepositoryPort;
+    private final ClubRepositoryPort clubRepositoryPort;
 
     @Override
-    public Club createClub(String tenantId, Club club) {return clubRepositoryPort.save(tenantId, club);}
+    public Club createClub(UUID tenantId, Club club) {return clubRepositoryPort.save(tenantId, club);}
 }

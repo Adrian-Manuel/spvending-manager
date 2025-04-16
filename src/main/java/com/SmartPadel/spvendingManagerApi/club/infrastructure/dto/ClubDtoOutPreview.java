@@ -24,7 +24,7 @@ import java.util.UUID;
 @Validated
 @Schema(description = "DTO that contains the main information of a Club entity, including related tenant and machines")
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class ClubDtoOut {
+public class ClubDtoOutPreview {
 
     @Schema(
             description = "id of the club",
@@ -33,19 +33,12 @@ public class ClubDtoOut {
     private UUID clubId;
 
     @NotNull(message = "The name of the club is required")
-    @Size(max = 100, message = "The number of characters cannot exceed 100")
+    @Size(min = 1, max = 100, message = "The number of characters cannot exceed 100")
     @Schema(
             description = "Name of the club",
             example = "PadelPrixOurense"
     )
     private String name;
-
-
-    @Schema(
-            description = "Tax Identification Code (CIF) of the club",
-            example = "A345F"
-    )
-    private String cif;
 
     @Schema(
             description = "Full postal address of the club",
@@ -60,45 +53,22 @@ public class ClubDtoOut {
     )
     private String phone;
 
-
-    @Email(message = "Invalid email")
-    @Schema(
-            description = "Contact email of the club",
-            example = "info@clubs.com"
-    )
-    private String email;
-
-    @Schema(
-            description = "Optional remarks or notes about the club",
-            example = "Club prefers weekend tournaments only."
-    )
-    private String remark;
-
-    @NotNull(message = "accountingId is required")
-    @Schema(description = "ID used for accounting purposes", example = "ACC-4567")
-    private String accountingId;
-
-    @NotNull(message = "You must register a tenant before you can register this club.")
+    @NotNull(message = "You must register the tenant before you can register this club with that tenant.")
     @Schema(
             description = "Tenant to whom this club belongs",
             implementation = TenantEntity.class
     )
-    private TenantEntity tenantEntity;
-
-    @Schema(
-            description = "List of vending or management machines associated with this club",
-            implementation = Machine.class
-    )
-    private List<Machine> machines;
+    private String tenantEntityName;
 
     @Schema(
             description = "Users manager associated with this club, if any",
             implementation = UserManager.class
     )
-    private List<UserManager> userManagers;
+    private List<String> userManagers;
+
     @Schema(
             description = "number of machines owned by this club",
             implementation = UserManager.class
     )
-    private String machinesCount;
+    private int machinesCount;
 }

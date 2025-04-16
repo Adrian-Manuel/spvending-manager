@@ -1,8 +1,12 @@
 package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.adapters;
 
+import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
+import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
+import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository.JpaClubRepository;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundException;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.ClubSpecification;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.ports.out.TenantRepositoryPort;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
@@ -25,9 +29,10 @@ import java.util.UUID;
 public class TenantRepositoryAdapter implements TenantRepositoryPort {
 
     private final JpaTenantRepository jpaTenantRepository;
+    private final JpaClubRepository jpaClubRepository;
 
     @Override
-    public Tenant save(@Valid Tenant tenant) {
+    public Tenant save(Tenant tenant) {
         TenantEntity tenantEntity=TenantEntity.fromDomainModel(tenant);
         Boolean tenantNameExist=jpaTenantRepository.existsByName(tenantEntity.getName());
 
@@ -68,12 +73,12 @@ public class TenantRepositoryAdapter implements TenantRepositoryPort {
     @Override
     public Tenant update(UUID tenantId, Tenant tenant) {
         boolean tenantExist=jpaTenantRepository.existsById(tenantId);
-        boolean NameTenantExist=jpaTenantRepository.existsByName(tenant.getName());
+        boolean nameTenantExist=jpaTenantRepository.existsByName(tenant.getName());
         if(!tenantExist){
             throw new ResourceNotFoundException("The tenant does not exist");
         }
 
-        if (NameTenantExist){
+        if (nameTenantExist){
             throw new ResourceAlreadyExistsException("There is already a tenant with that name");
         }
 

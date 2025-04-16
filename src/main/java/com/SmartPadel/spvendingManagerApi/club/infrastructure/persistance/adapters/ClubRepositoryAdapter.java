@@ -2,40 +2,113 @@ package com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.adapt
 
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.domain.ports.out.ClubRepositoryPort;
+import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.ClubSpecification;
+import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository.JpaClubRepository;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundException;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.repository.JpaTenantRepository;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 import java.util.UUID;
-
+@Transactional
+@Component
+@RequiredArgsConstructor
 public class ClubRepositoryAdapter implements ClubRepositoryPort {
+
+    private final JpaClubRepository jpaClubRepository;
+    private final JpaTenantRepository jpaTenantRepository;
 
     @Override
     public Page<Club> findAll(Pageable pageable) {
-        return null;
+        Page<ClubEntity> clubsPage=jpaClubRepository.findAll(pageable);
+        if (clubsPage.isEmpty()){
+            throw new NotResourcesFoundException("No clubs have been added yet");
+        }
+        return clubsPage.map(ClubEntity::toDomainModel);
     }
 
     @Override
     public Page<Club> findAll(String search, Pageable pageable) {
-        return null;
+        Specification<ClubEntity> spec = ClubSpecification.withFilter(search);
+        Page<ClubEntity> clubsPage=jpaClubRepository.findAll(spec,pageable);
+        if (clubsPage.isEmpty()){
+            throw new NotResourcesFoundException("Clubs not found");
+        }
+
+        return clubsPage.map(ClubEntity::toDomainModel);
     }
 
     @Override
-    public Club save(String tenantId, Club club) {
-        return null;
+    public Page<Club> findAllClubsByTenantId(String search, UUID tenantId, Pageable pageable) {
+        boolean tenantExists=jpaTenantRepository.existsById(tenantId);
+
+        if (!tenantExists){
+            throw new ResourceNotFoundException("The tenant does not exist");
+        }
+
+        Specification<ClubEntity> spec = ClubSpecification.belongsToTenant(tenantId);
+
+        if (search != null && !search.isBlank()) {
+            spec = spec.and(ClubSpecification.withFilter(search));
+        }
+
+        Page<ClubEntity> clubsPage=jpaClubRepository.findAll(spec, pageable );
+        if (clubsPage.isEmpty()){
+            throw new NotResourcesFoundException("no clubs found for this tenant");
+        }
+
+        return clubsPage.map(ClubEntity::toDomainModel);
+    }
+
+    @Override
+    public Club save(UUID tenantId, Club club) {
+        TenantEntity tenantEntity= jpaTenantRepository.findById(tenantId).orElseThrow(()->new ResourceNotFoundException("The requested tenant was not found"));
+        ClubEntity clubEntity=ClubEntity.fromDomainModel(club);
+        clubEntity.setTenantEntity(tenantEntity);
+        clubEntity=jpaClubRepository.save(clubEntity);
+        return clubEntity.toDomainModel();
     }
 
     @Override
     public Club findById(UUID clubId) {
-        return null;
+        ClubEntity clubEntity=jpaClubRepository.findById(clubId).orElseThrow(()->new ResourceNotFoundException("There is no club with that Id"));
+        return clubEntity.toDomainModel();
     }
 
+
+
     @Override
-    public Club update(UUID clubId, Club club) {
-        return null;
+    public Club update(UUID tenantId,UUID clubId, Club club) {
+        boolean clubExist=jpaClubRepository.existsById(clubId);
+        if (!clubExist){
+            throw new ResourceNotFoundException("the club does not exist");
+        }
+
+        TenantEntity tenantEntity=jpaTenantRepository.findById(tenantId).orElseThrow(()->new ResourceNotFoundException("The requested tenant was not found"));
+
+        club.setClubId(clubId);
+        ClubEntity clubEntity=ClubEntity.fromDomainModel(club);
+        clubEntity.setTenantEntity(tenantEntity);
+        clubEntity=jpaClubRepository.save(clubEntity);
+        return clubEntity.toDomainModel();
+
     }
 
     @Override
     public void deleteById(UUID clubId) {
+        boolean clubExist=jpaClubRepository.existsById(clubId);
 
+        if (!clubExist){
+            throw new ResourceNotFoundException("the club does not exist");
+        }
+
+        jpaClubRepository.deleteById(clubId);
     }
 }

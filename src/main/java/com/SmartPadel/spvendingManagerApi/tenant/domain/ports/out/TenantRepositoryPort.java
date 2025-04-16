@@ -1,5 +1,6 @@
 package com.SmartPadel.spvendingManagerApi.tenant.domain.ports.out;
 
+import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

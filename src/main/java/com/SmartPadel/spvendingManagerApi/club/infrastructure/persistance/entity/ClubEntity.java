@@ -5,6 +5,7 @@ import java.util.UUID;
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
 import com.SmartPadel.spvendingManagerApi.machines.modelsV1.Machine;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.Filtrable;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -23,15 +24,19 @@ public class ClubEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID clubId;
 
+    @Filtrable
     @Column(name="name", nullable=false)
     private String name;
+
 
     @Column(name="cif", nullable=false)
     private String cif;
 
+    @Filtrable
     @Column(name="address")
     private String address;
 
+    @Filtrable
     @Column( name = "phone")
     private String phone;
 
@@ -47,9 +52,12 @@ public class ClubEntity {
     @Column(name = "micronId", unique = true)
     private String micronId;
 
+
+    @Filtrable(name="tenantEntity.name")
     @ManyToOne
     @JoinColumn(name = "tenantId", nullable = false, referencedColumnName = "tenantId")
     private TenantEntity tenantEntity;
+
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<Machine> machines;
