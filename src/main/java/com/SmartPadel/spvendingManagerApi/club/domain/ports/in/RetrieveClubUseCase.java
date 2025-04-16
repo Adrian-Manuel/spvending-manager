@@ -10,5 +10,5 @@ public interface RetrieveClubUseCase {
     Club getClubById(UUID clubId);
     Page<Club> getAllClubs(Pageable pageable);
     Page<Club> getAllClubs(String search, Pageable pageable);
-
+    Page<Club> getAllClubsByTenantId(String search,UUID tenantId, Pageable pageable);
 }

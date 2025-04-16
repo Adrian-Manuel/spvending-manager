@@ -3,7 +3,6 @@ package com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.adapt
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.domain.ports.out.ClubRepositoryPort;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
 import com.SmartPadel.spvendingManagerApi.shared.Utils.ClubSpecification;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository.JpaClubRepository;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundException;
@@ -47,6 +46,28 @@ public class ClubRepositoryAdapter implements ClubRepositoryPort {
     }
 
     @Override
+    public Page<Club> findAllClubsByTenantId(String search, UUID tenantId, Pageable pageable) {
+        boolean tenantExists=jpaTenantRepository.existsById(tenantId);
+
+        if (!tenantExists){
+            throw new ResourceNotFoundException("The tenant does not exist");
+        }
+
+        Specification<ClubEntity> spec = ClubSpecification.belongsToTenant(tenantId);
+
+        if (search != null && !search.isBlank()) {
+            spec = spec.and(ClubSpecification.withFilter(search));
+        }
+
+        Page<ClubEntity> clubsPage=jpaClubRepository.findAll(spec, pageable );
+        if (clubsPage.isEmpty()){
+            throw new NotResourcesFoundException("no clubs found for this tenant");
+        }
+
+        return clubsPage.map(ClubEntity::toDomainModel);
+    }
+
+    @Override
     public Club save(UUID tenantId, Club club) {
         TenantEntity tenantEntity= jpaTenantRepository.findById(tenantId).orElseThrow(()->new ResourceNotFoundException("The requested tenant was not found"));
         ClubEntity clubEntity=ClubEntity.fromDomainModel(club);
@@ -60,6 +81,8 @@ public class ClubRepositoryAdapter implements ClubRepositoryPort {
         ClubEntity clubEntity=jpaClubRepository.findById(clubId).orElseThrow(()->new ResourceNotFoundException("There is no club with that Id"));
         return clubEntity.toDomainModel();
     }
+
+
 
     @Override
     public Club update(UUID tenantId,UUID clubId, Club club) {

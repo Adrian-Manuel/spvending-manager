@@ -27,5 +27,9 @@ public class RetrieveClubUseCaseImpl implements RetrieveClubUseCase {
         return clubRepositoryPort.findAll(search, pageable);
     }
 
+    @Override
+    public Page<Club> getAllClubsByTenantId(String search,UUID tenantId, Pageable pageable) {
+        return clubRepositoryPort.findAllClubsByTenantId(search,tenantId, pageable);
+    }
 
 }

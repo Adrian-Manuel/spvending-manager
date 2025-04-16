@@ -1,7 +1,6 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.dto;
 
 import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
-import com.SmartPadel.spvendingManagerApi.machines.modelsV1.Machine;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;

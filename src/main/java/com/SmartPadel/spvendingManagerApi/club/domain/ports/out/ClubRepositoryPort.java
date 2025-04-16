@@ -12,4 +12,5 @@ public interface ClubRepositoryPort {
     Club findById(UUID clubId);
     Club update(UUID tenantId,UUID clubId,Club club);
     void deleteById(UUID clubId);
+    Page<Club> findAllClubsByTenantId(String search, UUID tenantId, Pageable pageable);
 }
