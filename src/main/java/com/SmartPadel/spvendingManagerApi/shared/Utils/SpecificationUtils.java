@@ -1,12 +1,10 @@
 package com.SmartPadel.spvendingManagerApi.shared.Utils;
 
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.Filtrable;
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;

@@ -58,6 +58,7 @@ public class ClubMapper {
                 .phone(clubDtoIn.getPhone())
                 .email(clubDtoIn.getEmail())
                 .remark(clubDtoIn.getRemark())
+                .micronId(clubDtoIn.getMicronId())
                 .accountingId(clubDtoIn.getAccountingId())
                 .build();
     }

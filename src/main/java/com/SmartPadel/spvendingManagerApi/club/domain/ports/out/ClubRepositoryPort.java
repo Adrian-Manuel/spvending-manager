@@ -10,6 +10,6 @@ public interface ClubRepositoryPort {
     Page<Club> findAll(String search,Pageable pageable);
     Club save(UUID tenantId ,Club club);
     Club findById(UUID clubId);
-    Club update(UUID clubId,Club club);
+    Club update(UUID tenantId,UUID clubId,Club club);
     void deleteById(UUID clubId);
 }

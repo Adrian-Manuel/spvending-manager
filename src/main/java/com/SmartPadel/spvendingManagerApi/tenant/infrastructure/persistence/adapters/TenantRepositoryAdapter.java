@@ -68,12 +68,12 @@ public class TenantRepositoryAdapter implements TenantRepositoryPort {
     @Override
     public Tenant update(UUID tenantId, Tenant tenant) {
         boolean tenantExist=jpaTenantRepository.existsById(tenantId);
-        boolean NameTenantExist=jpaTenantRepository.existsByName(tenant.getName());
+        boolean nameTenantExist=jpaTenantRepository.existsByName(tenant.getName());
         if(!tenantExist){
             throw new ResourceNotFoundException("The tenant does not exist");
         }
 
-        if (NameTenantExist){
+        if (nameTenantExist){
             throw new ResourceAlreadyExistsException("There is already a tenant with that name");
         }
 

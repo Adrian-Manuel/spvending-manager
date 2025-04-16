@@ -87,9 +87,5 @@ public class ClubDtoOutDetail {
     )
     private List<String> userManagers;
 
-    @Schema(
-            description = "number of machines owned by this club",
-            implementation = UserManager.class
-    )
-    private String machinesCount;
+
 }

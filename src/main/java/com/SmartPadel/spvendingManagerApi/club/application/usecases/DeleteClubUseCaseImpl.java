@@ -11,7 +11,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class DeleteClubUseCaseImpl implements DeleteClubUseCase {
 
-    ClubRepositoryPort clubRepositoryPort;
+   private final ClubRepositoryPort clubRepositoryPort;
 
     @Override
     public void deleteClub(UUID clubId) {clubRepositoryPort.deleteById(clubId);}

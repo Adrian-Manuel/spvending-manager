@@ -3,6 +3,7 @@ package com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.adapt
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.domain.ports.out.ClubRepositoryPort;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
 import com.SmartPadel.spvendingManagerApi.shared.Utils.ClubSpecification;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository.JpaClubRepository;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundException;
@@ -61,12 +62,30 @@ public class ClubRepositoryAdapter implements ClubRepositoryPort {
     }
 
     @Override
-    public Club update(UUID clubId, Club club) {
-        return null;
+    public Club update(UUID tenantId,UUID clubId, Club club) {
+        boolean clubExist=jpaClubRepository.existsById(clubId);
+        if (!clubExist){
+            throw new ResourceNotFoundException("the club does not exist");
+        }
+
+        TenantEntity tenantEntity=jpaTenantRepository.findById(tenantId).orElseThrow(()->new ResourceNotFoundException("The requested tenant was not found"));
+
+        club.setClubId(clubId);
+        ClubEntity clubEntity=ClubEntity.fromDomainModel(club);
+        clubEntity.setTenantEntity(tenantEntity);
+        clubEntity=jpaClubRepository.save(clubEntity);
+        return clubEntity.toDomainModel();
+
     }
 
     @Override
     public void deleteById(UUID clubId) {
+        boolean clubExist=jpaClubRepository.existsById(clubId);
 
+        if (!clubExist){
+            throw new ResourceNotFoundException("the club does not exist");
+        }
+
+        jpaClubRepository.deleteById(clubId);
     }
 }
