@@ -14,7 +14,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RetrieveClubUseCaseImpl implements RetrieveClubUseCase {
 
-    ClubRepositoryPort clubRepositoryPort;
+    private final ClubRepositoryPort clubRepositoryPort;
 
     @Override
     public Club getClubById(UUID clubId) {return clubRepositoryPort.findById(clubId);}

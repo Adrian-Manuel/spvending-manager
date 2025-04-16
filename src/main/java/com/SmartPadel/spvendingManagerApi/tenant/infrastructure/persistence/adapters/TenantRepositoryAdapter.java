@@ -27,7 +27,7 @@ public class TenantRepositoryAdapter implements TenantRepositoryPort {
     private final JpaTenantRepository jpaTenantRepository;
 
     @Override
-    public Tenant save(@Valid Tenant tenant) {
+    public Tenant save(Tenant tenant) {
         TenantEntity tenantEntity=TenantEntity.fromDomainModel(tenant);
         Boolean tenantNameExist=jpaTenantRepository.existsByName(tenantEntity.getName());
 

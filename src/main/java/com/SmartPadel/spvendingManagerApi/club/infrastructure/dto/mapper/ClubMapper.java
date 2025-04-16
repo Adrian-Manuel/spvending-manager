@@ -1,58 +1,64 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.mapper;
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoIn;
-import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOut;
+import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutDetail;
+import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutPreview;
 import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
 import com.SmartPadel.spvendingManagerApi.machines.modelsV1.Machine;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 public class ClubMapper {
-    public static ClubDtoOut toModel(Club club) {
-        if ( club == null ) {
-            return null;
-        }
+    public static ClubDtoOutPreview toDtoPreview(Club club) {
 
-        ClubDtoOut.ClubDtoOutBuilder clubDtoOut = ClubDtoOut.builder();
 
-        clubDtoOut.clubId( club.getClubId() );
-        clubDtoOut.name( club.getName() );
-        clubDtoOut.cif( club.getCif() );
-        clubDtoOut.address( club.getAddress() );
-        clubDtoOut.phone( club.getPhone() );
-        clubDtoOut.email( club.getEmail() );
-        clubDtoOut.remark( club.getRemark() );
-        clubDtoOut.accountingId( club.getAccountingId() );
-        clubDtoOut.tenantEntity( club.getTenantEntity() );
-        List<Machine> list = club.getMachines();
-        if ( list != null ) {
-            clubDtoOut.machines( new ArrayList<Machine>( list ) );
-        }
-        List<UserManager> list1 = club.getUserManagers();
-        if ( list1 != null ) {
-            clubDtoOut.userManagers( new ArrayList<UserManager>( list1 ) );
-        }
+        return ClubDtoOutPreview.builder()
+        .clubId( club.getClubId() )
+        .name( club.getName() )
+        .address( club.getAddress() )
+        .phone( club.getPhone() )
+        .tenantEntityName(club.getTenantEntity().getName())
+        .machinesCount((club.getMachines()!=null) ? club.getMachines().size(): 0).build();
 
-        return clubDtoOut.build();
+
+
+
     }
 
 
-    public static Club toDto(ClubDtoIn club) {
-        if ( club == null ) {
-            return null;
-        }
+    public static ClubDtoOutDetail toDtoDetail(Club club) {
 
-        Club.ClubBuilder club1 = Club.builder();
+    return  ClubDtoOutDetail.builder()
+            .clubId(club.getClubId())
+            .name(club.getName())
+            .cif(club.getCif())
+            .address( club.getAddress() )
+            .phone( club.getPhone() )
+            .email( club.getEmail() )
+            .remark( club.getRemark() )
+            .accountingId( club.getAccountingId() )
+            .tenantEntityName(club.getTenantEntity().getName())
+            .micronId(club.getMicronId())
+            .userManagers((club.getUserManagers() !=null) ? club.getUserManagers()
+                    .stream()
+                    .map(UserManager::getUsername)
+                    .collect(Collectors.toList())
+                    : Collections.emptyList())
+            .build();
+    }
 
-        club1.name( club.getName() );
-        club1.cif( club.getCif() );
-        club1.address( club.getAddress() );
-        club1.phone( club.getPhone() );
-        club1.email( club.getEmail() );
-        club1.remark( club.getRemark() );
-        club1.accountingId( club.getAccountingId() );
-
-        return club1.build();
+    public static Club toModel(ClubDtoIn clubDtoIn){
+        return Club.builder()
+                .name(clubDtoIn.getName())
+                .cif(clubDtoIn.getCif())
+                .address(clubDtoIn.getAddress())
+                .phone(clubDtoIn.getPhone())
+                .email(clubDtoIn.getEmail())
+                .remark(clubDtoIn.getRemark())
+                .accountingId(clubDtoIn.getAccountingId())
+                .build();
     }
 }

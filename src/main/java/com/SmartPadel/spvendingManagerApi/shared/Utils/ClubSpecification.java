@@ -1,6 +1,5 @@
-package com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository;
+package com.SmartPadel.spvendingManagerApi.shared.Utils;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
-import com.SmartPadel.spvendingManagerApi.shared.Utils.SpecificationUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ClubSpecification {

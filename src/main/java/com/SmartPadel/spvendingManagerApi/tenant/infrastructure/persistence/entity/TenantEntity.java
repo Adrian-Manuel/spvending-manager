@@ -43,7 +43,6 @@ public class TenantEntity {
     @Column(name = "email")
     private String email;
 
-    @Filtrable
     @Column(name = "remark")
     private String remark;
 
