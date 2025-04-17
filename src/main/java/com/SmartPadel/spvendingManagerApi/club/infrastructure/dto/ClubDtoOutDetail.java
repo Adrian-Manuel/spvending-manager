@@ -25,8 +25,6 @@ public class ClubDtoOutDetail {
     )
     private UUID clubId;
 
-    @NotNull(message = "The name of the club is required")
-    @Size(max = 100, message = "The number of characters cannot exceed 100")
     @Schema(
             description = "Name of the club",
             example = "PadelPrixOurense"
@@ -53,8 +51,6 @@ public class ClubDtoOutDetail {
     )
     private String phone;
 
-
-    @Email(message = "Invalid email")
     @Schema(
             description = "Contact email of the club",
             example = "info@clubs.com"
@@ -67,13 +63,11 @@ public class ClubDtoOutDetail {
     )
     private String remark;
 
-    @NotNull(message = "accountingId is required")
     @Schema(description = "ID used for accounting purposes", example = "ACC-4567")
     private String accountingId;
 
     private String micronId;
 
-    @NotNull(message = "You must register a tenant before you can register this club.")
     @Schema(
             description = "Tenant to whom this club belongs",
             implementation = TenantEntity.class

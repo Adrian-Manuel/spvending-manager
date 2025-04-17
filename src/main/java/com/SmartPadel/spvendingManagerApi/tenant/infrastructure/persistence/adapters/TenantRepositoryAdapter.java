@@ -9,6 +9,7 @@ import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundExce
 import com.SmartPadel.spvendingManagerApi.shared.Utils.ClubSpecification;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.ports.out.TenantRepositoryPort;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper.TenantMapper;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.repository.JpaTenantRepository;
 import com.SmartPadel.spvendingManagerApi.shared.Utils.TenantSpecification;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 
 
@@ -29,7 +31,6 @@ import java.util.UUID;
 public class TenantRepositoryAdapter implements TenantRepositoryPort {
 
     private final JpaTenantRepository jpaTenantRepository;
-    private final JpaClubRepository jpaClubRepository;
 
     @Override
     public Tenant save(Tenant tenant) {
@@ -68,6 +69,15 @@ public class TenantRepositoryAdapter implements TenantRepositoryPort {
         }
 
         return tenantsPage.map(TenantEntity::toDomainModel);
+    }
+
+    @Override
+    public List<Tenant> findAllTenantsSumary() {
+        List<Tenant> tenantsSumary=jpaTenantRepository.findAll().stream().map(TenantEntity::toDomainModel).toList();
+        if (tenantsSumary.isEmpty()){
+            throw new NotResourcesFoundException("Tenants not found");
+        }
+        return tenantsSumary;
     }
 
     @Override

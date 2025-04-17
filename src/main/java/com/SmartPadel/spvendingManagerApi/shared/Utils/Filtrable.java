@@ -1,4 +1,4 @@
-package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity;
+package com.SmartPadel.spvendingManagerApi.shared.Utils;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

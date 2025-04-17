@@ -30,8 +30,6 @@ public class ClubDtoOutPreview {
     )
     private UUID clubId;
 
-    @NotNull(message = "The name of the club is required")
-    @Size(min = 1, max = 100, message = "The number of characters cannot exceed 100")
     @Schema(
             description = "Name of the club",
             example = "PadelPrixOurense"
@@ -51,7 +49,6 @@ public class ClubDtoOutPreview {
     )
     private String phone;
 
-    @NotNull(message = "You must register the tenant before you can register this club with that tenant.")
     @Schema(
             description = "Tenant to whom this club belongs",
             implementation = TenantEntity.class

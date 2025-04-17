@@ -64,6 +64,7 @@ public class ClubDtoIn {
 
     private String micronId;
 
+    @NotNull(message = "tenant name is required")
     private UUID tenantId;
 
     @NotNull(message = "accountingId is required")

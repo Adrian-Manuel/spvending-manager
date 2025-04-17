@@ -6,8 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-@RequiredArgsConstructor
+
 @Service
+@RequiredArgsConstructor
 public class DeleteUserManagerUseCaseImpl implements DeleteUserManagerUseCase {
 
     private final UserManagerRepositoryPort userManagerRepositoryPort;

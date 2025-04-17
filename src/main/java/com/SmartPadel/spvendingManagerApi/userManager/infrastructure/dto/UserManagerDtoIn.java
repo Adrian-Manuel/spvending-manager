@@ -12,13 +12,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Validated
-@Schema(description = "DTO containing information for external user managers who can be associated with tenants or clubs")
-public class UserManagerDTOOutDetail {
+@Schema(description = "DTO input information for external user managers who can be associated with tenants or clubs")
+public class UserManagerDtoIn {
 
     @NotNull(message = "The username is required")
     @Schema(
@@ -38,7 +40,7 @@ public class UserManagerDTOOutDetail {
     )
     private String password;
 
-    @NotNull(message = "The micron ID is required")
+    @NotNull(message = "the micron Id is required")
     @Schema(
             description = "Unique identifier used in the Micron system",
             example = "MIC123456"
@@ -69,14 +71,14 @@ public class UserManagerDTOOutDetail {
 
 
     @Schema(
-            description = "Club associated with this user, if any",
+            description = "tenant id associated with this user, if any",
             implementation = TenantEntity.class
     )
-    private String tenantEntityName;
+    private UUID tenantEntityId;
 
     @Schema(
-            description = "Club associated with this user, if any",
+            description = "Club id associated with this user, if any",
             implementation = ClubEntity.class
     )
-    private String clubEntityName;
+    private String clubEntityId;
 }

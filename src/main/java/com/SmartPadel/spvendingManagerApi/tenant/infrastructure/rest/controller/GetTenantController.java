@@ -7,6 +7,7 @@ import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.ports.in.RetrieveTenantUseCase;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutPreview;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutSumary;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper.TenantMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -16,7 +17,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/tenants")
@@ -32,7 +35,7 @@ public class GetTenantController {
         Pageable pageable = PageRequest.of(page, size);
         Page<TenantDtoOutPreview> tenants = (search != null)
                 ? retrieveTenantUseCase.getAllTenants(search, pageable).map(TenantMapper::toDtoPreview)
-                : retrieveTenantUseCase.getAllTenants(pageable).map(TenantMapper::toDtoPreview);;
+                : retrieveTenantUseCase.getAllTenants(pageable).map(TenantMapper::toDtoPreview);
         return new ResponseEntity<>(tenants, HttpStatus.OK);
     }
 
@@ -50,6 +53,12 @@ public class GetTenantController {
         Pageable pageable=PageRequest.of(page, size);
         Page<ClubDtoOutPreview> clubs = retrieveClubUseCase.getAllClubsByTenantId(search, tenantId,pageable).map(ClubMapper::toDtoPreview);
         return new ResponseEntity<>(clubs, HttpStatus.OK);
+    }
+
+    @GetMapping("/all-sumary")
+    public ResponseEntity<List<TenantDtoOutSumary>> getTenantsSumary(){
+        List<TenantDtoOutSumary> tenantsSumary=retrieveTenantUseCase.getAllTenantsSumary().stream().map(TenantMapper::toDtoSumary).toList();
+        return new ResponseEntity<>(tenantsSumary, HttpStatus.OK);
     }
 
 

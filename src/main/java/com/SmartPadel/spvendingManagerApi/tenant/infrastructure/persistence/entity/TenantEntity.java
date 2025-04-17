@@ -2,6 +2,7 @@ package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.ent
 import java.util.List;
 import java.util.UUID;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.Filtrable;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import io.swagger.v3.oas.annotations.media.Schema;

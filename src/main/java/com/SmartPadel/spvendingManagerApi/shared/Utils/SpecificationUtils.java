@@ -1,6 +1,5 @@
 package com.SmartPadel.spvendingManagerApi.shared.Utils;
 
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.Filtrable;
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
