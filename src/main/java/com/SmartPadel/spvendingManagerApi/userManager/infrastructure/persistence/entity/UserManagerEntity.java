@@ -1,4 +1,4 @@
-package com.SmartPadel.spvendingManagerApi.externalUser.model;
+package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity;
 
 import java.util.UUID;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
@@ -12,14 +12,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "external_users")
-public class UserManager {
+@Table(name = "user_managers")
+public class UserManagerEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID userId;
     
     @Column(name = "username", nullable = false, unique = true)
-    private String username;
+    private String userName;
     @Column(name = "password", nullable = false)
     private String password;
     @Column(name = "micron_id", nullable = false, unique = true)
@@ -32,11 +32,11 @@ public class UserManager {
     private String userType;
 
     @ManyToOne
-    @JoinColumn(name = "tenant_id", referencedColumnName = "tenantid")
+    @JoinColumn(name = "tenantId", referencedColumnName = "tenantId")
     private TenantEntity tenantEntity;
 
     @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "club_id", referencedColumnName = "clubid")
+    @JoinColumn(name = "clubId", referencedColumnName = "clubId")
     private ClubEntity club;
 }
 

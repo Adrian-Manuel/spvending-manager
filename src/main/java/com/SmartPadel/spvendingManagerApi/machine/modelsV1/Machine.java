@@ -1,4 +1,4 @@
-package com.SmartPadel.spvendingManagerApi.machines.modelsV1;
+package com.SmartPadel.spvendingManagerApi.machine.modelsV1;
 
 import java.util.UUID;
 

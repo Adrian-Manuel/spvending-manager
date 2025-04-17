@@ -1,10 +1,11 @@
-package com.SmartPadel.spvendingManagerApi.externalUser.model.dto;
+package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto;
 
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,7 +18,7 @@ import org.springframework.validation.annotation.Validated;
 @Builder
 @Validated
 @Schema(description = "DTO containing information for external user managers who can be associated with tenants or clubs")
-public class UserManagerDTO {
+public class UserManagerDTOOutDetail {
 
     @NotNull(message = "The username is required")
     @Schema(
@@ -58,6 +59,7 @@ public class UserManagerDTO {
     )
     private String micronPass;
 
+    @Size(min = 1, max = 1, message = "this field just accept 1 character, 1 or 2")
     @NotNull(message = "The user type is required")
     @Schema(
             description = "Type of user (e.g. 1 TENANT_ADMIN, 2 CLUB_ADMIN)",
@@ -65,16 +67,16 @@ public class UserManagerDTO {
     )
     private String userType;
 
-    @NotNull(message = "The tenant is required")
+
     @Schema(
-            description = "Tenant to which the user belongs",
+            description = "Club associated with this user, if any",
             implementation = TenantEntity.class
     )
-    private TenantEntity tenantEntity;
+    private String tenantEntityName;
 
     @Schema(
             description = "Club associated with this user, if any",
             implementation = ClubEntity.class
     )
-    private ClubEntity club;
+    private String clubEntityName;
 }

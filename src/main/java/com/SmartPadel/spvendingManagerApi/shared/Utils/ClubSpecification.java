@@ -10,6 +10,6 @@ public class ClubSpecification {
     }
 
     public static Specification<ClubEntity> belongsToTenant(UUID tenantId) {
-        return (root, query, cb) -> cb.equal(root.get("tenantEntity").get("tenantId"), tenantId);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("tenantEntity").get("tenantId"), tenantId);
     }
 }

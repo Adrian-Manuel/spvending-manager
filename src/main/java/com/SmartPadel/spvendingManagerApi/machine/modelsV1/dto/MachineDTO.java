@@ -1,4 +1,4 @@
-package com.SmartPadel.spvendingManagerApi.machines.modelsV1.dto;
+package com.SmartPadel.spvendingManagerApi.machine.modelsV1.dto;
 
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -1,11 +1,9 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.dto;
 
-import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
-import com.SmartPadel.spvendingManagerApi.machines.modelsV1.Machine;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -62,13 +60,13 @@ public class ClubDtoOutPreview {
 
     @Schema(
             description = "Users manager associated with this club, if any",
-            implementation = UserManager.class
+            implementation = UserManagerEntity.class
     )
     private List<String> userManagers;
 
     @Schema(
             description = "number of machines owned by this club",
-            implementation = UserManager.class
+            implementation = UserManagerEntity.class
     )
     private int machinesCount;
 }

@@ -1,12 +1,11 @@
 package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper;
 
-import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoIn;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutPreview;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Collectors;
 
@@ -34,9 +33,9 @@ public class TenantMapper {
                 .address(tenant.getAddress())
                 .remark(tenant.getRemark())
                 .micronId(tenant.getMicronId())
-                .managers(tenant.getUserManagers() !=null ? tenant.getUserManagers()
+                .managers(tenant.getUserManagerEntities() !=null ? tenant.getUserManagerEntities()
                         .stream()
-                        .map(UserManager::getUsername)
+                        .map(UserManagerEntity::getUserName)
                         .collect(Collectors.toList())
                         : Collections.emptyList())
                 .build();

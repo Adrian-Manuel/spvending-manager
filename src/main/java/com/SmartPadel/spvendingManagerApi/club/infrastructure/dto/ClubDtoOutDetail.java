@@ -1,6 +1,6 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.dto;
 
-import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
@@ -82,7 +82,7 @@ public class ClubDtoOutDetail {
 
     @Schema(
             description = "Users manager associated with this club, if any",
-            implementation = UserManager.class
+            implementation = UserManagerEntity.class
     )
     private List<String> userManagers;
 
