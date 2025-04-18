@@ -10,4 +10,6 @@ import java.util.UUID;
 @Repository
 public interface JpaUserManagerRepository extends JpaRepository<UserManagerEntity, UUID>, JpaSpecificationExecutor<UserManagerEntity> {
     boolean existsByUserName(String username);
+    boolean existsByMicronId(String micronId);
+    boolean existsByMicronUser(String micronUser);
 }

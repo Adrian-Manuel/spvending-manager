@@ -1,6 +1,7 @@
 package com.SmartPadel.spvendingManagerApi.shared;
 
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundException;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ParamRequiredException;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,13 @@ public class GlobalExceptionHandler {
         Map<String, String> errors=new HashMap<>();
         errors.put("Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
+    @ExceptionHandler(ParamRequiredException.class)
+    public ResponseEntity<Map<String, String>> handleParamRequiredException(ParamRequiredException ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
     @ExceptionHandler(ResourceAlreadyExistsException.class)

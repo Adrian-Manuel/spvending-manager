@@ -80,5 +80,5 @@ public class UserManagerDtoIn {
             description = "Club id associated with this user, if any",
             implementation = ClubEntity.class
     )
-    private String clubEntityId;
+    private UUID clubEntityId;
 }

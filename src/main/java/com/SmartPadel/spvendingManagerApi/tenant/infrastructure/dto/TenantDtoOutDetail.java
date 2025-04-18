@@ -27,15 +27,13 @@ public class TenantDtoOutDetail {
     )
     private UUID tenantId;
 
-    @NotNull(message = "The name of the tenant is required")
-    @Size(min = 0, max = 100, message = "The number of characters cannot exceed 100")
     @Schema(
             description = "Name of the tenant (company or organization)",
             example = "PadelPrix"
     )
     private String name;
 
-    @NotNull(message = "the cif is required")
+
     @Schema(
             description = "CIF (Tax ID) of the tenant",
             example = "B12345678"
@@ -56,14 +54,14 @@ public class TenantDtoOutDetail {
     private String phone;
 
 
-    @Pattern(regexp = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",message = "invalid email")
+
     @Schema(
             description = "Contact email address of the tenant",
             example = "info@padelprix.com"
     )
     private String email;
 
-    @Size(min = 0, max = 255)
+
     @Schema(
             description = "Additional notes or remarks about the tenant",
             example = "Empresa principal de la red de clubes."
