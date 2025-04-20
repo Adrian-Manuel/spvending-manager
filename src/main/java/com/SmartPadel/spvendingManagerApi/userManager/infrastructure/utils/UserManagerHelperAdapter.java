@@ -1,7 +1,7 @@
 package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.utils;
-
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ParamRequiredException;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
 import com.SmartPadel.spvendingManagerApi.userManager.domain.model.UserManager;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.repository.JpaUserManagerRepository;
 
@@ -34,4 +34,12 @@ public class UserManagerHelperAdapter {
             throw new ResourceAlreadyExistsException("a user with that micron user already exists");
         }
     }
+
+    public static void validateUserManagerExists(JpaUserManagerRepository repo, UUID userManagerId) {
+        if (!repo.existsById(userManagerId)) {
+            throw new ResourceNotFoundException("The club does not exist");
+        }
+    }
+
+
 }

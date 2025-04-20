@@ -24,4 +24,6 @@ public class RetrieveUserManagerUseCaseImpl implements RetrieveUserManagerUseCas
     public Page<UserManager> getAllUserManager(String search, Pageable pageable) {
         return userManagerRepositoryPort.findAll(search, pageable);
     }
+
+
 }

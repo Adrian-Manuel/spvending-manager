@@ -4,12 +4,14 @@ import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundExc
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ParamRequiredException;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,6 +43,21 @@ public class GlobalExceptionHandler {
         Map<String, String> errors=new HashMap<>();
         errors.put("Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Map<String, String>> handleDataIntegrityViolationException(DataIntegrityViolationException ex){
+        String fullMessage = ex.getMostSpecificCause().getMessage();
+        String detailMessage = Arrays.stream(fullMessage.split("\n"))
+                .filter(line -> line.trim().startsWith("Detail:"))
+                .map(line -> line.replace("Detail:", "").trim())
+                .findFirst()
+                .orElse("Violación de integridad de datos.");
+
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", detailMessage);
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

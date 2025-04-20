@@ -9,4 +9,5 @@ import java.util.UUID;
 public interface RetrieveUserManagerUseCase {
     UserManager getUserManagerById(UUID userManagerId);
     Page<UserManager> getAllUserManager(String search, Pageable pageable);
+
 }
