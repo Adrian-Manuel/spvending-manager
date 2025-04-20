@@ -3,8 +3,6 @@ package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistenc
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository.JpaClubRepository;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.utils.ClubHelperAdapter;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ParamRequiredException;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
 import com.SmartPadel.spvendingManagerApi.shared.Utils.PersistenceUtils;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
@@ -72,7 +70,8 @@ public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
 
     @Override
     public void delete(UUID userManagerId) {
-
+        UserManagerHelperAdapter.validateUserManagerExists(jpaUserManagerRepository, userManagerId);
+        jpaUserManagerRepository.deleteById(userManagerId);
     }
 
 
@@ -84,7 +83,9 @@ public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
     }
 
     @Override
-    public UserManager findById(UUID userManager) {
-        return null;
+    public UserManager findById(UUID userManagerId) {
+        return jpaUserManagerRepository.findById(userManagerId)
+                .map(UserManagerEntity::toDomainModel)
+                .orElseThrow(()->new ResourceNotFoundException("there is no user manager with that id"));
     }
 }
