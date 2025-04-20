@@ -1,11 +1,9 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.dto;
 
-import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
-import com.SmartPadel.spvendingManagerApi.machines.modelsV1.Machine;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -32,8 +30,6 @@ public class ClubDtoOutPreview {
     )
     private UUID clubId;
 
-    @NotNull(message = "The name of the club is required")
-    @Size(min = 1, max = 100, message = "The number of characters cannot exceed 100")
     @Schema(
             description = "Name of the club",
             example = "PadelPrixOurense"
@@ -53,7 +49,6 @@ public class ClubDtoOutPreview {
     )
     private String phone;
 
-    @NotNull(message = "You must register the tenant before you can register this club with that tenant.")
     @Schema(
             description = "Tenant to whom this club belongs",
             implementation = TenantEntity.class
@@ -62,13 +57,13 @@ public class ClubDtoOutPreview {
 
     @Schema(
             description = "Users manager associated with this club, if any",
-            implementation = UserManager.class
+            implementation = UserManagerEntity.class
     )
     private List<String> userManagers;
 
     @Schema(
             description = "number of machines owned by this club",
-            implementation = UserManager.class
+            implementation = UserManagerEntity.class
     )
     private int machinesCount;
 }

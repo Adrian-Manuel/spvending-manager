@@ -3,11 +3,9 @@ import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoIn;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutPreview;
-import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
-import com.SmartPadel.spvendingManagerApi.machines.modelsV1.Machine;
-import java.util.ArrayList;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
+
 import java.util.Collections;
-import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -42,9 +40,9 @@ public class ClubMapper {
             .accountingId( club.getAccountingId() )
             .tenantEntityName(club.getTenantEntity().getName())
             .micronId(club.getMicronId())
-            .userManagers((club.getUserManagers() !=null) ? club.getUserManagers()
+            .userManagers((club.getUserManagerEntities() !=null) ? club.getUserManagerEntities()
                     .stream()
-                    .map(UserManager::getUsername)
+                    .map(UserManagerEntity::getUserName)
                     .collect(Collectors.toList())
                     : Collections.emptyList())
             .build();

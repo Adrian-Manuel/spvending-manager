@@ -3,9 +3,9 @@ import java.util.List;
 import java.util.UUID;
 
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
-import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
-import com.SmartPadel.spvendingManagerApi.machines.modelsV1.Machine;
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.Filtrable;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
+import com.SmartPadel.spvendingManagerApi.machine.modelsV1.Machine;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.Filtrable;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,28 +27,20 @@ public class ClubEntity {
     @Filtrable
     @Column(name="name", nullable=false)
     private String name;
-
-
     @Column(name="cif", nullable=false)
     private String cif;
-
     @Filtrable
     @Column(name="address")
     private String address;
-
     @Filtrable
     @Column( name = "phone")
     private String phone;
-
     @Column(name = "email")
     private String email;
-
     @Column(name = "remark")
     private String remark;
-
     @Column(name = "accountingId", unique = true, nullable = false)
     private String accountingId;
-
     @Column(name = "micronId", unique = true)
     private String micronId;
 
@@ -63,7 +55,7 @@ public class ClubEntity {
     private List<Machine> machines;
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UserManager> userManagers;
+    private List<UserManagerEntity> userManagerEntities;
 
     public static ClubEntity fromDomainModel(Club club){
         return ClubEntity.builder()
@@ -78,7 +70,7 @@ public class ClubEntity {
                 .remark(club.getRemark())
                 .accountingId(club.getAccountingId())
                 .tenantEntity(club.getTenantEntity())
-                .userManagers(club.getUserManagers())
+                .userManagerEntities(club.getUserManagerEntities())
                 .build();
     }
 
@@ -95,7 +87,7 @@ public class ClubEntity {
                 .remark(remark)
                 .accountingId(accountingId)
                 .tenantEntity(tenantEntity)
-                .userManagers(userManagers)
+                .userManagerEntities(userManagerEntities)
                 .build();
     }
 }

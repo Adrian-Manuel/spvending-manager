@@ -1,7 +1,7 @@
 package com.SmartPadel.spvendingManagerApi.shared.Utils;
 
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.Filtrable;
 import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.jpa.domain.Specification;
@@ -11,6 +11,9 @@ import java.util.List;
 
 public class SpecificationUtils {
     public static <T> Specification<T> buildFilterSpec(Class<T> clazz, String filter) {
+        if (filter == null || filter.trim().isEmpty()) {
+            return null;
+        }
         return (root, query, criteriaBuilder) -> {
             String like = "%" + filter.toLowerCase() + "%";
             List<Predicate> predicates = new ArrayList<>();
@@ -33,10 +36,18 @@ public class SpecificationUtils {
 
     private static Path<?> getPath(From<?, ?> root, String path) {
         String[] parts = path.split("\\.");
+        From<?, ?> from = root;
         Path<?> result = root;
-        for (String part : parts) {
-            result = result.get(part); // esto permite llegar a tenant.name
+
+        for (int i = 0; i < parts.length; i++) {
+            if (i < parts.length - 1) {
+                from = from.join(parts[i], JoinType.LEFT); // JOIN seguro
+                result = from;
+            } else {
+                result = result.get(parts[i]); // Último campo
+            }
         }
+
         return result;
     }
 }

@@ -1,7 +1,7 @@
 package com.SmartPadel.spvendingManagerApi.tenant.domain.model;
 
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
-import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,5 +25,5 @@ public class Tenant {
     private String remark;
     private String micronId;
     private List<ClubEntity> clubs;
-    private List <UserManager> userManagers;
+    private List <UserManagerEntity> userManagerEntities;
 }

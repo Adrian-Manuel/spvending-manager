@@ -9,5 +9,4 @@ import java.util.UUID;
 @Repository
 public interface JpaTenantRepository extends JpaRepository<TenantEntity, UUID>, JpaSpecificationExecutor<TenantEntity> {
     Boolean existsByName(String name);
-
 }

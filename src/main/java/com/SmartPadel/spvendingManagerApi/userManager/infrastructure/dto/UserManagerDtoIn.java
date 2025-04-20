@@ -1,23 +1,26 @@
-package com.SmartPadel.spvendingManagerApi.externalUser.model.dto;
+package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto;
 
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.UUID;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Validated
-@Schema(description = "DTO containing information for external user managers who can be associated with tenants or clubs")
-public class UserManagerDTO {
+@Schema(description = "DTO input information for external user managers who can be associated with tenants or clubs")
+public class UserManagerDtoIn {
 
     @NotNull(message = "The username is required")
     @Schema(
@@ -37,7 +40,7 @@ public class UserManagerDTO {
     )
     private String password;
 
-    @NotNull(message = "The micron ID is required")
+    @NotNull(message = "the micron Id is required")
     @Schema(
             description = "Unique identifier used in the Micron system",
             example = "MIC123456"
@@ -58,6 +61,7 @@ public class UserManagerDTO {
     )
     private String micronPass;
 
+    @Size(min = 1, max = 1, message = "this field just accept 1 character, 1 or 2")
     @NotNull(message = "The user type is required")
     @Schema(
             description = "Type of user (e.g. 1 TENANT_ADMIN, 2 CLUB_ADMIN)",
@@ -65,16 +69,16 @@ public class UserManagerDTO {
     )
     private String userType;
 
-    @NotNull(message = "The tenant is required")
-    @Schema(
-            description = "Tenant to which the user belongs",
-            implementation = TenantEntity.class
-    )
-    private TenantEntity tenantEntity;
 
     @Schema(
-            description = "Club associated with this user, if any",
+            description = "tenant id associated with this user, if any",
+            implementation = TenantEntity.class
+    )
+    private UUID tenantEntityId;
+
+    @Schema(
+            description = "Club id associated with this user, if any",
             implementation = ClubEntity.class
     )
-    private ClubEntity club;
+    private UUID clubEntityId;
 }

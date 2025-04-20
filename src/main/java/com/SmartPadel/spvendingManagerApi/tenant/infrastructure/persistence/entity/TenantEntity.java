@@ -2,7 +2,8 @@ package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.ent
 import java.util.List;
 import java.util.UUID;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
-import com.SmartPadel.spvendingManagerApi.externalUser.model.UserManager;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.Filtrable;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -54,7 +55,7 @@ public class TenantEntity {
 
 
     @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<UserManager> userManagers;
+    private List<UserManagerEntity> userManagerEntities;
 
     public static TenantEntity fromDomainModel(Tenant tenant){
         return TenantEntity.builder()
@@ -67,7 +68,7 @@ public class TenantEntity {
                 .name(tenant.getName())
                 .phone(tenant.getPhone())
                 .remark(tenant.getRemark())
-                .userManagers(tenant.getUserManagers())
+                .userManagerEntities(tenant.getUserManagerEntities())
                 .build();
     }
 
@@ -82,7 +83,7 @@ public class TenantEntity {
                 .name(name)
                 .phone(phone)
                 .remark(remark)
-                .userManagers(userManagers)
+                .userManagerEntities(userManagerEntities)
                 .build();
     }
 }

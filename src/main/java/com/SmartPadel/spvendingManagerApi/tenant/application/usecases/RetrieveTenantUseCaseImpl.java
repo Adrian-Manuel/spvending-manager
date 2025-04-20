@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -26,6 +28,11 @@ public class RetrieveTenantUseCaseImpl implements RetrieveTenantUseCase {
 
     @Override
     public Tenant getTenantById(UUID tenantId) {return tenantRepositoryPort.findById(tenantId);}
+
+    @Override
+    public List<Tenant> getAllTenantsSumary() {
+        return tenantRepositoryPort.findAllTenantsSumary();
+    }
 
 
 }
