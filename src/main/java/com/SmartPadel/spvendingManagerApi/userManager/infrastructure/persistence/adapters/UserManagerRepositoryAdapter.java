@@ -11,6 +11,7 @@ import com.SmartPadel.spvendingManagerApi.userManager.domain.model.UserManager;
 import com.SmartPadel.spvendingManagerApi.userManager.domain.ports.out.UserManagerRepositoryPort;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.repository.JpaUserManagerRepository;
+import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.utils.UserManagerHelperAdapter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,56 +30,19 @@ public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
 
     @Override
     public UserManager save(UUID tenantId, UUID clubId, UserManager userManager) {
-        if (tenantId==null && clubId==null){
-            throw new ParamRequiredException("some club id or tenant id is required");
-        }
+        UserManagerHelperAdapter.validateClubOrTenant(tenantId, clubId, userManager.getUserType());
+        UserManagerHelperAdapter.validateUserUniqueness(jpaUserManagerRepository, userManager);
 
-        if (tenantId!=null && clubId!=null){
-            throw new ParamRequiredException("only one of the two parameters is needed");
-        }
-
-        if (tenantId!=null && userManager.getUserType().equals("1")){
-            throw new ParamRequiredException("The user is type 1, the club id is required.");
-        }
-
-        if (clubId!=null && userManager.getUserType().equals("2")){
-            throw new ParamRequiredException("The user is type 2, the tenant id is required.");
-        }
-
-        boolean userNameExists=jpaUserManagerRepository.existsByUserName(userManager.getUserName());
-        boolean micronIdExists=jpaUserManagerRepository.existsByMicronId(userManager.getMicronId());
-        boolean micronUserExists=jpaUserManagerRepository.existsByMicronUser(userManager.getMicronUser());
-
-        if (userNameExists){
-            throw new ResourceAlreadyExistsException("a user with that name already exists");
-        }
-
-        if (micronIdExists){
-            throw new ResourceAlreadyExistsException("a user with that micron Id already exists");
-        }
-
-        if (micronUserExists){
-            throw new ResourceAlreadyExistsException("a user with that micron user already exists");
-        }
-
-
-        if (clubId!=null){
-
-            ClubEntity clubEntity=jpaClubRepository.findById(clubId).orElseThrow(()->new ResourceNotFoundException("club not found"));
+        if (clubId != null) {
+            ClubEntity clubEntity = jpaClubRepository.findById(clubId).orElseThrow(() -> new ResourceNotFoundException("club not found"));
             userManager.setClub(clubEntity);
-            UserManagerEntity userManagerEntity=UserManagerEntity.fromDomainModel(userManager);
-            userManagerEntity=jpaUserManagerRepository.save(userManagerEntity);
-
-            return userManagerEntity.toDomainModel();
+        } else {
+            TenantEntity tenantEntity = jpaTenantRepository.findById(tenantId).orElseThrow(() -> new ResourceNotFoundException("tenant not found"));
+            userManager.setTenantEntity(tenantEntity);
         }
 
-
-
-        TenantEntity tenantEntity=jpaTenantRepository.findById(tenantId).orElseThrow(()->new ResourceNotFoundException("tenant not found"));
-        userManager.setTenantEntity(tenantEntity);
-        UserManagerEntity userManagerEntity=UserManagerEntity.fromDomainModel(userManager);
-        userManagerEntity=jpaUserManagerRepository.save(userManagerEntity);
-
+        UserManagerEntity userManagerEntity = UserManagerEntity.fromDomainModel(userManager);
+        userManagerEntity = jpaUserManagerRepository.save(userManagerEntity);
         return userManagerEntity.toDomainModel();
     }
 

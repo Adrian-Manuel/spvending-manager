@@ -1,20 +1,12 @@
 package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.adapters;
-
-import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
-import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
-import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository.JpaClubRepository;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundException;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
-import com.SmartPadel.spvendingManagerApi.shared.Utils.ClubSpecification;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.PersistenceUtils;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.ports.out.TenantRepositoryPort;
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper.TenantMapper;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.repository.JpaTenantRepository;
-import com.SmartPadel.spvendingManagerApi.shared.Utils.TenantSpecification;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.utils.TenantHelperAdapter;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.utils.TenantSpecification;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -34,80 +26,44 @@ public class TenantRepositoryAdapter implements TenantRepositoryPort {
 
     @Override
     public Tenant save(Tenant tenant) {
-        TenantEntity tenantEntity=TenantEntity.fromDomainModel(tenant);
-        Boolean tenantNameExist=jpaTenantRepository.existsByName(tenantEntity.getName());
-
-        if (tenantNameExist){
-            throw new ResourceAlreadyExistsException("There is already a tenant with that name");
-        }
-
-        tenantEntity=jpaTenantRepository.save(tenantEntity);
-        return tenantEntity.toDomainModel();
+        TenantHelperAdapter.validateTenantNameNotExists(jpaTenantRepository, tenant.getName());
+        TenantEntity savedEntity = jpaTenantRepository.save(TenantEntity.fromDomainModel(tenant));
+        return savedEntity.toDomainModel();
     }
 
     @Override
     public Tenant findById(UUID tenantId){
-        TenantEntity tenantEntity=jpaTenantRepository.findById(tenantId).orElseThrow(()->new ResourceNotFoundException("There is no tenant with that Id"));
-        return tenantEntity.toDomainModel();
+        return TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, tenantId).toDomainModel();
     }
 
     @Override
     public Page<Tenant> findAll(Pageable pageable) {
-        Page<TenantEntity> tenantsPage=jpaTenantRepository.findAll(pageable);
-        if (tenantsPage.isEmpty()){
-            throw new NotResourcesFoundException("No tenants have been added yet");
-        }
-        return tenantsPage.map(TenantEntity::toDomainModel);
+        return PersistenceUtils.mapPageOrThrow(jpaTenantRepository.findAll(pageable),"No tenants have been added yet",TenantEntity::toDomainModel);
     }
 
     @Override
     public Page<Tenant> findAll(String search, Pageable pageable) {
         Specification<TenantEntity> spec = TenantSpecification.withFilter(search);
-        Page<TenantEntity> tenantsPage=jpaTenantRepository.findAll(spec, pageable);
-        if (tenantsPage.isEmpty()){
-            throw new NotResourcesFoundException("Tenants not found");
-        }
-
-        return tenantsPage.map(TenantEntity::toDomainModel);
+       return PersistenceUtils.mapPageOrThrow(jpaTenantRepository.findAll(spec, pageable),"Tenants not found" , TenantEntity::toDomainModel);
     }
 
     @Override
     public List<Tenant> findAllTenantsSumary() {
-        List<Tenant> tenantsSumary=jpaTenantRepository.findAll().stream().map(TenantEntity::toDomainModel).toList();
-        if (tenantsSumary.isEmpty()){
-            throw new NotResourcesFoundException("Tenants not found");
-        }
-        return tenantsSumary;
+        return PersistenceUtils.mapListOrThrow(jpaTenantRepository.findAll(), "Tenants not found", TenantEntity::toDomainModel);
     }
 
     @Override
     public Tenant update(UUID tenantId, Tenant tenant) {
-        boolean tenantExist=jpaTenantRepository.existsById(tenantId);
-        boolean nameTenantExist=jpaTenantRepository.existsByName(tenant.getName());
-        if(!tenantExist){
-            throw new ResourceNotFoundException("The tenant does not exist");
-        }
-
-        if (nameTenantExist){
-            throw new ResourceAlreadyExistsException("There is already a tenant with that name");
-        }
-
+        TenantHelperAdapter.validateTenantExists(jpaTenantRepository, tenantId);
+        TenantHelperAdapter.validateTenantNameNotExists(jpaTenantRepository, tenant.getName());
         tenant.setTenantId(tenantId);
         TenantEntity tenantEntity=TenantEntity.fromDomainModel(tenant);
-
-        tenantEntity=jpaTenantRepository.save(tenantEntity);
-        return tenantEntity.toDomainModel();
+        return jpaTenantRepository.save(tenantEntity).toDomainModel();
     }
 
     @Override
     public void deleteById(UUID tenantId) {
-        boolean tenantExist=jpaTenantRepository.existsById(tenantId);
-
-        if (!tenantExist){
-            throw new ResourceNotFoundException("the tenant does not exist");
-        }
-
+        TenantHelperAdapter.validateTenantExists(jpaTenantRepository, tenantId);
         jpaTenantRepository.deleteById(tenantId);
-
     }
 }

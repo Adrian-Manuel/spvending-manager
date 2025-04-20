@@ -1,5 +1,6 @@
-package com.SmartPadel.spvendingManagerApi.shared.Utils;
+package com.SmartPadel.spvendingManagerApi.club.infrastructure.utils;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.SpecificationUtils;
 import org.springframework.data.jpa.domain.Specification;
 
 import java.util.UUID;

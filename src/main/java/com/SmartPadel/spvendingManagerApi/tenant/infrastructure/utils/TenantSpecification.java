@@ -1,4 +1,5 @@
-package com.SmartPadel.spvendingManagerApi.shared.Utils;
+package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.utils;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.SpecificationUtils;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import org.springframework.data.jpa.domain.Specification;
 
