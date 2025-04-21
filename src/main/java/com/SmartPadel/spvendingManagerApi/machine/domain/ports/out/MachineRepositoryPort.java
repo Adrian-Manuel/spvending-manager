@@ -5,6 +5,7 @@ import com.SmartPadel.spvendingManagerApi.machine.domain.model.Machine;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface MachineRepositoryPort {
@@ -13,5 +14,5 @@ public interface MachineRepositoryPort {
     Machine findById(UUID machineId);
     Machine update(UUID clubId,UUID machineId,Machine machine);
     void deleteById(UUID machineId);
-    Page<Machine> findAllMachinesByClubId(String search, UUID clubId, Pageable pageable);
+    List<Machine> findAllMachinesByClubId(UUID clubId);
 }

@@ -5,8 +5,15 @@ import com.SmartPadel.spvendingManagerApi.machine.domain.ports.out.MachineReposi
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class DeleteMachineUseCaseImpl implements DeleteMachineUseCase {
     private final MachineRepositoryPort machineRepositoryPort;
+
+    @Override
+    public void deleteMachine(UUID machineId) {
+        machineRepositoryPort.deleteById(machineId);
+    }
 }
