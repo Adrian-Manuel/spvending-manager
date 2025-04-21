@@ -11,24 +11,17 @@ import java.util.stream.Collectors;
 
 public class ClubMapper {
     public static ClubDtoOutPreview toDtoPreview(Club club) {
-
-
         return ClubDtoOutPreview.builder()
         .clubId( club.getClubId() )
         .name( club.getName() )
         .address( club.getAddress() )
         .phone( club.getPhone() )
         .tenantEntityName(club.getTenantEntity().getName())
-        .machinesCount((club.getMachines()!=null) ? club.getMachines().size(): 0).build();
-
-
-
-
+        .machinesCount((club.getMachineEntities()!=null) ? club.getMachineEntities().size(): 0).build();
     }
 
 
     public static ClubDtoOutDetail toDtoDetail(Club club) {
-
     return  ClubDtoOutDetail.builder()
             .clubId(club.getClubId())
             .name(club.getName())

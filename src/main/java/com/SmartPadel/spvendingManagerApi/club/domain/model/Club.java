@@ -1,7 +1,7 @@
 package com.SmartPadel.spvendingManagerApi.club.domain.model;
 
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
-import com.SmartPadel.spvendingManagerApi.machine.modelsV1.Machine;
+import com.SmartPadel.spvendingManagerApi.machine.infrastructure.persistence.entity.MachineEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +26,6 @@ public class Club {
     private String accountingId;
     private String micronId;
     private TenantEntity tenantEntity;
-    private List<Machine> machines;
+    private List<MachineEntity> machineEntities;
     private List<UserManagerEntity> userManagerEntities;
 }

@@ -1,10 +1,13 @@
-package com.SmartPadel.spvendingManagerApi.machine.modelsV1;
+package com.SmartPadel.spvendingManagerApi.machine.infrastructure.persistence.entity;
 
 import java.util.UUID;
 
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
 
 
+import com.SmartPadel.spvendingManagerApi.machine.domain.model.Machine;
+import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -22,13 +26,14 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @Table(name = "machines")
-public class Machine {
+public class MachineEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID machineId;
-    @Column(name = "code", nullable = false, unique = true)
 
+    @Column(name = "code", nullable = false, unique = true)
     @Schema(
             description = "Unique internal code of the machine",
             example = "2341"
@@ -84,4 +89,35 @@ public class Machine {
             implementation = ClubEntity.class
     )
     private ClubEntity club;
+
+
+
+    public static MachineEntity fromDomainModel(Machine machine){
+        return MachineEntity.builder()
+                .machineId(machine.getMachineId())
+                .code(machine.getCode())
+                .smartFridgeId(machine.getSmartFridgeId())
+                .smartFridgePassword(machine.getSmartFridgePassword())
+                .terminalId(machine.getTerminalId())
+                .toaSerialNumber(machine.getToaSerialNumber())
+                .rustdeskId(machine.getRustdeskId())
+                .rustdeskPass(machine.getRustdeskPass())
+                .club(machine.getClub())
+                .build();
+    }
+
+    public Machine toDomainModel(){
+        return  Machine.builder()
+                .machineId(machineId)
+                .code(code)
+                .smartFridgeId(smartFridgeId)
+                .smartFridgePassword(smartFridgePassword)
+                .terminalId(terminalId)
+                .toaSerialNumber(toaSerialNumber)
+                .rustdeskId(rustdeskId)
+                .rustdeskPass(rustdeskPass)
+                .club(club)
+                .build();
+    }
+
 }

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
-import com.SmartPadel.spvendingManagerApi.machine.modelsV1.Machine;
+import com.SmartPadel.spvendingManagerApi.machine.infrastructure.persistence.entity.MachineEntity;
 import com.SmartPadel.spvendingManagerApi.shared.Utils.Filtrable;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import jakarta.persistence.*;
@@ -52,7 +52,7 @@ public class ClubEntity {
 
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<Machine> machines;
+    private List<MachineEntity> machineEntities;
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<UserManagerEntity> userManagerEntities;
@@ -62,7 +62,7 @@ public class ClubEntity {
                 .clubId(club.getClubId())
                 .address(club.getAddress())
                 .cif(club.getCif())
-                .machines(club.getMachines())
+                .machineEntities(club.getMachineEntities())
                 .email(club.getEmail())
                 .micronId(club.getMicronId())
                 .name(club.getName())
@@ -79,7 +79,7 @@ public class ClubEntity {
                 .clubId(clubId)
                 .address(address)
                 .cif(cif)
-                .machines(machines)
+                .machineEntities(machineEntities)
                 .email(email)
                 .micronId(micronId)
                 .name(name)
