@@ -33,7 +33,7 @@ public class GetUserManagerController {
     }
 
     @GetMapping("/{userManagerId}")
-    public ResponseEntity<UserManagerDtoOutDetail> getUserManagerById(@PathVariable UUID userManagerId){
+    public ResponseEntity<UserManagerDtoOutDetail> getUserManagerById(@PathVariable UUID userManagerId) throws Exception {
         UserManager userManagerRequest=retrieveUserManagerUseCase.getUserManagerById(userManagerId);
         return new ResponseEntity<>(UserManagerMapper.toDtoDetail(userManagerRequest),HttpStatus.OK);
     }

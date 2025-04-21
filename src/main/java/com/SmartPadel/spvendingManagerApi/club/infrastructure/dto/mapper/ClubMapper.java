@@ -3,6 +3,9 @@ import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoIn;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutPreview;
+import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutSumary;
+import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutSumary;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 
 import java.util.Collections;
@@ -51,6 +54,13 @@ public class ClubMapper {
                 .remark(clubDtoIn.getRemark())
                 .micronId(clubDtoIn.getMicronId())
                 .accountingId(clubDtoIn.getAccountingId())
+                .build();
+    }
+
+    public static ClubDtoOutSumary toDtoSumary(Club club){
+        return ClubDtoOutSumary.builder()
+                .name(club.getName())
+                .clubId(club.getClubId())
                 .build();
     }
 }

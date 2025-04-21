@@ -13,6 +13,6 @@ public class MachineSpecification {
     }
 
     public static Specification<MachineEntity> belongsToClub(UUID clubId) {
-        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("clubEntity").get("clubId"), clubId);
+        return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("club").get("clubId"), clubId);
     }
 }

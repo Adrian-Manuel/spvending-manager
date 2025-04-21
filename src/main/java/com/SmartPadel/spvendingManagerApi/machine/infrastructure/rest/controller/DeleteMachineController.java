@@ -20,6 +20,7 @@ public class DeleteMachineController {
 
     @DeleteMapping("/{machineId}")
     public ResponseEntity<Void> deleteMachine(@PathVariable UUID machineId){
+        deleteMachineUseCase.deleteMachine(machineId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

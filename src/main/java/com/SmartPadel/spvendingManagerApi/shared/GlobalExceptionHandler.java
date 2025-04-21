@@ -1,9 +1,6 @@
 package com.SmartPadel.spvendingManagerApi.shared;
 
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.NotResourcesFoundException;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ParamRequiredException;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceAlreadyExistsException;
-import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +20,14 @@ public class GlobalExceptionHandler {
         errors.put("Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
+
+    @ExceptionHandler(EncryptionException.class)
+    public ResponseEntity<String> handleEncryptionException(EncryptionException ex) {
+        return ResponseEntity
+                .status(500)
+                .body("Error al encriptar la contraseña: " + ex.getMessage());
+    }
+
 
     @ExceptionHandler(ParamRequiredException.class)
     public ResponseEntity<Map<String, String>> handleParamRequiredException(ParamRequiredException ex){

@@ -15,7 +15,7 @@ public class CreateUserManagerUseCaseImpl implements CreateUserManagerUseCase {
     private final UserManagerRepositoryPort userManagerRepositoryPort;
 
     @Override
-    public UserManager createUserManager(UUID tenantId, UUID clubId,UserManager userManager) {
+    public UserManager createUserManager(UUID tenantId, UUID clubId,UserManager userManager) throws Exception {
         return userManagerRepositoryPort.save(tenantId,clubId, userManager);
     }
 }

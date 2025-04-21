@@ -4,6 +4,7 @@ import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository.JpaClubRepository;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.utils.ClubHelperAdapter;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
+import com.SmartPadel.spvendingManagerApi.shared.Utils.AESGCMEncryption;
 import com.SmartPadel.spvendingManagerApi.shared.Utils.PersistenceUtils;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.repository.JpaTenantRepository;
@@ -15,6 +16,7 @@ import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.utils.UserManagerHelperAdapter;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.utils.UserManagerSpecification;
 import jakarta.transaction.Transactional;
+import jakarta.websocket.EncodeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -32,7 +34,7 @@ public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
     private final JpaTenantRepository jpaTenantRepository;
 
     @Override
-    public UserManager save(UUID tenantId, UUID clubId, UserManager userManager) {
+    public UserManager save(UUID tenantId, UUID clubId, UserManager userManager) throws EncodeException {
         UserManagerHelperAdapter.validateClubOrTenant(tenantId, clubId, userManager.getUserType());
         UserManagerHelperAdapter.validateUserUniqueness(jpaUserManagerRepository, userManager);
 
@@ -44,8 +46,10 @@ public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
             userManager.setTenantEntity(tenantEntity);
         }
 
+
         UserManagerEntity userManagerEntity = UserManagerEntity.fromDomainModel(userManager);
         userManagerEntity = jpaUserManagerRepository.save(userManagerEntity);
+
         return userManagerEntity.toDomainModel();
     }
 
