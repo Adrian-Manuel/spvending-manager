@@ -30,7 +30,7 @@ public class GetMachineController {
     }
 
     @GetMapping("/{machineId}")
-    public ResponseEntity<MachineDtoOutDetail> getClubById(@PathVariable UUID machineId){
+    public ResponseEntity<MachineDtoOutDetail> getClubById(@PathVariable UUID machineId) throws Exception {
         Machine machineRequest=retrieveMachineUseCase.getMachineById(machineId);
         return new ResponseEntity<>(MachineMapper.toDtoDetail(machineRequest), HttpStatus.OK);
     }
