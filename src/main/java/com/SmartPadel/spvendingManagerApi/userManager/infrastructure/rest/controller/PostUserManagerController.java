@@ -19,7 +19,7 @@ public class PostUserManagerController {
     private final CreateUserManagerUseCase createUserManagerUseCase;
 
     @PostMapping
-    public ResponseEntity<UserManagerDtoOutPreview> createUserManager(@RequestBody @Valid UserManagerDtoIn userManagerDtoIn){
+    public ResponseEntity<UserManagerDtoOutPreview> createUserManager(@RequestBody @Valid UserManagerDtoIn userManagerDtoIn) throws Exception {
         UserManager userManagerRequest= UserManagerMapper.toModel(userManagerDtoIn);
         userManagerRequest=createUserManagerUseCase.createUserManager(userManagerDtoIn.getTenantEntityId(), userManagerDtoIn.getClubEntityId(), userManagerRequest);
         return new ResponseEntity<>(UserManagerMapper.toDtoPreview(userManagerRequest), HttpStatus.CREATED);

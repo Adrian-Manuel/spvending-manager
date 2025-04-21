@@ -21,7 +21,7 @@ public class PutUserManagerController {
     private final UpdateUserManagerUseCase updateUserManagerUseCase;
 
     @PutMapping("/{userManagerId}")
-    public ResponseEntity<UserManagerDtoOutDetail> updateUserManager(@PathVariable UUID userManagerId, @Valid @RequestBody UserManagerDtoIn userManagerDtoIn){
+    public ResponseEntity<UserManagerDtoOutDetail> updateUserManager(@PathVariable UUID userManagerId, @Valid @RequestBody UserManagerDtoIn userManagerDtoIn) throws Exception {
         UserManager userManagerRequest= UserManagerMapper.toModel(userManagerDtoIn);
         userManagerRequest= updateUserManagerUseCase.updateUserManager(userManagerDtoIn.getTenantEntityId(),userManagerDtoIn.getClubEntityId(), userManagerId, userManagerRequest);
         return new ResponseEntity<>(UserManagerMapper.toDtoDetail(userManagerRequest), HttpStatus.OK);

@@ -19,6 +19,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.UUID;
 @Transactional
 @Component
@@ -27,11 +28,6 @@ public class ClubRepositoryAdapter implements ClubRepositoryPort {
 
     private final JpaClubRepository jpaClubRepository;
     private final JpaTenantRepository jpaTenantRepository;
-
-    @Override
-    public Page<Club> findAll(Pageable pageable) {
-        return PersistenceUtils.mapPageOrThrow(jpaClubRepository.findAll(pageable), "No clubs have been added yet", ClubEntity::toDomainModel);
-    }
 
     @Override
     public Page<Club> findAll(String search, Pageable pageable) {
@@ -44,6 +40,11 @@ public class ClubRepositoryAdapter implements ClubRepositoryPort {
         TenantHelperAdapter.validateTenantExists(jpaTenantRepository, tenantId);
         Specification<ClubEntity> spec= ClubSearchHelper.buildClubSearchSpec(tenantId,search);
         return PersistenceUtils.mapPageOrThrow(jpaClubRepository.findAll(spec, pageable), "No clubs found for this tenant", ClubEntity::toDomainModel);
+    }
+
+    @Override
+    public List<Club> findAllClubsSumary() {
+        return PersistenceUtils.mapListOrThrow(jpaClubRepository.findAll(), "Clubs not found", ClubEntity::toDomainModel);
     }
 
     @Override

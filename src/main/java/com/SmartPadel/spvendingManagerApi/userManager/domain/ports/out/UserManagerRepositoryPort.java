@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.UUID;
 
 public interface UserManagerRepositoryPort {
-    UserManager save (UUID tenantId, UUID clubId, UserManager userManager);
+    UserManager save (UUID tenantId, UUID clubId, UserManager userManager) throws Exception;
     UserManager update(UUID tenantId, UUID clubId, UUID userManagerId, UserManager userManager);
     void delete(UUID userManagerId);
     Page<UserManager> findAll(String search, Pageable pageable);

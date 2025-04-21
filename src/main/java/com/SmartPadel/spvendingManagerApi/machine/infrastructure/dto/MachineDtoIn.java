@@ -1,4 +1,4 @@
-package com.SmartPadel.spvendingManagerApi.machine.modelsV1.dto;
+package com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto;
 
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 
+import java.util.UUID;
 
 
 @Data
@@ -16,8 +17,8 @@ import org.springframework.validation.annotation.Validated;
 @NoArgsConstructor
 @Builder
 @Validated
-@Schema(description = "DTO that contains the main information of a Machine entity, including credentials and assigned club")
-public class MachineDTO {
+@Schema(description = "DTO that contains the input information of a Machine entity, including credentials and assigned club")
+public class MachineDtoIn {
 
 
     @NotNull(message = "The code of the machine is required")
@@ -74,5 +75,5 @@ public class MachineDTO {
             description = "The club where this machine is installed or managed",
             implementation = ClubEntity.class
     )
-    private ClubEntity club;
+    private UUID clubId;
 }

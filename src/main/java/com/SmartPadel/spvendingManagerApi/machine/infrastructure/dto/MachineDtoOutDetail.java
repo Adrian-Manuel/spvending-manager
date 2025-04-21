@@ -1,33 +1,28 @@
-package com.SmartPadel.spvendingManagerApi.machine.modelsV1;
-
-import java.util.UUID;
+package com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto;
 
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
-
-
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
-@Entity
+import java.util.UUID;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "machines")
-public class Machine {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID machineId;
-    @Column(name = "code", nullable = false, unique = true)
+@Builder
+@Validated
+@Schema(description = "DTO that contains all information of a Machine entity, including credentials and assigned club")
+public class MachineDtoOutDetail {
+
+    @Schema(
+            description = "Unique id of the machine in the database",
+            example = "2341"
+    )
+    private  UUID machineId;
 
     @Schema(
             description = "Unique internal code of the machine",
@@ -35,53 +30,45 @@ public class Machine {
     )
     private String code;
 
-    @Column(name = "smartFridgeId",unique = true, nullable = false)
     @Schema(
             description = "ID assigned to the smart fridge module of the machine",
             example = "12"
     )
     private String smartFridgeId;
 
-    @Column(name = "smartFridgPassword", nullable = false)
     @Schema(
             description = "Password to access the smart fridge",
             example = "abc123."
     )
     private String smartFridgePassword;
 
-    @Column(name = "terminalId",unique = true, nullable = false)
     @Schema(
             description = "Unique terminal ID used for payment or control systems",
             example = "14"
     )
     private String terminalId;
 
-    @Column(name = "toaSerialNumber", nullable = false, unique = true)
     @Schema(
             description = "Serial number assigned by TOA (provider or manufacturer)",
             example = "14455"
     )
     private String toaSerialNumber;
 
-    @Column(name = "rustdeskId",unique = true, nullable = false)
     @Schema(
             description = "ID used for remote control via RustDesk",
             example = "76"
     )
     private String rustdeskId;
 
-    @Column(name = "rustdeskPass", nullable = false)
     @Schema(
             description = "Password used for remote access through RustDesk",
             example = "Padelprix2025"
     )
     private String rustdeskPass;
 
-    @ManyToOne
-    @JoinColumn(name = "clubId", nullable = false, referencedColumnName = "clubId")
     @Schema(
             description = "The club where this machine is installed or managed",
             implementation = ClubEntity.class
     )
-    private ClubEntity club;
+    private String clubName;
 }

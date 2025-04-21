@@ -9,8 +9,7 @@ import java.util.UUID;
 
 public class ClubHelperAdapter {
     public static ClubEntity getClubOrThrow(JpaClubRepository repo, UUID clubId) {
-        return repo.findById(clubId)
-                .orElseThrow(() -> new ResourceNotFoundException("The requested club was not found"));
+        return repo.findById(clubId).orElseThrow(() -> new ResourceNotFoundException("The requested club was not found"));
     }
 
     public static void validateClubExists(JpaClubRepository repo, UUID clubId) {

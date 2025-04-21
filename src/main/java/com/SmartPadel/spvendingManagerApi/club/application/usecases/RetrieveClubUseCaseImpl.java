@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -20,9 +21,6 @@ public class RetrieveClubUseCaseImpl implements RetrieveClubUseCase {
     public Club getClubById(UUID clubId) {return clubRepositoryPort.findById(clubId);}
 
     @Override
-    public Page<Club> getAllClubs(Pageable pageable) {return clubRepositoryPort.findAll(pageable);}
-
-    @Override
     public Page<Club> getAllClubs(String search, Pageable pageable) {
         return clubRepositoryPort.findAll(search, pageable);
     }
@@ -30,6 +28,11 @@ public class RetrieveClubUseCaseImpl implements RetrieveClubUseCase {
     @Override
     public Page<Club> getAllClubsByTenantId(String search,UUID tenantId, Pageable pageable) {
         return clubRepositoryPort.findAllClubsByTenantId(search,tenantId, pageable);
+    }
+
+    @Override
+    public List<Club> getAllClubsSumary() {
+        return clubRepositoryPort.findAllClubsSumary();
     }
 
 }

@@ -3,12 +3,14 @@ package com.SmartPadel.spvendingManagerApi.club.domain.ports.out;
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 import java.util.UUID;
 
 public interface ClubRepositoryPort {
-    Page<Club> findAll(Pageable pageable);
     Page<Club> findAll(String search,Pageable pageable);
-    Club save(UUID tenantId ,Club club);
+    List<Club> findAllClubsSumary();
+    Club save(UUID tenantId , Club club);
     Club findById(UUID clubId);
     Club update(UUID tenantId,UUID clubId,Club club);
     void deleteById(UUID clubId);

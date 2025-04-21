@@ -1,5 +1,6 @@
 package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto.mapper;
 
+import com.SmartPadel.spvendingManagerApi.shared.Utils.AESGCMEncryption;
 import com.SmartPadel.spvendingManagerApi.userManager.domain.model.UserManager;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto.UserManagerDtoIn;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto.UserManagerDtoOutDetail;
@@ -18,27 +19,27 @@ public class UserManagerMapper {
                 .build();
     }
 
-    public static UserManagerDtoOutDetail toDtoDetail(UserManager userManager){
+    public static UserManagerDtoOutDetail toDtoDetail(UserManager userManager) throws Exception {
         return UserManagerDtoOutDetail.builder()
                 .userManagerId(userManager.getUserId())
                 .username(userManager.getUserName())
-                .password(userManager.getPassword())
+                .password(AESGCMEncryption.decrypt(userManager.getPassword()))
                 .micronId(userManager.getMicronId())
                 .micronUser(userManager.getMicronUser())
-                .micronPass(userManager.getMicronPass())
+                .micronPass(AESGCMEncryption.decrypt(userManager.getMicronPass()))
                 .userType(userManager.getUserType())
                 .clubEntityName(userManager.getClub() != null ? userManager.getClub().getName() : null)
                 .tenantEntityName(userManager.getTenantEntity() != null ? userManager.getTenantEntity().getName() : null)
                 .build();
     }
 
-    public static UserManager toModel(UserManagerDtoIn userManagerDtoIn){
+    public static UserManager toModel(UserManagerDtoIn userManagerDtoIn) throws Exception {
         return UserManager.builder()
                 .userName(userManagerDtoIn.getUsername())
-                .password(userManagerDtoIn.getPassword())
+                .password(AESGCMEncryption.encrypt(userManagerDtoIn.getPassword()))
                 .micronId(userManagerDtoIn.getMicronId())
                 .micronUser(userManagerDtoIn.getMicronUser())
-                .micronPass(userManagerDtoIn.getMicronPass())
+                .micronPass(AESGCMEncryption.encrypt(userManagerDtoIn.getMicronPass()))
                 .userType(userManagerDtoIn.getUserType())
                 .build();
     }
