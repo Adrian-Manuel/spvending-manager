@@ -20,7 +20,7 @@ public class PutMachineController {
     private final UpdateMachineUseCase updateMachineUseCase;
 
     @PutMapping("/{machineId}")
-    public ResponseEntity<MachineDtoOutDetail> updateMachine(@PathVariable UUID machineId, @Valid @RequestBody MachineDtoIn machineDtoIn){
+    public ResponseEntity<MachineDtoOutDetail> updateMachine(@PathVariable UUID machineId, @Valid @RequestBody MachineDtoIn machineDtoIn) throws Exception {
         Machine machineRequest= MachineMapper.toModel(machineDtoIn);
         machineRequest=updateMachineUseCase.updateMachine(machineDtoIn.getClubId(),machineId, machineRequest);
         return new ResponseEntity<>(MachineMapper.toDtoDetail(machineRequest), HttpStatus.OK);

@@ -20,7 +20,7 @@ public class PostMachineController {
     private final CreateMachineUseCase createMachineUseCase;
 
     @PostMapping
-    public ResponseEntity<MachineDtoOutPreview> createClub (@RequestBody @Valid MachineDtoIn machineDtoIn){
+    public ResponseEntity<MachineDtoOutPreview> createClub (@RequestBody @Valid MachineDtoIn machineDtoIn) throws Exception {
         Machine machineRequest= MachineMapper.toModel(machineDtoIn);
         machineRequest=createMachineUseCase.createMachine(machineDtoIn.getClubId(), machineRequest);
         return new ResponseEntity<>(MachineMapper.toDtoPreview(machineRequest), HttpStatus.CREATED);
