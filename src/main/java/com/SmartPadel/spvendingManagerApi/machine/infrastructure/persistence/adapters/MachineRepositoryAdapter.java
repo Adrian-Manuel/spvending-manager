@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.machine.infrastructure.persistence.adapters;
-
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.repository.JpaClubRepository;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.utils.ClubHelperAdapter;
@@ -8,14 +7,12 @@ import com.SmartPadel.spvendingManagerApi.machine.domain.ports.out.MachineReposi
 import com.SmartPadel.spvendingManagerApi.machine.infrastructure.persistence.entity.MachineEntity;
 import com.SmartPadel.spvendingManagerApi.machine.infrastructure.persistence.repository.JpaMachineRepository;
 import com.SmartPadel.spvendingManagerApi.machine.infrastructure.utils.MachineHelperAdapter;
-import com.SmartPadel.spvendingManagerApi.machine.infrastructure.utils.MachineSearchHelper;
 import com.SmartPadel.spvendingManagerApi.machine.infrastructure.utils.MachineSpecification;
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.ResourceNotFoundException;
 import com.SmartPadel.spvendingManagerApi.shared.Utils.PersistenceUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;

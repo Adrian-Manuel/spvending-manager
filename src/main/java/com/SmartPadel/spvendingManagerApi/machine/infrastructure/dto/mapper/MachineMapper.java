@@ -1,13 +1,13 @@
 package com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.mapper;
-
 import com.SmartPadel.spvendingManagerApi.machine.domain.model.Machine;
-import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.MachineDtoDetail;
 import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.MachineDtoIn;
-import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.MachineDtoPreview;
+import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.MachineDtoOutDetail;
+import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.MachineDtoOutPreview;
+
 
 public class MachineMapper {
-    public static MachineDtoPreview toDtoPreview(Machine machine){
-        return MachineDtoPreview.builder()
+    public static MachineDtoOutPreview toDtoPreview(Machine machine){
+        return MachineDtoOutPreview.builder()
                 .machineId(machine.getMachineId())
                 .code(machine.getCode())
                 .clubName(machine.getClub().getName())
@@ -17,8 +17,8 @@ public class MachineMapper {
                 .build();
     }
 
-    public static MachineDtoDetail toDtoDetail (Machine machine){
-        return MachineDtoDetail.builder()
+    public static MachineDtoOutDetail toDtoDetail (Machine machine){
+        return MachineDtoOutDetail.builder()
                 .machineId(machine.getMachineId())
                 .code(machine.getCode())
                 .clubName(machine.getClub().getName())

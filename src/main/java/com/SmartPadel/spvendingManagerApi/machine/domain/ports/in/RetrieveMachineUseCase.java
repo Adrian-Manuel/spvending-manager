@@ -9,6 +9,6 @@ import java.util.UUID;
 
 public interface RetrieveMachineUseCase {
     Page<Machine> getAllMachines(String search, Pageable pageable);
-    Machine findById(UUID machineId);
+    Machine getMachineById(UUID machineId);
     List<Machine> findAllMachinesByClubId(UUID clubId);
 }

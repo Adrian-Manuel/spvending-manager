@@ -22,7 +22,7 @@ public class RetrieveMachineUseCaseImpl implements RetrieveMachineUseCase {
     }
 
     @Override
-    public Machine findById(UUID machineId) {
+    public Machine getMachineById(UUID machineId) {
         return machineRepositoryPort.findById(machineId);
     }
 

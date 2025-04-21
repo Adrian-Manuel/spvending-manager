@@ -5,6 +5,10 @@ import com.SmartPadel.spvendingManagerApi.club.domain.ports.in.RetrieveClubUseCa
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutPreview;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.mapper.ClubMapper;
+import com.SmartPadel.spvendingManagerApi.machine.domain.model.Machine;
+import com.SmartPadel.spvendingManagerApi.machine.domain.ports.in.RetrieveMachineUseCase;
+import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.MachineDtoOutPreview;
+import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.mapper.MachineMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -20,6 +25,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class GetClubController {
     private final RetrieveClubUseCase retrieveClubUseCase;
+    private final RetrieveMachineUseCase retrieveMachineUseCase;
 
     @GetMapping
     public ResponseEntity<Page<ClubDtoOutPreview>> getAllClubs(@RequestParam(required = false) String search,
@@ -36,6 +42,12 @@ public class GetClubController {
     public ResponseEntity<ClubDtoOutDetail> getClubById(@PathVariable UUID clubId){
         Club clubRequest=retrieveClubUseCase.getClubById(clubId);
         return new ResponseEntity<>(ClubMapper.toDtoDetail(clubRequest), HttpStatus.OK);
+    }
+
+    @GetMapping("/{clubId}/machines")
+    public ResponseEntity<List<MachineDtoOutPreview>> getAllMachinesByClub(@PathVariable UUID clubId){
+        List<MachineDtoOutPreview> machines= retrieveMachineUseCase.findAllMachinesByClubId(clubId).stream().map(MachineMapper::toDtoPreview).toList();
+        return new ResponseEntity<>(machines, HttpStatus.OK);
     }
 
 }
