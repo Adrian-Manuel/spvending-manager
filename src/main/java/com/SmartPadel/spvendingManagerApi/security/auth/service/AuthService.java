@@ -39,7 +39,7 @@ public class AuthService {
 
     public TokenResponse register(final RegisterRequest request){
         final User user = User.builder()
-                .username(request.name())
+                .username(request.username())
                 .password(passwordEncoder.encode(request.password()))
                 .build();
 
