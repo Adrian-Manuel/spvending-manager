@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GetTenantController {
     private final RetrieveClubUseCase retrieveClubUseCase;
     private final RetrieveTenantUseCase retrieveTenantUseCase;

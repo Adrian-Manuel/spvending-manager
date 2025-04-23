@@ -16,6 +16,7 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user-managers")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutUserManagerController {
 
     private final UpdateUserManagerUseCase updateUserManagerUseCase;

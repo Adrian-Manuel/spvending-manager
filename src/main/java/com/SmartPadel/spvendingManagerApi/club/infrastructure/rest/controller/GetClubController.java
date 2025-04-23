@@ -26,6 +26,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/clubs")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GetClubController {
     private final RetrieveClubUseCase retrieveClubUseCase;
     private final RetrieveMachineUseCase retrieveMachineUseCase;

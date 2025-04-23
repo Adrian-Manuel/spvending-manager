@@ -16,6 +16,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/machines")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutMachineController {
     private final UpdateMachineUseCase updateMachineUseCase;
 
