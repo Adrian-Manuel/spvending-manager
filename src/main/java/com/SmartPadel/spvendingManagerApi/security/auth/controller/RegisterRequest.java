@@ -1,7 +1,3 @@
 package com.SmartPadel.spvendingManagerApi.security.auth.controller;
 
-public record RegisterRequest (
-        String username,
-        String password
-) {
-}
+public record RegisterRequest (String username, String password) {}

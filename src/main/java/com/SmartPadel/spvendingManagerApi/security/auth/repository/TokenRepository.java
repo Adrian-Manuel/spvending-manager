@@ -15,6 +15,6 @@ public interface TokenRepository extends JpaRepository<Token, Integer> {
       where u.id = :id and (t.expired = false or t.revoked = false)\s
       """)
     List<Token> findAllValidTokenByUser(Integer id);
-
+    void deleteByToken(String jwt);
     Optional<Token> findByToken(String token);
 }
