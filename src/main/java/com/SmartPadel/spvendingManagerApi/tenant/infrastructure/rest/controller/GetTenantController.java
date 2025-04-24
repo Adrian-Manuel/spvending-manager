@@ -23,12 +23,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @RestController
+@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
 public class GetTenantController {
     private final RetrieveClubUseCase retrieveClubUseCase;
     private final RetrieveTenantUseCase retrieveTenantUseCase;
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping
     public ResponseEntity <Page<TenantDtoOutPreview>> getAllTenants(@RequestParam(required = false) String search,
                                                                     @RequestParam(defaultValue = "0") int page,
@@ -39,13 +40,13 @@ public class GetTenantController {
                 : retrieveTenantUseCase.getAllTenants(pageable).map(TenantMapper::toDtoPreview);
         return new ResponseEntity<>(tenants, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{tenantId}")
     public ResponseEntity<TenantDtoOutDetail> getTenantById(@PathVariable UUID tenantId){
         Tenant tenantRequest=retrieveTenantUseCase.getTenantById(tenantId);
         return new ResponseEntity<>(TenantMapper.toDtoDetail(tenantRequest), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{tenantId}/clubs")
     public ResponseEntity<Page<ClubDtoOutPreview>> getAllClubsByTenantId(@RequestParam(required = false) String search,
                                                                          @RequestParam(defaultValue = "0") int page,
@@ -55,9 +56,9 @@ public class GetTenantController {
         Page<ClubDtoOutPreview> clubs = retrieveClubUseCase.getAllClubsByTenantId(search, tenantId,pageable).map(ClubMapper::toDtoPreview);
         return new ResponseEntity<>(clubs, HttpStatus.OK);
     }
-
-    @GetMapping("/all-sumary")
-    public ResponseEntity<List<TenantDtoOutSumary>> getTenantsSumary(){
+    @PreAuthorize("hasAuthority('admin:read')")
+    @GetMapping("/all-summary")
+    public ResponseEntity<List<TenantDtoOutSumary>> getTenantsSummary(){
         List<TenantDtoOutSumary> tenantsSumary=retrieveTenantUseCase.getAllTenantsSumary().stream().map(TenantMapper::toDtoSumary).toList();
         return new ResponseEntity<>(tenantsSumary, HttpStatus.OK);
     }

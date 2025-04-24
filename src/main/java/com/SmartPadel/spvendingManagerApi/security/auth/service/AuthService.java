@@ -26,6 +26,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+
     private void saveUserToken(User user, String jwtToken){
         final Token token = Token.builder()
                 .user(user)
@@ -39,8 +40,9 @@ public class AuthService {
 
     public TokenResponse register(final RegisterRequest request){
         final User user = User.builder()
-                .username(request.username())
-                .password(passwordEncoder.encode(request.password()))
+                .username(request.getUsername())
+                .password(passwordEncoder.encode(request.getPassword()))
+                .role(request.getRole())
                 .build();
 
         final User savedUser = jpaUserRepository.save(user);

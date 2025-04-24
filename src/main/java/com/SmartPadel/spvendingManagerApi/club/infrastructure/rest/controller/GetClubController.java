@@ -18,6 +18,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,10 +27,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/clubs")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 public class GetClubController {
     private final RetrieveClubUseCase retrieveClubUseCase;
     private final RetrieveMachineUseCase retrieveMachineUseCase;
-
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping
     public ResponseEntity<Page<ClubDtoOutPreview>> getAllClubs(@RequestParam(required = false) String search,
                                                                  @RequestParam(defaultValue = "0") int page,
@@ -38,21 +40,21 @@ public class GetClubController {
         Page<ClubDtoOutPreview> clubs = retrieveClubUseCase.getAllClubs(search, pageable).map(ClubMapper::toDtoPreview);
         return new ResponseEntity<>(clubs, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{clubId}")
     public ResponseEntity<ClubDtoOutDetail> getClubById(@PathVariable UUID clubId){
         Club clubRequest=retrieveClubUseCase.getClubById(clubId);
         return new ResponseEntity<>(ClubMapper.toDtoDetail(clubRequest), HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{clubId}/machines")
     public ResponseEntity<List<MachineDtoOutPreview>> getAllMachinesByClub(@PathVariable UUID clubId){
         List<MachineDtoOutPreview> machines= retrieveMachineUseCase.findAllMachinesByClubId(clubId).stream().map(MachineMapper::toDtoPreview).toList();
         return new ResponseEntity<>(machines, HttpStatus.OK);
     }
-
-    @GetMapping("/all-sumary")
-    public ResponseEntity<List<ClubDtoOutSumary>> getClubsSumary(){
+    @PreAuthorize("hasAuthority('admin:read')")
+    @GetMapping("/all-summary")
+    public ResponseEntity<List<ClubDtoOutSumary>> getClubsSummary(){
         List<ClubDtoOutSumary> tenantsSumary=retrieveClubUseCase.getAllClubsSumary().stream().map(ClubMapper::toDtoSumary).toList();
         return new ResponseEntity<>(tenantsSumary, HttpStatus.OK);
     }

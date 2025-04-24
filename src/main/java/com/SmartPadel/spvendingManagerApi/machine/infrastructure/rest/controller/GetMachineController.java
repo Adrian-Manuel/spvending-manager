@@ -10,6 +10,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,9 +18,10 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/machines")
 @RequiredArgsConstructor
+@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 public class GetMachineController {
     private final RetrieveMachineUseCase retrieveMachineUseCase;
-
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping
     public ResponseEntity<Page<MachineDtoOutPreview>> getAllClubs(@RequestParam(required = false) String search,
                                                                   @RequestParam(defaultValue = "0") int page,
@@ -28,7 +30,7 @@ public class GetMachineController {
         Page<MachineDtoOutPreview> machines = retrieveMachineUseCase.getAllMachines(search, pageable).map(MachineMapper::toDtoPreview);
         return new ResponseEntity<>(machines, HttpStatus.OK);
     }
-
+    @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{machineId}")
     public ResponseEntity<MachineDtoOutDetail> getClubById(@PathVariable UUID machineId) throws Exception {
         Machine machineRequest=retrieveMachineUseCase.getMachineById(machineId);

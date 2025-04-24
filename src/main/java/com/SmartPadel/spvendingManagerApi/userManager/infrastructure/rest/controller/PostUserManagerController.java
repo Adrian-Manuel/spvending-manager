@@ -10,14 +10,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
+@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/user-managers")
 public class PostUserManagerController {
     private final CreateUserManagerUseCase createUserManagerUseCase;
-
+    @PreAuthorize("hasAuthority('admin:create')")
     @PostMapping
     public ResponseEntity<UserManagerDtoOutPreview> createUserManager(@RequestBody @Valid UserManagerDtoIn userManagerDtoIn) throws Exception {
         UserManager userManagerRequest= UserManagerMapper.toModel(userManagerDtoIn);

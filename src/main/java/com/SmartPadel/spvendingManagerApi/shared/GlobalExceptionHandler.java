@@ -21,6 +21,13 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
     }
 
+    @ExceptionHandler(TokenNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTokenNotFoundException(TokenNotFoundException ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errors);
+    }
+
     @ExceptionHandler(EncryptionException.class)
     public ResponseEntity<String> handleEncryptionException(EncryptionException ex) {
         return ResponseEntity

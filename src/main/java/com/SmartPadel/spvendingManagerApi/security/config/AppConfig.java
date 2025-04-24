@@ -22,12 +22,7 @@ public class AppConfig {
     @Bean
     public UserDetailsService userDetailsService(){
         return username -> {
-            final User user = jpaUserRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
-
-            return org.springframework.security.core.userdetails.User.builder()
-                    .username(user.getUsername())
-                    .password(user.getPassword())
-                    .build();
+            return jpaUserRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
         };
     }
 

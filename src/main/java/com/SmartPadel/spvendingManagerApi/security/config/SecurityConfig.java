@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,6 +19,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static com.SmartPadel.spvendingManagerApi.security.user.Permission.*;
+import static com.SmartPadel.spvendingManagerApi.security.user.Role.ADMIN;
+import static com.SmartPadel.spvendingManagerApi.security.user.Role.USER;
+import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -43,7 +48,9 @@ public class SecurityConfig {
         final Token storedToken = tokenRepository.findByToken(jwt)
                 .orElse(null);
         if (storedToken != null) {
-            tokenRepository.deleteById(storedToken.getId());
+            storedToken.setExpired(true);
+            storedToken.setRevoked(true);
+            tokenRepository.save(storedToken);
             SecurityContextHolder.clearContext();
         }
     }
@@ -53,10 +60,8 @@ public class SecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/api/v1/auth/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated()
+                        req.requestMatchers("/api/v1/auth/**").permitAll()
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
                 .authenticationProvider(authenticationProvider)
