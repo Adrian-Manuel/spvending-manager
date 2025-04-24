@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @Schema(description = "DTO containing information about tenants name and id")
-public class TenantDtoOutSumary {
+public class TenantDtoOutSummary {
     @Schema(
             description = "Identificator of the tenant "
     )

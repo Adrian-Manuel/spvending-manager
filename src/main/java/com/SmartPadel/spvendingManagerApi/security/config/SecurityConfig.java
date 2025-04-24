@@ -2,13 +2,13 @@ package com.SmartPadel.spvendingManagerApi.security.config;
 
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.Token;
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.TokenRepository;
+import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -18,11 +18,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import static com.SmartPadel.spvendingManagerApi.security.user.Permission.*;
-import static com.SmartPadel.spvendingManagerApi.security.user.Role.ADMIN;
-import static com.SmartPadel.spvendingManagerApi.security.user.Role.USER;
-import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
 @Configuration
@@ -32,27 +27,18 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
-    private final TokenRepository tokenRepository;
-
-    private void logout(
-            final HttpServletRequest request, final HttpServletResponse response,
-            final Authentication authentication
-    ) {
-
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            return;
+    private final TokenBlacklistService tokenBlacklistService;
+    private void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
+         String accessToken=request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (accessToken!=null && accessToken.startsWith("Bearer ")){
+             accessToken = accessToken.substring(7);
         }
 
-        final String jwt = authHeader.substring(7);
-        final Token storedToken = tokenRepository.findByToken(jwt)
-                .orElse(null);
-        if (storedToken != null) {
-            storedToken.setExpired(true);
-            storedToken.setRevoked(true);
-            tokenRepository.save(storedToken);
-            SecurityContextHolder.clearContext();
+        if (accessToken != null) {
+            tokenBlacklistService.blacklistToken(accessToken);
         }
+
+        SecurityContextHolder.clearContext();
     }
 
     @Bean

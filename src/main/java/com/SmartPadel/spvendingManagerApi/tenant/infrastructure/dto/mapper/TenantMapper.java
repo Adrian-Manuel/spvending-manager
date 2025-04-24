@@ -1,6 +1,6 @@
 package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper;
 
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutSumary;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutSummary;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoIn;
@@ -56,8 +56,8 @@ public class TenantMapper {
                 .build();
     }
 
-    public static TenantDtoOutSumary toDtoSumary(Tenant tenant){
-        return TenantDtoOutSumary.builder()
+    public static TenantDtoOutSummary toDtoSummary(Tenant tenant){
+        return TenantDtoOutSummary.builder()
                 .name(tenant.getName())
                 .tenantId(tenant.getTenantId())
                 .build();

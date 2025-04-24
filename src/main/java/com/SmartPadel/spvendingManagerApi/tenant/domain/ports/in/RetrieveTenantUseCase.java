@@ -13,5 +13,5 @@ public interface RetrieveTenantUseCase {
     Page<Tenant> getAllTenants(Pageable pageable);
     Page<Tenant> getAllTenants(String search, Pageable pageable);
     Tenant getTenantById(UUID tenantId);
-    List<Tenant> getAllTenantsSumary();
+    List<Tenant> getAllTenantsSummary();
 }

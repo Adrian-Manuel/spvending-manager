@@ -48,7 +48,7 @@ public class TenantRepositoryAdapter implements TenantRepositoryPort {
     }
 
     @Override
-    public List<Tenant> findAllTenantsSumary() {
+    public List<Tenant> findAllTenantsSummary() {
         return PersistenceUtils.mapListOrThrow(jpaTenantRepository.findAll(), "Tenants not found", TenantEntity::toDomainModel);
     }
 

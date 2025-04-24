@@ -9,7 +9,7 @@ import java.util.UUID;
 
 public interface ClubRepositoryPort {
     Page<Club> findAll(String search,Pageable pageable);
-    List<Club> findAllClubsSumary();
+    List<Club> findAllClubsSummary();
     Club save(UUID tenantId , Club club);
     Club findById(UUID clubId);
     Club update(UUID tenantId,UUID clubId,Club club);

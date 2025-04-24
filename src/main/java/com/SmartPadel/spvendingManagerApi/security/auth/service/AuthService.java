@@ -7,6 +7,8 @@ import com.SmartPadel.spvendingManagerApi.security.auth.repository.Token;
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.TokenRepository;
 import com.SmartPadel.spvendingManagerApi.security.user.JpaUserRepository;
 import com.SmartPadel.spvendingManagerApi.security.user.User;
+import com.SmartPadel.spvendingManagerApi.shared.Exceptions.TokenNotFoundException;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,22 +23,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AuthService {
     private final JpaUserRepository jpaUserRepository;
-    private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final TokenBlacklistService tokenBlacklistService;
 
 
-    private void saveUserToken(User user, String jwtToken){
-        final Token token = Token.builder()
-                .user(user)
-                .token(jwtToken)
-                .tokenType(Token.TokenType.BEARER)
-                .expired(false)
-                .revoked(false)
-                .build();
-        tokenRepository.save(token);
-    }
 
     public TokenResponse register(final RegisterRequest request){
         final User user = User.builder()
@@ -46,24 +38,11 @@ public class AuthService {
                 .build();
 
         final User savedUser = jpaUserRepository.save(user);
-        final String jwtToken = jwtService.gerateToken(savedUser);
+        final String jwtToken = jwtService.generateToken(savedUser);
         final String refreshToken = jwtService.generateRefreshToken(savedUser);
-
-        saveUserToken(savedUser, jwtToken);
         return new TokenResponse(jwtToken, refreshToken);
     }
 
-    private void revokeAllUserTokens(final User user){
-        final List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-
-        if (!validUserTokens.isEmpty()){
-            validUserTokens.forEach(token -> {
-                token.setExpired(true);
-                token.setRevoked(true);
-            });
-            tokenRepository.saveAll(validUserTokens);
-        }
-    }
 
     public TokenResponse authenticate(final AuthRequest request){
         authenticationManager.authenticate(
@@ -74,11 +53,9 @@ public class AuthService {
         );
 
         final User user= jpaUserRepository.findByUsername(request.username()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
-        final String accesToken = jwtService.gerateToken(user);
+        final String accessToken = jwtService.generateToken(user);
         final String refreshToken = jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, accesToken);
-        return new TokenResponse(accesToken, refreshToken);
+        return new TokenResponse(accessToken, refreshToken);
     }
 
     public TokenResponse refreshToken(@NotNull final String authentication){
@@ -87,7 +64,6 @@ public class AuthService {
         }
 
         final String refreshToken = authentication.substring(7);
-
         final String username = jwtService.extractUsername(refreshToken);
 
         if (username==null){
@@ -101,11 +77,9 @@ public class AuthService {
             return null;
         }
 
-        final  String accesToken= jwtService.generateRefreshToken(user);
-        revokeAllUserTokens(user);
-        saveUserToken(user, accesToken);
+        final  String accessToken= jwtService.generateRefreshToken(user);
 
-        return new TokenResponse(accesToken, refreshToken);
+        return new TokenResponse(accessToken, refreshToken);
     }
 
 }

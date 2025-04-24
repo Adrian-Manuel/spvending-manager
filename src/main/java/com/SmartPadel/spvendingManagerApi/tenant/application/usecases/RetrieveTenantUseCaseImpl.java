@@ -30,8 +30,8 @@ public class RetrieveTenantUseCaseImpl implements RetrieveTenantUseCase {
     public Tenant getTenantById(UUID tenantId) {return tenantRepositoryPort.findById(tenantId);}
 
     @Override
-    public List<Tenant> getAllTenantsSumary() {
-        return tenantRepositoryPort.findAllTenantsSumary();
+    public List<Tenant> getAllTenantsSummary() {
+        return tenantRepositoryPort.findAllTenantsSummary();
     }
 
 

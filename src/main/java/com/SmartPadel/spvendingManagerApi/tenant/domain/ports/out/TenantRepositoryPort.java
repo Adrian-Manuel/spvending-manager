@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface TenantRepositoryPort {
     Page<Tenant> findAll(Pageable pageable);
     Page<Tenant> findAll(String search, Pageable pageable);
-    List<Tenant> findAllTenantsSumary();
+    List<Tenant> findAllTenantsSummary();
     Tenant save(Tenant tenant);
     Tenant findById(UUID tenantId);
     Tenant update(UUID tenantId, Tenant tenant);

@@ -7,7 +7,7 @@ import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.ports.in.RetrieveTenantUseCase;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutPreview;
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutSumary;
+import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutSummary;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper.TenantMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -58,9 +57,9 @@ public class GetTenantController {
     }
     @PreAuthorize("hasAuthority('admin:read')")
     @GetMapping("/all-summary")
-    public ResponseEntity<List<TenantDtoOutSumary>> getTenantsSummary(){
-        List<TenantDtoOutSumary> tenantsSumary=retrieveTenantUseCase.getAllTenantsSumary().stream().map(TenantMapper::toDtoSumary).toList();
-        return new ResponseEntity<>(tenantsSumary, HttpStatus.OK);
+    public ResponseEntity<List<TenantDtoOutSummary>> getTenantsSummary(){
+        List<TenantDtoOutSummary> tenantsSummary=retrieveTenantUseCase.getAllTenantsSummary().stream().map(TenantMapper::toDtoSummary).toList();
+        return new ResponseEntity<>(tenantsSummary, HttpStatus.OK);
     }
 
 

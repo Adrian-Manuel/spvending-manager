@@ -2,6 +2,7 @@ package com.SmartPadel.spvendingManagerApi.security.config;
 
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.TokenRepository;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.JwtService;
+import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
 import com.SmartPadel.spvendingManagerApi.security.user.JpaUserRepository;
 import com.SmartPadel.spvendingManagerApi.security.user.User;
 import jakarta.servlet.FilterChain;
@@ -31,6 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final TokenRepository tokenRepository;
     private final JpaUserRepository jpaUserRepository;
+    private final TokenBlacklistService tokenBlacklistService;
+
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
@@ -41,11 +44,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("invalid token");
             return;
         }
 
         final String jwt = authHeader.substring(7);
+
+        if (tokenBlacklistService.isBlacklisted(jwt)) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("invalid token");
+            return;
+        }
+
+
         final String username = jwtService.extractUsername(jwt);
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (username == null || authentication != null) {
@@ -53,29 +65,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-        final boolean isTokenExpiredOrRevoked = tokenRepository.findByToken(jwt)
-                .map(token -> !token.getExpired() && !token.getRevoked())
-                .orElse(false);
 
-
-        if (isTokenExpiredOrRevoked) {
-            final Optional<User> user = jpaUserRepository.findByUsername(username);
-
-            if (user.isPresent()) {
-                final boolean isTokenValid = jwtService.isTokenValid(jwt, user.get());
-
-                if (isTokenValid) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            userDetails,
-                            null,
-                            userDetails.getAuthorities()
-                    );
-                    authToken.setDetails(
-                            new WebAuthenticationDetailsSource().buildDetails(request)
-                    );
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
-            }
+        if (jwtService.isTokenValid(jwt, userDetails)) {
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
         filterChain.doFilter(request, response);

@@ -4,14 +4,11 @@ import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.domain.ports.in.RetrieveClubUseCase;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutPreview;
-import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutSumary;
+import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutSummary;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.mapper.ClubMapper;
-import com.SmartPadel.spvendingManagerApi.machine.domain.model.Machine;
 import com.SmartPadel.spvendingManagerApi.machine.domain.ports.in.RetrieveMachineUseCase;
 import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.MachineDtoOutPreview;
 import com.SmartPadel.spvendingManagerApi.machine.infrastructure.dto.mapper.MachineMapper;
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutSumary;
-import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper.TenantMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,9 +51,9 @@ public class GetClubController {
     }
     @PreAuthorize("hasAuthority('admin:read')")
     @GetMapping("/all-summary")
-    public ResponseEntity<List<ClubDtoOutSumary>> getClubsSummary(){
-        List<ClubDtoOutSumary> tenantsSumary=retrieveClubUseCase.getAllClubsSumary().stream().map(ClubMapper::toDtoSumary).toList();
-        return new ResponseEntity<>(tenantsSumary, HttpStatus.OK);
+    public ResponseEntity<List<ClubDtoOutSummary>> getClubsSummary(){
+        List<ClubDtoOutSummary> tenantsSummary=retrieveClubUseCase.getAllClubsSummary().stream().map(ClubMapper::toDtoSummary).toList();
+        return new ResponseEntity<>(tenantsSummary, HttpStatus.OK);
     }
 
 }
