@@ -1,4 +1,4 @@
-package com.SmartPadel.spvendingManagerApi.security.auth.service;
+package com.SmartPadel.spvendingManagerApi.security.auth.util;
 import com.SmartPadel.spvendingManagerApi.security.user.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-public class JwtService {
+public class JwtUtil {
     @Value("${application.security.jwt.secret-key}")
     private String secretKey;
     @Value("${application.security.jwt.expiration}")

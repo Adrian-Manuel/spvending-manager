@@ -1,5 +1,6 @@
 package com.SmartPadel.spvendingManagerApi.security.auth.service;
 
+import com.SmartPadel.spvendingManagerApi.security.auth.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -9,10 +10,10 @@ import java.util.concurrent.TimeUnit;
 @RequiredArgsConstructor
 public class TokenBlacklistService {
     private final RedisTemplate<String, String> redisTemplate;
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
 
     public void blacklistToken(String token){
-        long expiration=jwtService.getJwtExpiration(token);
+        long expiration= jwtUtil.getJwtExpiration(token);
         redisTemplate.opsForValue().set(token, "blacklisted", expiration, TimeUnit.MILLISECONDS);
     }
 

@@ -1,10 +1,7 @@
 package com.SmartPadel.spvendingManagerApi.security.config;
 
-import com.SmartPadel.spvendingManagerApi.security.auth.repository.TokenRepository;
-import com.SmartPadel.spvendingManagerApi.security.auth.service.JwtService;
+import com.SmartPadel.spvendingManagerApi.security.auth.util.JwtUtil;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
-import com.SmartPadel.spvendingManagerApi.security.user.JpaUserRepository;
-import com.SmartPadel.spvendingManagerApi.security.user.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,16 +19,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Optional;
 
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
-    private final TokenRepository tokenRepository;
-    private final JpaUserRepository jpaUserRepository;
     private final TokenBlacklistService tokenBlacklistService;
 
 
@@ -58,7 +52,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
 
-        final String username = jwtService.extractUsername(jwt);
+        final String username = jwtUtil.extractUsername(jwt);
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (username == null || authentication != null) {
             filterChain.doFilter(request, response);
@@ -66,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-        if (jwtService.isTokenValid(jwt, userDetails)) {
+        if (jwtUtil.isTokenValid(jwt, userDetails)) {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
