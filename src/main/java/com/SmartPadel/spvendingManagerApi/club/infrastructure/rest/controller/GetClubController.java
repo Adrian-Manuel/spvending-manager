@@ -55,5 +55,4 @@ public class GetClubController {
         List<ClubDtoOutSummary> tenantsSummary=retrieveClubUseCase.getAllClubsSummary().stream().map(ClubMapper::toDtoSummary).toList();
         return new ResponseEntity<>(tenantsSummary, HttpStatus.OK);
     }
-
 }
