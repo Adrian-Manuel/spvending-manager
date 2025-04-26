@@ -19,6 +19,7 @@ import java.util.UUID;
 @RequestMapping("/api/v1/machines")
 @RequiredArgsConstructor
 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GetMachineController {
     private final RetrieveMachineUseCase retrieveMachineUseCase;
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")

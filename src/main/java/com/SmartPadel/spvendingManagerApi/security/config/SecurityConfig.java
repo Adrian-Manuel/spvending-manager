@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.security.config;
-
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.Token;
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.TokenRepository;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
@@ -26,6 +25,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
+
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;

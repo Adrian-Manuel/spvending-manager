@@ -19,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/tenants")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutTenantController {
     private final UpdateTenantUseCase updateTenantUseCase;
     @PreAuthorize("hasAuthority('admin:update')")

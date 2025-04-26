@@ -13,11 +13,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/v1/machines")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostMachineController {
     private final CreateMachineUseCase createMachineUseCase;
     @PreAuthorize("hasAuthority('admin:create')")

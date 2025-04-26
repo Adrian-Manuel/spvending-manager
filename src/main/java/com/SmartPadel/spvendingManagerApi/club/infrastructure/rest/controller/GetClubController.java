@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.rest.controller;
-
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.domain.ports.in.RetrieveClubUseCase;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutDetail;
@@ -55,5 +54,5 @@ public class GetClubController {
         List<ClubDtoOutSummary> tenantsSummary=retrieveClubUseCase.getAllClubsSummary().stream().map(ClubMapper::toDtoSummary).toList();
         return new ResponseEntity<>(tenantsSummary, HttpStatus.OK);
     }
-
 }
+
