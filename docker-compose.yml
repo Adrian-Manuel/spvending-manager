@@ -12,6 +12,26 @@ services:
       - spring-network
     depends_on:
       - postgres
+      - redis
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/tenants_managment
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: abc123.
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+  redis:
+    image: redis
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    networks:
+      - spring-network
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   postgres:
     image: postgres
     container_name: postgres_database
@@ -19,15 +39,20 @@ services:
       POSTGRES_PASSWORD: abc123.
       POSTGRES_DB: tenants_managment
       POSTGRES_USER: postgres
-
     ports:
-      - "5434:5432"
+      - "5432:5432"
     networks:
       - spring-network
     volumes:
-      - postgres-volume:/var/lib/postgres
+      - postgres-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 networks:
   spring-network:
+    driver: bridge
 volumes:
   postgres-volume:
 
