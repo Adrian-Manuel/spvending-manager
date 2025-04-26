@@ -18,6 +18,7 @@ import java.util.UUID;
 @RestController
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/clubs")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutClubController {
     private final UpdateClubUseCaseImpl updateClubUseCase;
     @PreAuthorize("hasAuthority('admin:update')")

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/user-managers")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostUserManagerController {
     private final CreateUserManagerUseCase createUserManagerUseCase;
     @PreAuthorize("hasAuthority('admin:create')")

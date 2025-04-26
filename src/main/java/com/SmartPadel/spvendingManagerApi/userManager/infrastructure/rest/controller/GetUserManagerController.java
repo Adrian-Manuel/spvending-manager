@@ -21,6 +21,7 @@ import java.util.UUID;
 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 @RequestMapping("/api/v1/user-managers")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GetUserManagerController {
 
     private final RetrieveUserManagerUseCase retrieveUserManagerUseCase;

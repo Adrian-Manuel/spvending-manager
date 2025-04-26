@@ -25,6 +25,7 @@ import java.util.UUID;
 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GetTenantController {
     private final RetrieveClubUseCase retrieveClubUseCase;
     private final RetrieveTenantUseCase retrieveTenantUseCase;

@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.rest.controller;
-
 import com.SmartPadel.spvendingManagerApi.club.domain.ports.in.DeleteClubUseCase;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

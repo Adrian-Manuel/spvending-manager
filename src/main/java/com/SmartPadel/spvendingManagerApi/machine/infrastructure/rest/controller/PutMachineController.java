@@ -18,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/machines")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutMachineController {
     private final UpdateMachineUseCase updateMachineUseCase;
     @PreAuthorize("hasAuthority('admin:update')")

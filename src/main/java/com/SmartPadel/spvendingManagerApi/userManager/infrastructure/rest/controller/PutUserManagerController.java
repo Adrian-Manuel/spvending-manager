@@ -18,6 +18,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/user-managers")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutUserManagerController {
 
     private final UpdateUserManagerUseCase updateUserManagerUseCase;
