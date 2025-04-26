@@ -43,7 +43,7 @@ public class ClubRepositoryAdapter implements ClubRepositoryPort {
     }
 
     @Override
-    public List<Club> findAllClubsSumary() {
+    public List<Club> findAllClubsSummary() {
         return PersistenceUtils.mapListOrThrow(jpaClubRepository.findAll(), "Clubs not found", ClubEntity::toDomainModel);
     }
 

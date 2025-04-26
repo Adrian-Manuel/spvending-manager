@@ -12,7 +12,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ClubDtoOutSumary {
+public class ClubDtoOutSummary {
     @Schema(
             description = "Identificator of the club "
     )

@@ -1,12 +1,14 @@
 package com.SmartPadel.spvendingManagerApi.shared;
-
 import com.SmartPadel.spvendingManagerApi.shared.Exceptions.*;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,6 +21,27 @@ public class GlobalExceptionHandler {
         Map<String, String> errors=new HashMap<>();
         errors.put("Error", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errors);
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAuthorizationDeniedException(AuthorizationDeniedException ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errors);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Map<String, String>> handleAuthenticationException(AuthenticationException ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errors);
+    }
+
+    @ExceptionHandler(TokenNotFoundException.class)
+    public ResponseEntity<Map<String, String>> handleTokenNotFoundException(TokenNotFoundException ex){
+        Map<String, String> errors=new HashMap<>();
+        errors.put("Error", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errors);
     }
 
     @ExceptionHandler(EncryptionException.class)
@@ -79,4 +102,7 @@ public class GlobalExceptionHandler {
         errors.put("Error", "An unexpected error ocurred: "+ ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
     }
+
+
+
 }

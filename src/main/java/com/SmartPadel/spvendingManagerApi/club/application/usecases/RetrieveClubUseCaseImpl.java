@@ -31,8 +31,8 @@ public class RetrieveClubUseCaseImpl implements RetrieveClubUseCase {
     }
 
     @Override
-    public List<Club> getAllClubsSumary() {
-        return clubRepositoryPort.findAllClubsSumary();
+    public List<Club> getAllClubsSummary() {
+        return clubRepositoryPort.findAllClubsSummary();
     }
 
 }
