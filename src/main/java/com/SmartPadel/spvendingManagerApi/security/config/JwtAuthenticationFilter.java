@@ -4,6 +4,7 @@ import com.SmartPadel.spvendingManagerApi.security.auth.util.JwtUtil;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 
 @Component
@@ -27,32 +29,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final TokenBlacklistService tokenBlacklistService;
-
-
+    private static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
         if (request.getServletPath().contains("/api/v1/auth")){
             filterChain.doFilter(request, response);
             return;
         }
+        String jwtAcces = null;
+        Cookie[] cookies = request.getCookies();
 
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        jwtAcces=getCookieValue(cookies, ACCESS_TOKEN_COOKIE_NAME);
+        if (jwtAcces == null || jwtAcces.trim().isEmpty()) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("Authentication required: Access token cookie missing or empty.");
+                return;
+        }
+
+
+        if (tokenBlacklistService.isBlacklisted(jwtAcces)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("invalid token");
             return;
         }
 
-        final String jwt = authHeader.substring(7);
 
-        if (tokenBlacklistService.isBlacklisted(jwt)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("invalid token");
-            return;
-        }
-
-
-        final String username = jwtUtil.extractUsername(jwt);
+        final String username = jwtUtil.extractUsername(jwtAcces);
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (username == null || authentication != null) {
             filterChain.doFilter(request, response);
@@ -60,12 +62,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-        if (jwtUtil.isTokenValid(jwt, userDetails)) {
+        if (userDetails!=null && jwtUtil.isTokenValid(jwtAcces, userDetails)) {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String getCookieValue(Cookie[] cookies, String cookieName) {
+        if (cookies == null || cookieName == null) {
+            return null;
+        }
+        return Arrays.stream(cookies)
+                .filter(cookie -> cookieName.equals(cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
     }
 }

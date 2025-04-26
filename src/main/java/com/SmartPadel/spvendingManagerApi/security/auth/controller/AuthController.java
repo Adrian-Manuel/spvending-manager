@@ -1,6 +1,10 @@
 package com.SmartPadel.spvendingManagerApi.security.auth.controller;
 
 import com.SmartPadel.spvendingManagerApi.security.auth.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +23,17 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> authenticate(@RequestBody AuthRequest request) {
-        final TokenResponse response = service.authenticate(request);
+    public ResponseEntity<TokenResponse> authenticate(@RequestBody AuthRequest request, HttpServletResponse httpServletResponse) {
+        final TokenResponse response = service.authenticate(request, httpServletResponse);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/refresh-token")
     public TokenResponse refreshToken(
-            @RequestHeader(HttpHeaders.AUTHORIZATION) final String authentication
-    ) {
-        return service.refreshToken(authentication);
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull HttpServletRequest httpServletRequest
+            ) {
+        return service.refreshToken(httpServletRequest, httpServletResponse);
     }
 
 }

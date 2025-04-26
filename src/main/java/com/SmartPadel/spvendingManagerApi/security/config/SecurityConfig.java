@@ -3,6 +3,7 @@ package com.SmartPadel.spvendingManagerApi.security.config;
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.Token;
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.TokenRepository;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -29,12 +30,30 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final TokenBlacklistService tokenBlacklistService;
     private void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
-         String accessToken=request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (accessToken!=null && accessToken.startsWith("Bearer ")){
-             accessToken = accessToken.substring(7);
+        String accessToken = null;
+        String refreshToken = null;
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie != null) {
+
+                    if ("access_token".equals(cookie.getName())) {
+                        accessToken = cookie.getValue();
+                    } else if ("refresh_token".equals(cookie.getName())) {
+                        refreshToken = cookie.getValue();
+                    }
+                }
+            }
         }
 
-        if (accessToken != null) {
+        if (refreshToken!=null && refreshToken.startsWith("Bearer ")){
+            refreshToken = refreshToken.substring(7);
+            tokenBlacklistService.blacklistToken(refreshToken);
+        }
+
+        if (accessToken!=null && accessToken.startsWith("Bearer ")){
+             accessToken = accessToken.substring(7);
             tokenBlacklistService.blacklistToken(accessToken);
         }
 
@@ -56,6 +75,7 @@ public class SecurityConfig {
                         logout.logoutUrl("/api/v1/auth/logout")
                                 .addLogoutHandler(this::logout)
                                 .logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext())
+                                .deleteCookies("access_token", "refresh_token")
                 )
         ;
 
