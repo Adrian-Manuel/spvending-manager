@@ -3,6 +3,7 @@ package com.SmartPadel.spvendingManagerApi.security.auth.service;
 import com.SmartPadel.spvendingManagerApi.security.auth.controller.AuthRequest;
 import com.SmartPadel.spvendingManagerApi.security.auth.controller.RegisterRequest;
 import com.SmartPadel.spvendingManagerApi.security.auth.controller.TokenResponse;
+import com.SmartPadel.spvendingManagerApi.security.auth.util.CookieUtil;
 import com.SmartPadel.spvendingManagerApi.security.auth.util.JwtUtil;
 import com.SmartPadel.spvendingManagerApi.security.user.JpaUserRepository;
 import com.SmartPadel.spvendingManagerApi.security.user.User;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -58,59 +60,40 @@ public class AuthService {
         final String accessToken = jwtUtil.generateToken(user);
         final String refreshToken = jwtUtil.generateRefreshToken(user);
 
-        Cookie accessTokenCookie = new Cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
-        accessTokenCookie.setHttpOnly(true);
-        accessTokenCookie.setSecure(true);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(60 * 15);
-
-        Cookie refreshTokenCookie = new Cookie(REFRESH_TOKEN_COOKIE_NAME, refreshToken);
-        refreshTokenCookie.setHttpOnly(true);
-        refreshTokenCookie.setPath("/");
-        refreshTokenCookie.setMaxAge(60 * 60 * 24);
-        refreshTokenCookie.setSecure(true);
+        Cookie accessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,"/");
+        Cookie refreshTokenCookie=CookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,60*60*24,true,true, "/");
 
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
         return new TokenResponse(accessToken, refreshToken);
     }
 
-    public TokenResponse refreshToken(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response){
-        String refreshTokenValue = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
+    public TokenResponse refreshToken(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response) throws IOException {
+        String refreshTokenValue = CookieUtil.getCookieValue(request,REFRESH_TOKEN_COOKIE_NAME);
 
-            refreshTokenValue = Arrays.stream(cookies)
-                    .filter(cookie -> REFRESH_TOKEN_COOKIE_NAME.equals(cookie.getName()))
-                    .findFirst()
-                    .map(Cookie::getValue)
-                    .orElse(null);
-        }
 
         if (refreshTokenValue == null || refreshTokenValue.trim().isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Refresh token cookie missing or empty.");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Authentication required: Refresh token cookie missing or empty.");
         }
 
         final String username = jwtUtil.extractUsername(refreshTokenValue);
 
         if (username==null){
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token: Cannot extract username.");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid Refresh Token: Username cant be found");
         }
 
 
         final User user = this.jpaUserRepository.findByUsername(username).orElseThrow();
         final boolean isTokenValid= jwtUtil.isTokenValid(refreshTokenValue, user);
         if (!isTokenValid) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token: Token validation failed.");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("Invalid refresh token: Token validation failed.");
         }
 
         final  String accessToken= jwtUtil.generateRefreshToken(user);
-
-        Cookie newAccessTokenCookie = new Cookie(ACCESS_TOKEN_COOKIE_NAME, accessToken);
-        newAccessTokenCookie.setPath("/");
-        newAccessTokenCookie.setMaxAge(60*15);
-        newAccessTokenCookie.setHttpOnly(true);
-        newAccessTokenCookie.setSecure(true);
+        Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,"/");
 
         response.addCookie(newAccessTokenCookie);
         return new TokenResponse(accessToken, refreshTokenValue);

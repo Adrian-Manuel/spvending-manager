@@ -3,6 +3,7 @@ package com.SmartPadel.spvendingManagerApi.security.config;
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.Token;
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.TokenRepository;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
+import com.SmartPadel.spvendingManagerApi.security.auth.util.CookieUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -30,22 +31,9 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final TokenBlacklistService tokenBlacklistService;
     private void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
-        String accessToken = null;
-        String refreshToken = null;
 
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie != null) {
-
-                    if ("access_token".equals(cookie.getName())) {
-                        accessToken = cookie.getValue();
-                    } else if ("refresh_token".equals(cookie.getName())) {
-                        refreshToken = cookie.getValue();
-                    }
-                }
-            }
-        }
+        String accessToken= CookieUtil.getCookieValue(request, "acces_token");
+        String refreshToken=CookieUtil.getCookieValue(request, "refresh_token");
 
         if (refreshToken!=null && refreshToken.startsWith("Bearer ")){
             refreshToken = refreshToken.substring(7);

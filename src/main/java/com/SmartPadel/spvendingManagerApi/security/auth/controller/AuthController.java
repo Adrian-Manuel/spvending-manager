@@ -10,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -29,10 +31,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public TokenResponse refreshToken(
-            @NotNull HttpServletResponse httpServletResponse,
-            @NotNull HttpServletRequest httpServletRequest
-            ) {
+    public TokenResponse refreshToken(@NotNull HttpServletResponse httpServletResponse, @NotNull HttpServletRequest httpServletRequest) throws IOException {
         return service.refreshToken(httpServletRequest, httpServletResponse);
     }
 

@@ -13,6 +13,9 @@ public class TokenBlacklistService {
     private final JwtUtil jwtUtil;
 
     public void blacklistToken(String token){
+        if (token.startsWith("Bearer ")) {
+            token = token.substring(7);
+        }
         long expiration= jwtUtil.getJwtExpiration(token);
         redisTemplate.opsForValue().set(token, "blacklisted", expiration, TimeUnit.MILLISECONDS);
     }

@@ -1,5 +1,6 @@
 package com.SmartPadel.spvendingManagerApi.security.config;
 
+import com.SmartPadel.spvendingManagerApi.security.auth.util.CookieUtil;
 import com.SmartPadel.spvendingManagerApi.security.auth.util.JwtUtil;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
 import jakarta.servlet.FilterChain;
@@ -36,25 +37,24 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String jwtAcces = null;
-        Cookie[] cookies = request.getCookies();
 
-        jwtAcces=getCookieValue(cookies, ACCESS_TOKEN_COOKIE_NAME);
-        if (jwtAcces == null || jwtAcces.trim().isEmpty()) {
+        String  jwtAccess= CookieUtil.getCookieValue(request, ACCESS_TOKEN_COOKIE_NAME);
+
+        if (jwtAccess == null || jwtAccess.trim().isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Authentication required: Access token cookie missing or empty.");
                 return;
         }
 
 
-        if (tokenBlacklistService.isBlacklisted(jwtAcces)) {
+        if (tokenBlacklistService.isBlacklisted(jwtAccess)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("invalid token");
             return;
         }
 
 
-        final String username = jwtUtil.extractUsername(jwtAcces);
+        final String username = jwtUtil.extractUsername(jwtAccess);
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (username == null || authentication != null) {
             filterChain.doFilter(request, response);
@@ -62,7 +62,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
 
-        if (userDetails!=null && jwtUtil.isTokenValid(jwtAcces, userDetails)) {
+        if (userDetails!=null && jwtUtil.isTokenValid(jwtAccess, userDetails)) {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
@@ -71,14 +71,5 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getCookieValue(Cookie[] cookies, String cookieName) {
-        if (cookies == null || cookieName == null) {
-            return null;
-        }
-        return Arrays.stream(cookies)
-                .filter(cookie -> cookieName.equals(cookie.getName()))
-                .findFirst()
-                .map(Cookie::getValue)
-                .orElse(null);
-    }
+
 }
