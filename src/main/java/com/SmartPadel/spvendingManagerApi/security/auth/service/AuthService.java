@@ -70,31 +70,23 @@ public class AuthService {
 
     public TokenResponse refreshToken(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response) throws IOException {
         String refreshTokenValue = CookieUtil.getCookieValue(request,REFRESH_TOKEN_COOKIE_NAME);
-
-
         if (refreshTokenValue == null || refreshTokenValue.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Authentication required: Refresh token cookie missing or empty.");
         }
-
         final String username = jwtUtil.extractUsername(refreshTokenValue);
-
         if (username==null){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid Refresh Token: Username cant be found");
         }
-
-
         final User user = this.jpaUserRepository.findByUsername(username).orElseThrow();
         final boolean isTokenValid= jwtUtil.isTokenValid(refreshTokenValue, user);
         if (!isTokenValid) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid refresh token: Token validation failed.");
         }
-
         final  String accessToken= jwtUtil.generateRefreshToken(user);
         Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,"/");
-
         response.addCookie(newAccessTokenCookie);
         return new TokenResponse(accessToken, refreshTokenValue);
     }
