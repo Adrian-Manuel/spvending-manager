@@ -1,6 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.rest.controller;
-
-import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.mapper.ClubMapper;
 import com.SmartPadel.spvendingManagerApi.userManager.domain.model.UserManager;
 import com.SmartPadel.spvendingManagerApi.userManager.domain.ports.in.CreateUserManagerUseCase;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto.UserManagerDtoIn;
@@ -12,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")

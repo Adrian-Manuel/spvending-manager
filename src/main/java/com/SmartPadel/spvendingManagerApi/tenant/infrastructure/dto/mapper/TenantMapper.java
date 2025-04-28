@@ -1,16 +1,12 @@
 package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.mapper;
-
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutSummary;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.domain.model.Tenant;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoIn;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto.TenantDtoOutPreview;
-
 import java.util.Collections;
 import java.util.stream.Collectors;
-
-
 public class TenantMapper {
     public static TenantDtoOutPreview toDtoPreview(Tenant tenant) {
         return TenantDtoOutPreview.builder()
@@ -21,9 +17,7 @@ public class TenantMapper {
                 .email( tenant.getEmail() )
                 .clubsCount((tenant.getClubs()!=null)?tenant.getClubs().size():0)
                 .build();
-
     }
-
     public static TenantDtoOutDetail toDtoDetail(Tenant tenant) {
         return TenantDtoOutDetail.builder()
                 .tenantId( tenant.getTenantId() )
@@ -41,9 +35,6 @@ public class TenantMapper {
                         : Collections.emptyList())
                 .build();
     }
-
-
-
     public static Tenant toModel(TenantDtoIn tenantDto) {
         return Tenant.builder()
                 .name( tenantDto.getName() )
@@ -55,7 +46,6 @@ public class TenantMapper {
                 .micronId( tenantDto.getMicronId() )
                 .build();
     }
-
     public static TenantDtoOutSummary toDtoSummary(Tenant tenant){
         return TenantDtoOutSummary.builder()
                 .name(tenant.getName())

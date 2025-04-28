@@ -1,10 +1,8 @@
-package com.SmartPadel.spvendingManagerApi.security.auth.controller;
-
+package com.SmartPadel.spvendingManagerApi.security.auth.dto;
 import com.SmartPadel.spvendingManagerApi.security.user.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

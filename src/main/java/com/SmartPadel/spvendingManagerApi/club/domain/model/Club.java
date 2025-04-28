@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.club.domain.model;
-
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity.UserManagerEntity;
 import com.SmartPadel.spvendingManagerApi.machine.infrastructure.persistence.entity.MachineEntity;
 import com.SmartPadel.spvendingManagerApi.tenant.infrastructure.persistence.entity.TenantEntity;
@@ -7,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.util.List;
 import java.util.UUID;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

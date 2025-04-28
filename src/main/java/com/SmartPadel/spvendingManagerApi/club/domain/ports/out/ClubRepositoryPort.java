@@ -1,12 +1,9 @@
 package com.SmartPadel.spvendingManagerApi.club.domain.ports.out;
-
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import java.util.List;
 import java.util.UUID;
-
 public interface ClubRepositoryPort {
     Page<Club> findAll(String search,Pageable pageable);
     List<Club> findAllClubsSummary();

@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -53,7 +52,6 @@ public class TenantEntity {
     @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ClubEntity> clubs;
 
-
     @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<UserManagerEntity> userManagerEntities;
 
@@ -71,7 +69,6 @@ public class TenantEntity {
                 .userManagerEntities(tenant.getUserManagerEntities())
                 .build();
     }
-
     public Tenant toDomainModel(){
         return  Tenant.builder()
                 .tenantId(tenantId)

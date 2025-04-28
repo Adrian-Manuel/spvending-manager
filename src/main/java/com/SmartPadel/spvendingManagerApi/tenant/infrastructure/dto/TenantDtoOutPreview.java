@@ -1,17 +1,12 @@
 package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto;
-
 import java.util.UUID;
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import org.springframework.validation.annotation.Validated;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,43 +14,17 @@ import lombok.NoArgsConstructor;
 @Validated
 @Schema(description = "DTO containing information about a tenant, including contact info and associated clubs.")
 public class TenantDtoOutPreview {
-
-    @Schema(
-            description = "Identificator of the tenant "
-    )
+    @Schema(description = "Identificator of the tenant ")
     private UUID tenantId;
-
-
-    @Schema(
-            description = "Name of the tenant (company or organization)",
-            example = "PadelPrix"
-    )
+    @Schema(description = "Name of the tenant (company or organization)", example = "PadelPrix")
     private String name;
-
-
-    @Schema(
-            description = "CIF (Tax ID) of the tenant",
-            example = "B12345678"
-    )
+    @Schema(description = "CIF (Tax ID) of the tenant", example = "B12345678")
     private String cif;
-
-    @Schema(
-            description = "Phone number of the tenant",
-            example = "6094852"
-    )
+    @Schema(description = "Phone number of the tenant", example = "6094852")
     private String phone;
-
-    @Schema(
-            description = "Contact email address of the tenant",
-            example = "info@padelprix.com"
-    )
+    @Schema(description = "Contact email address of the tenant", example = "info@padelprix.com")
     private String email;
-
-    @Schema(
-            description = "number of clubs owned by this tenant",
-            implementation = Club.class
-    )
-
+    @Schema(description = "number of clubs owned by this tenant", implementation = Club.class)
     private int clubsCount;
 
 }

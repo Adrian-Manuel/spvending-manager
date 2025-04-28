@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.shared.Utils;
-
 import jakarta.persistence.criteria.From;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Path;
@@ -8,7 +7,6 @@ import org.springframework.data.jpa.domain.Specification;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
-
 public class SpecificationUtils {
     public static <T> Specification<T> buildFilterSpec(Class<T> clazz, String filter) {
         if (filter == null || filter.trim().isEmpty()) {
@@ -29,16 +27,13 @@ public class SpecificationUtils {
                     ));
                 }
             }
-
             return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
         };
     }
-
     private static Path<?> getPath(From<?, ?> root, String path) {
         String[] parts = path.split("\\.");
         From<?, ?> from = root;
         Path<?> result = root;
-
         for (int i = 0; i < parts.length; i++) {
             if (i < parts.length - 1) {
                 from = from.join(parts[i], JoinType.LEFT); // JOIN seguro
@@ -47,7 +42,6 @@ public class SpecificationUtils {
                 result = result.get(parts[i]); // Último campo
             }
         }
-
         return result;
     }
 }

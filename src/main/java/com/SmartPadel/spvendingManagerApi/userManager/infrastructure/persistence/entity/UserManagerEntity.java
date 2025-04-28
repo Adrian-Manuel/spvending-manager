@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.persistence.entity;
-
 import java.util.UUID;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.persistance.entity.ClubEntity;
 import com.SmartPadel.spvendingManagerApi.shared.Utils.Filtrable;
@@ -10,7 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 @Entity
 @Data
 @AllArgsConstructor
@@ -57,7 +55,6 @@ public class UserManagerEntity {
                 .club(userManager.getClub())
                 .build();
     }
-
     public UserManager toDomainModel(){
         return UserManager.builder()
                 .userId(userId)
@@ -71,6 +68,5 @@ public class UserManagerEntity {
                 .club(club)
                 .build();
     }
-
 }
 
