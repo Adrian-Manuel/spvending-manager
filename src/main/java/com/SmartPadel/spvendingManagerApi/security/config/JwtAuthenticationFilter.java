@@ -27,49 +27,38 @@ import java.util.Arrays;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
     private final TokenBlacklistService tokenBlacklistService;
     private static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
+        final String requestURI=request.getRequestURI();
+        return requestURI.equals("/api/v1/auth/login");
+    }
+
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
-        if (request.getServletPath().contains("/api/v1/auth")){
-            filterChain.doFilter(request, response);
-            return;
-        }
-
         String  jwtAccess= CookieUtil.getCookieValue(request, ACCESS_TOKEN_COOKIE_NAME);
-
         if (jwtAccess == null || jwtAccess.trim().isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("Authentication required: Access token cookie missing or empty.");
                 return;
         }
-
-
         if (tokenBlacklistService.isBlacklisted(jwtAccess)) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("invalid token");
             return;
         }
-
-
         final String username = jwtUtil.extractUsername(jwtAccess);
-        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (username == null || authentication != null) {
-            filterChain.doFilter(request, response);
-            return;
-        }
         final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-
         if (userDetails!=null && jwtUtil.isTokenValid(jwtAccess, userDetails)) {
             UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
-
         filterChain.doFilter(request, response);
     }
-
-
 }

@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.security.auth.service;
-
 import com.SmartPadel.spvendingManagerApi.security.auth.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +15,7 @@ public class TokenBlacklistService {
         if (token.startsWith("Bearer ")) {
             token = token.substring(7);
         }
+
         long expiration= jwtUtil.getJwtExpiration(token);
         redisTemplate.opsForValue().set(token, "blacklisted", expiration, TimeUnit.MILLISECONDS);
     }
