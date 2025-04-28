@@ -6,14 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
-
 @RestController
 @PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DeleteTenantController {
-
     private final DeleteTenantUseCase deleteTenantUseCase;
     @PreAuthorize("hasAuthority('admin:delete')")
     @DeleteMapping("/{tenantId}")

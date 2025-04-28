@@ -1,19 +1,13 @@
 package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.dto;
-
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-
 import java.util.List;
 import java.util.UUID;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -21,65 +15,22 @@ import java.util.UUID;
 @Validated
 @Schema(description = "DTO containing a little information about a tenant")
 public class TenantDtoOutDetail {
-
-    @Schema(
-            description = "Identificator of the tenant "
-    )
+    @Schema(description = "Identificator of the tenant ")
     private UUID tenantId;
-
-    @Schema(
-            description = "Name of the tenant (company or organization)",
-            example = "PadelPrix"
-    )
+    @Schema(description = "Name of the tenant (company or organization)", example = "PadelPrix")
     private String name;
-
-
-    @Schema(
-            description = "CIF (Tax ID) of the tenant",
-            example = "B12345678"
-    )
+    @Schema(description = "CIF (Tax ID) of the tenant", example = "B12345678")
     private String cif;
-
-
-    @Schema(
-            description = "Full address of the tenant",
-            example = "POLIGONO CIUDAD TRANSPORTE CALLE SUECIA, 9. 12006, CASTELLON DE LA PLANA. ESPAÑA."
-    )
+    @Schema(description = "Full address of the tenant", example = "POLIGONO CIUDAD TRANSPORTE CALLE SUECIA, 9. 12006, CASTELLON DE LA PLANA. ESPAÑA.")
     private String address;
-
-    @Schema(
-            description = "Phone number of the tenant",
-            example = "6094852"
-    )
+    @Schema(description = "Phone number of the tenant", example = "6094852")
     private String phone;
-
-
-
-    @Schema(
-            description = "Contact email address of the tenant",
-            example = "info@padelprix.com"
-    )
+    @Schema(description = "Contact email address of the tenant", example = "info@padelprix.com")
     private String email;
-
-
-    @Schema(
-            description = "Additional notes or remarks about the tenant",
-            example = "Empresa principal de la red de clubes."
-    )
+    @Schema(description = "Additional notes or remarks about the tenant", example = "Empresa principal de la red de clubes.")
     private String remark;
-
-
-    @Schema(
-            description = "Micron ID associated with this tenant",
-            example = "82160004"
-    )
+    @Schema(description = "Micron ID associated with this tenant", example = "82160004")
     private String micronId;
-
-
-    @Schema(
-            description = "number of clubs owned by this tenant",
-            implementation = Club.class
-    )
-
+    @Schema(description = "number of clubs owned by this tenant", implementation = Club.class)
     private List<String> managers;
 }

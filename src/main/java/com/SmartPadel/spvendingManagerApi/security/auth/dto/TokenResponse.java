@@ -1,5 +1,3 @@
-package com.SmartPadel.spvendingManagerApi.security.auth.controller;
-
+package com.SmartPadel.spvendingManagerApi.security.auth.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 public record TokenResponse(@JsonProperty("access_token") String accessToken, @JsonProperty("refresh_token") String refreshToken) {}

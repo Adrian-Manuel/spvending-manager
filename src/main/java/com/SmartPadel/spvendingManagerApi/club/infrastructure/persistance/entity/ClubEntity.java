@@ -27,29 +27,34 @@ public class ClubEntity {
     @Filtrable
     @Column(name="name", nullable=false)
     private String name;
+
     @Column(name="cif", nullable=false)
     private String cif;
+
     @Filtrable
     @Column(name="address")
     private String address;
+
     @Filtrable
     @Column( name = "phone")
     private String phone;
+
     @Column(name = "email")
     private String email;
+
     @Column(name = "remark")
     private String remark;
+
     @Column(name = "accountingId", unique = true, nullable = false)
     private String accountingId;
+
     @Column(name = "micronId", unique = true)
     private String micronId;
-
 
     @Filtrable(name="tenantEntity.name")
     @ManyToOne
     @JoinColumn(name = "tenantId", nullable = false, referencedColumnName = "tenantId")
     private TenantEntity tenantEntity;
-
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MachineEntity> machineEntities;
@@ -73,7 +78,6 @@ public class ClubEntity {
                 .userManagerEntities(club.getUserManagerEntities())
                 .build();
     }
-
     public Club toDomainModel(){
         return  Club.builder()
                 .clubId(clubId)

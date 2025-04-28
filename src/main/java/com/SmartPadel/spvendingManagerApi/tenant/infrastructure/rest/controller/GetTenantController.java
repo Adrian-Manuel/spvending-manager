@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.tenant.infrastructure.rest.controller;
-
 import com.SmartPadel.spvendingManagerApi.club.domain.ports.in.RetrieveClubUseCase;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoOutPreview;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.mapper.ClubMapper;
@@ -17,10 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 import java.util.UUID;
-
 @RestController
 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 @RequestMapping("/api/v1/tenants")
@@ -31,9 +28,7 @@ public class GetTenantController {
     private final RetrieveTenantUseCase retrieveTenantUseCase;
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping
-    public ResponseEntity <Page<TenantDtoOutPreview>> getAllTenants(@RequestParam(required = false) String search,
-                                                                    @RequestParam(defaultValue = "0") int page,
-                                                                    @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity <Page<TenantDtoOutPreview>> getAllTenants(@RequestParam(required = false) String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<TenantDtoOutPreview> tenants = (search != null)
                 ? retrieveTenantUseCase.getAllTenants(search, pageable).map(TenantMapper::toDtoPreview)
@@ -62,8 +57,4 @@ public class GetTenantController {
         List<TenantDtoOutSummary> tenantsSummary=retrieveTenantUseCase.getAllTenantsSummary().stream().map(TenantMapper::toDtoSummary).toList();
         return new ResponseEntity<>(tenantsSummary, HttpStatus.OK);
     }
-
-
-
-
 }

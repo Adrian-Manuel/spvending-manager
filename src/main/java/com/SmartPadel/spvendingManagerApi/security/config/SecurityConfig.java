@@ -1,15 +1,11 @@
 package com.SmartPadel.spvendingManagerApi.security.config;
-import com.SmartPadel.spvendingManagerApi.security.auth.repository.Token;
-import com.SmartPadel.spvendingManagerApi.security.auth.repository.TokenRepository;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.TokenBlacklistService;
 import com.SmartPadel.spvendingManagerApi.security.auth.util.CookieUtil;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -20,18 +16,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 @EnableMethodSecurity
-
 public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthFilter;
     private final AuthenticationProvider authenticationProvider;
     private final TokenBlacklistService tokenBlacklistService;
     private void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
-
         String accessToken= CookieUtil.getCookieValue(request, "acces_token");
         String refreshToken=CookieUtil.getCookieValue(request, "refresh_token");
 
@@ -39,15 +32,12 @@ public class SecurityConfig {
             refreshToken = refreshToken.substring(7);
             tokenBlacklistService.blacklistToken(refreshToken);
         }
-
         if (accessToken!=null && accessToken.startsWith("Bearer ")){
              accessToken = accessToken.substring(7);
             tokenBlacklistService.blacklistToken(accessToken);
         }
-
         SecurityContextHolder.clearContext();
     }
-
     @Bean
     public SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
         http
@@ -66,9 +56,6 @@ public class SecurityConfig {
                                 .deleteCookies("access_token", "refresh_token")
                 )
         ;
-
         return http.build();
     }
-
-
 }

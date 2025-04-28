@@ -1,13 +1,10 @@
 package com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto.mapper;
-
 import com.SmartPadel.spvendingManagerApi.shared.Utils.AESGCMEncryption;
 import com.SmartPadel.spvendingManagerApi.userManager.domain.model.UserManager;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto.UserManagerDtoIn;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto.UserManagerDtoOutDetail;
 import com.SmartPadel.spvendingManagerApi.userManager.infrastructure.dto.UserManagerDtoOutPreview;
-
 public class UserManagerMapper {
-
     public static UserManagerDtoOutPreview toDtoPreview (UserManager userManager){
         return UserManagerDtoOutPreview.builder()
                 .username(userManager.getUserName())
@@ -18,7 +15,6 @@ public class UserManagerMapper {
                 .clubEntityName(userManager.getClub() != null ? userManager.getClub().getName() : null)
                 .build();
     }
-
     public static UserManagerDtoOutDetail toDtoDetail(UserManager userManager) throws Exception {
         return UserManagerDtoOutDetail.builder()
                 .userManagerId(userManager.getUserId())
@@ -32,7 +28,6 @@ public class UserManagerMapper {
                 .tenantEntityName(userManager.getTenantEntity() != null ? userManager.getTenantEntity().getName() : null)
                 .build();
     }
-
     public static UserManager toModel(UserManagerDtoIn userManagerDtoIn) throws Exception {
         return UserManager.builder()
                 .userName(userManagerDtoIn.getUsername())
@@ -43,7 +38,5 @@ public class UserManagerMapper {
                 .userType(userManagerDtoIn.getUserType())
                 .build();
     }
-
-
 }
 

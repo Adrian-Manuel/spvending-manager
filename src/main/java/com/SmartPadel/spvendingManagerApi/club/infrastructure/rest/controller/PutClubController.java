@@ -1,5 +1,4 @@
 package com.SmartPadel.spvendingManagerApi.club.infrastructure.rest.controller;
-
 import com.SmartPadel.spvendingManagerApi.club.application.usecases.UpdateClubUseCaseImpl;
 import com.SmartPadel.spvendingManagerApi.club.domain.model.Club;
 import com.SmartPadel.spvendingManagerApi.club.infrastructure.dto.ClubDtoIn;
@@ -11,9 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.UUID;
-
 @RequiredArgsConstructor
 @RestController
 @PreAuthorize("hasRole('ADMIN')")

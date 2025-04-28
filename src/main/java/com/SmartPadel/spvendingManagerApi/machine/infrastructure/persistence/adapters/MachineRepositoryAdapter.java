@@ -16,23 +16,19 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
-
 import java.util.List;
 import java.util.UUID;
 @Transactional
 @Component
 @RequiredArgsConstructor
 public class MachineRepositoryAdapter implements MachineRepositoryPort {
-
     private final JpaMachineRepository jpaMachineRepository;
     private final JpaClubRepository jpaClubRepository;
-
     @Override
     public Page<Machine> findAll(String search, Pageable pageable) {
         Specification<MachineEntity> spec = MachineSpecification.withFilter(search);
         return PersistenceUtils.mapPageOrThrow(jpaMachineRepository.findAll(spec,pageable), "No machines have been added yet", MachineEntity::toDomainModel);
     }
-
     @Override
     public Machine save(UUID clubId, Machine machine) {
         ClubEntity clubEntity= ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId);
@@ -40,14 +36,12 @@ public class MachineRepositoryAdapter implements MachineRepositoryPort {
         MachineEntity machineEntity=MachineEntity.fromDomainModel(machine);
         return jpaMachineRepository.save(machineEntity).toDomainModel();
     }
-
     @Override
     public Machine findById(UUID machineId) {
         return jpaMachineRepository.findById(machineId)
                 .map(MachineEntity::toDomainModel)
                 .orElseThrow(()->new ResourceNotFoundException("There is no machine with that id"));
     }
-
     @Override
     public Machine update(UUID clubId, UUID machineId, Machine machine) {
         MachineHelperAdapter.validateMachineExists(jpaMachineRepository, machineId);
@@ -57,13 +51,11 @@ public class MachineRepositoryAdapter implements MachineRepositoryPort {
         machineEntity.setClub(clubEntity);
         return jpaMachineRepository.save(machineEntity).toDomainModel();
     }
-
     @Override
     public void deleteById(UUID machineId) {
         MachineHelperAdapter.validateMachineExists(jpaMachineRepository, machineId);
         jpaMachineRepository.deleteById(machineId);
     }
-
     @Override
     public List<Machine> findAllMachinesByClubId(UUID clubId) {
         ClubHelperAdapter.validateClubExists(jpaClubRepository,clubId);
