@@ -8,7 +8,7 @@ public class CookieUtil {
         cookie.setHttpOnly(httpOnly);
         cookie.setSecure(secure);
         cookie.setPath(path);
-        cookie.setMaxAge(maxAge);
+        cookie.setMaxAge(maxAge); //segundos
         return cookie;
     }
     public static String getCookieValue(HttpServletRequest request, String name) {
