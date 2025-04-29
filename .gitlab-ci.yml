@@ -13,7 +13,7 @@ build_image:
     - docker-compose
   script:
     - echo "Iniciando etapa de Construccion..."
-    - "$DOCKER_EXEC build -t $SERVICE_NAME:$CI_COMMIT_SHORT_SHA ."
+    - "$DOCKER_EXEC" build -t $SERVICE_NAME:$CI_COMMIT_SHORT_SHA .
     - echo "Imagen construida:$SERVICE_NAME:$CI_COMMIT_SHORT_SHA"
 deploy_production:
   stage: deploy
@@ -22,8 +22,8 @@ deploy_production:
     - docker-compose
   script:
     - echo "Iniciando etapa de Despliegue con Docker Compose..."
-    - "$DOCKER_COMPOSE_EXEC -f $DOCKER_COMPOSE_FILE pull"
-    - "$DOCKER_COMPOSE_EXEC -f $DOCKER_COMPOSE_FILE up -d --force-recreate"
+    - "$DOCKER_COMPOSE_EXEC" -f $DOCKER_COMPOSE_FILE pull
+    - "$DOCKER_COMPOSE_EXEC" -f $DOCKER_COMPOSE_FILE up -d --force-recreate
     - echo "Despliegue completado."
 
   only:
