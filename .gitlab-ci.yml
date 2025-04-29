@@ -1,44 +1,39 @@
-stages:
-  - build
-  - deploy
+image: docker:latest
+
+services:
+  - docker:dind
 
 variables:
   DOCKER_DRIVER: overlay2
-  POSTGRES_DB: tenants_managment
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: abc123.
 
-services:
-  - name: postgres:15
-    alias: postgres
-  - name: redis:7
-    alias: redis
+stages:
+  - build
+  - dockerized
+  - deploy
 
-before_script:
-  - export SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/$POSTGRES_DB
-  - export SPRING_REDIS_HOST=redis
-
-build:
+# 1. Compilar la aplicación
+build-app:
+  image: maven:3.8.3-openjdk-17
   stage: build
-  tags:
-    - build
-  image: maven:3.9-eclipse-temurin-22
   script:
     - mvn clean package -DskipTests
-    - chown -R $(whoami):$(whoami) target/
-    - chmod -R u+rw target/
-    - ls -l target/
   artifacts:
     paths:
       - target/*.jar
 
-deploy:
-  stage: deploy
-  tags:
-    - deploy
-  image: docker:latest
-  services:
-    - docker:dind
+# 3. Construir la imagen Docker localmente
+docker-build:
+  stage: dockerized
   script:
-    - docker build -t spvending-app .
-    - docker compose -f docker-compose.yml up -d
+    - docker build -t spvending-api-image .
+    - docker images
+
+# 4. Despliegue local usando Docker Compose
+deploy-local:
+  stage: deploy
+  script:
+    - docker-compose down || true
+    - docker-compose up -d --build
+    - docker-compose ps
+  only:
+    - main
