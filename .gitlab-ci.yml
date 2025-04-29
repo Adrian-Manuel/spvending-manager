@@ -1,9 +1,8 @@
-stage:
+stages:
   - test
-
 test-runner:
   stage: test
-  tag:
+  tags:
     - docker
   script:
     - echo "hola mundo, mi pepeline!!"
