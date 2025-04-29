@@ -1,8 +1,37 @@
 stages:
-  - test
-test-runner:
-  stage: test
-  tags:
-    - docker
+  - build
+  - deploy
+
+variables:
+  DOCKER_DRIVER: overlay2
+  POSTGRES_DB: tenants_managment
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: abc123.
+
+services:
+  - name: postgres:15
+    alias: postgres
+  - name: redis:7
+    alias: redis
+
+before_script:
+  - export SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/$POSTGRES_DB
+  - export SPRING_REDIS_HOST=redis
+
+build:
+  stage: build
+  image: maven:3.9-eclipse-temurin-21
   script:
-    - echo "hola mundo, mi pepeline!!"
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+
+deploy:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - docker build -t spvending-app .
+    - docker compose -f docker-compose.yml up -d
