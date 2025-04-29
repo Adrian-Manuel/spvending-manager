@@ -1,32 +1,9 @@
-variables:
-  SERVICE_NAME: spvending-manager
-  IMAGE_TAG: $SERVICE_NAME:$CI_COMMIT_SHORT_SHA
-  DOCKER_COMPOSE_FILE: docker-compose.yml
+stage:
+  - test
 
-stages:
-  - build
-  - deploy
-
-build_image:
-  stage: build
-  tags:
-    - ci
+test-runner:
+  stage: test
+  tag:
     - docker
   script:
-    - echo "Iniciando etapa de Construccion..."
-    - docker build -t $IMAGE_TAG .
-    - echo "Imagen construida:$IMAGE_TAG"
-
-deploy_production:
-  stage: deploy
-  tags:
-    - ci
-    - docker
-  script:
-    - echo "Iniciando etapa de Despliegue con Docker Compose..."
-    - docker-compose -f $DOCKER_COMPOSE_FILE pull
-    - docker-compose -f $DOCKER_COMPOSE_FILE up -d --force-recreate
-    - echo "Despliegue completado."
-
-  only:
-    - main
+    - echo "hola mundo, mi pepeline!!"
