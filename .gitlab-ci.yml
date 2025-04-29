@@ -1,12 +1,35 @@
 stages:
-  - test
+  - build
+  - deploy
 
-test-docker:
-  image: docker:latest
+variables:
+  DOCKER_DRIVER: overlay2
+
+build:
+  stage: build
   tags:
     - build
-  services:
-    - docker:dind
+  image: maven:3.8.3-openjdk-22
   script:
-    - docker info
-    - docker run hello-world
+    - mvn clean package -DskipTests
+  artifacts:
+    paths:
+      - target/*.jar
+
+deploy:
+  stage: deploy
+  tags:
+    - deploy
+  image: docker:24.0.5-cli
+  services:
+    - docker:24.0.5-dind
+  variables:
+    DOCKER_TLS_CERTDIR: ""
+  before_script:
+    - apk add --no-cache docker-compose
+  script:
+    - docker-compose down || true
+    - docker-compose up -d --build
+    - docker-compose ps
+  only:
+    - main
