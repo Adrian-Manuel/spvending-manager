@@ -10,8 +10,8 @@ stages:
 build_image:
   stage: build
   tags:
-    - local
-    - docker-compose
+    - ci
+    - docker
   script:
     - echo "Iniciando etapa de Construccion..."
     - docker build -t $IMAGE_TAG .
@@ -20,8 +20,8 @@ build_image:
 deploy_production:
   stage: deploy
   tags:
-    - local
-    - docker-compose
+    - ci
+    - docker
   script:
     - echo "Iniciando etapa de Despliegue con Docker Compose..."
     - docker-compose -f $DOCKER_COMPOSE_FILE pull
