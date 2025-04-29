@@ -28,6 +28,7 @@ build:
   artifacts:
     paths:
       - target/*.jar
+      - ls -l target/
 
 deploy:
   stage: deploy
