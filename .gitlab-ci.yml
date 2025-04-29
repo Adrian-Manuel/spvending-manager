@@ -3,6 +3,8 @@ stages:
 
 test-docker:
   image: docker:latest
+  tags:
+    - build
   services:
     - docker:dind
   script:
