@@ -1,44 +1,27 @@
-image: docker:latest
-services:
-  - docker:dind
-
-variables:
-  DOCKER_DRIVER: overlay2
-
 stages:
   - build
-  - dockerized
   - deploy
 
-# 1. Compilar la aplicación
-build-app:
-  image: eclipse-temurin:22-jdk
+variables:
+  DOCKER_HOST: tcp://docker:2375/
+  DOCKER_DRIVER: overlay2
+
+build:
   stage: build
-  tags:
-    - build
+  image: docker:25.0-git
+  services:
+    - docker:25.0-dind
   script:
-    - mvn clean package -DskipTests
-  artifacts:
-    paths:
-      - target/*.jar
+    - docker compose build
 
-# 3. Construir la imagen Docker localmente
-docker-build:
-  stage: dockerized
-  tags:
-    - docker
-  script:
-    - docker build -t spvending-api-image .
-    - docker images
-
-# 4. Despliegue local usando Docker Compose
-deploy-local:
+deploy:
   stage: deploy
-  tags:
-    - deploy
+  image: docker:25.0-git
+  services:
+    - docker:25.0-dind
   script:
-    - docker-compose down || true
-    - docker-compose up -d --build
-    - docker-compose ps
+    - docker compose down || true
+    - docker compose up -d --build
+    - docker compose ps
   only:
     - main
