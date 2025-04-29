@@ -4,8 +4,8 @@ stages:
 variables:
   SERVICE_NAME: spvending-manager
   DOCKER_COMPOSE_FILE: docker-compose.yml
-  DOCKER_EXEC: "C:\Program Files\Docker\Docker\resources\bin\docker.exe"
-  DOCKER_COMPOSE_EXEC: "C:\Program Files\Docker\Docker\resources\bin\docker-compose.exe"
+  DOCKER_EXEC: "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker.exe"
+  DOCKER_COMPOSE_EXEC: "C:\\Program Files\\Docker\\Docker\\resources\\bin\\docker-compose.exe"
 build_image:
   stage: build
   tags:
