@@ -1,27 +1,10 @@
 stages:
-  - build
-  - deploy
+  - test
 
-variables:
-  DOCKER_HOST: tcp://docker:2375/
-  DOCKER_DRIVER: overlay2
-
-build:
-  stage: build
-  image: docker:25.0-git
+test-docker:
+  image: docker:latest
   services:
-    - docker:25.0-dind
+    - docker:dind
   script:
-    - docker compose build
-
-deploy:
-  stage: deploy
-  image: docker:25.0-git
-  services:
-    - docker:25.0-dind
-  script:
-    - docker compose down || true
-    - docker compose up -d --build
-    - docker compose ps
-  only:
-    - main
+    - docker info
+    - docker run hello-world
