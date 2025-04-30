@@ -8,6 +8,8 @@
     image: docker:latest
     services:
       - docker:dind
+    variables:
+      DOCKER_TLS_CERTDIR: "" # Necesario para que docker:dind no use TLS en GitLab CI
     before_script:
       - docker info
       - echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
