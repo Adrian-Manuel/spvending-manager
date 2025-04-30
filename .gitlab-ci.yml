@@ -8,7 +8,7 @@ build-and-push-dockerhub:
   before_script:
     - docker logout registry.docker.io || true
     - echo "Logging into Docker Hub with $DOCKERHUB_USERNAME via stdin"
-    - docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+    - docker login -u "$DOCKERHUB_USERNAME" --password-stdin <<< "$DOCKERHUB_PASSWORD"
   script:
     - docker build -t "$DOCKERHUB_USERNAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG" .
     - docker push "$DOCKERHUB_USERNAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
