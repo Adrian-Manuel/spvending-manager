@@ -13,7 +13,7 @@ COPY ./.mvn /root/.mvn
 COPY ./mvnw  /root
 
 #Descargar dependencias
-RUN ./mvnw dependency:go-offline
+RUN chmod +x mvnw && ./mvnw dependency:go-offline
 
 #Copiar codigo fuente
 COPY ./src /root/src
