@@ -3,10 +3,12 @@ build-image-docker:
   tags:
     - build
   image: docker:latest
+  services:
+    - docker:dind
   before_script:
     - docker logout registry.docker.io || true
     - echo "Logging into GitLab Container Registry with CI_REGISTRY_USER via stdin"
-    - echo "$CI_REGISTRY_PASSWORD" | docker login $CI_REGISTRY -u $CI_REGISTRY_USER --password-stdin
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p "$CI_REGISTRY_PASSWORD"
   script:
     - docker build -t $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG .
     - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_TAG
