@@ -27,7 +27,7 @@ deploy_app:
   script:
     - $env:DOCKER_HOST = "npipe:////./pipe/docker_cli"
     - docker login -u "$env:CI_REGISTRY_USER" -p "$env:CI_REGISTRY_PASSWORD" "192.168.74.132:5050"
-    - docker pull $env:IMAGE_NAME
+    - docker pull 192.168.74.132:5050/adrian-manuel/spvending-managment:latest
     #- docker-compose -f docker-compose.deploy.yml down
     #- docker-compose -f docker-compose.deploy.yml up -d
   only:
