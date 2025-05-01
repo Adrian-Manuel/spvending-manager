@@ -26,7 +26,7 @@ deploy_app:
   tags:
     - deploy  # Tag del runner local
   script:
-    - $env:DOCKER_HOST = "npipe:////./pipe/docker_cli"
+    #- $env:DOCKER_HOST = "npipe:////./pipe/docker_cli"
     - docker login -u "$env:CI_REGISTRY_USER" -p "$env:CI_REGISTRY_PASSWORD" "$env:REGISTRY_URL"
     - docker pull "$env:192.168.74.132:5050/adrian-manuel/spvending-managment:latest"
     - docker-compose -f docker-compose.deploy.yml down
