@@ -18,8 +18,8 @@ build_image:
     - build
   script:
     - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker build -t localhost:5050/adrian-manuel/spvending-managment .
-    - docker push localhost:5050/adrian-manuel/spvending-managment
+    - docker build -t 192.168.74.132:5050/adrian-manuel/spvending-managment .
+    - docker push 192.168.74.132:5050/adrian-manuel/spvending-managment
   only:
     - main  # Puedes cambiar esto a la rama que usas para producción
 
