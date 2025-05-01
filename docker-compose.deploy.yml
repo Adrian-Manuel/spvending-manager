@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  spvending-api-image:
+    image: 192.168.74.132:5050/adrian-manuel/spvending-managment
+    container_name: spvending-api-container
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-network
+    depends_on:
+      - postgres
+      - redis
+
+  redis:
+    image: redis
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    networks:
+      - spring-network
+
+  postgres:
+    image: postgres
+    container_name: postgres_database
+    environment:
+      POSTGRES_PASSWORD: abc123.
+      POSTGRES_DB: tenants_managment
+      POSTGRES_USER: postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - spring-network
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+
+networks:
+  spring-network:
+    driver: bridge
+
+volumes:
+  postgres-volume:

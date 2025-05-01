@@ -21,3 +21,14 @@ build_image:
     - docker push $IMAGE_NAME
   only:
     - main
+deploy_app:
+  stage: deploy
+  tags:
+    - deploy  # Tag del runner local
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker pull 192.168.74.132:5050/adrian-manuel/spvending-managment
+    - docker-compose -f docker-compose.deploy.yml down || true
+    - docker-compose -f docker-compose.deploy.yml up -d
+  only:
+    - main
