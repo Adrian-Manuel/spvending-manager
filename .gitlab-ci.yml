@@ -3,21 +3,21 @@ image: docker:latest  # Usaremos Docker para los builds
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
-  IMAGE_NAME: "192.168.74.132/Adrian-Manuel/spvending-managment"  # Nombre de la imagen en GitLab Registry
+  IMAGE_NAME: "192.168.74.132:5050/adrian-manuel/spvending-managment"  # Nombre de la imagen en GitLab Registry
   COMPOSE_PROJECT_NAME: spvending-managment
 
 stages:
   - build
   - deploy
 
-# Paso de construcción de la imagen Docker
 build_image:
   stage: build
   tags:
-    - build  # Asegúrate de que el runner tenga el tag "build"
+    - build
   script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY  # Login al registry de GitLab
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose -f docker-compose.yml build  # Usamos Docker Compose para construir la imagen
-    - docker-compose -f docker-compose.yml push  # Subimos la imagen construida al registry
+    - docker tag spvending-api-image $IMAGE_NAME
+    - docker push $IMAGE_NAME
   only:
-    - main  # Asegúrate de que esta es la rama correcta para el deploy
+    - main
