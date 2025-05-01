@@ -1,13 +1,10 @@
 image: docker:latest  # Usaremos Docker para los builds
 
-services:
-  - docker:dind  # Necesitamos Docker-in-Docker
-
 variables:
   DOCKER_DRIVER: overlay2
-  DOCKER_HOST: tcp://docker:2375/
-  IMAGE_NAME: "192.168.74.132:5050/adrian-manuel/springboot-app"  # Nombre de la imagen en tu GitLab Registry
-  COMPOSE_PROJECT_NAME: springboot-app
+  DOCKER_HOST: unix:///var/run/docker.sock  # Conectamos al socket Docker del host
+  IMAGE_NAME: "192.168.74.132:5050/Adrian-Manuel/spvending-managment"  # Nombre de la imagen en tu GitLab Registry
+  COMPOSE_PROJECT_NAME: spvending-managment
 
 stages:
   - build
