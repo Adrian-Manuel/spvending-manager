@@ -14,6 +14,8 @@ stages:
 # Paso de construcción de la imagen Docker
 build_image:
   stage: build
+  tags:
+    - build
   script:
     - docker build -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:latest
@@ -23,6 +25,8 @@ build_image:
 # Opcional: paso para limpiar imágenes antiguas o realizar otras tareas
 cleanup:
   stage: deploy
+  tags:
+    - deploy
   script:
     - docker image prune -f
   only:
