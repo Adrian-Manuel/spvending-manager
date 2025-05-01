@@ -27,7 +27,7 @@ deploy_app:
   script:
     - $env:DOCKER_HOST = "npipe:////./pipe/docker_cli"
     - docker login -u "Adrian-Manuel" -p "hakemoto31" "192.168.74.132:5050"
-    - docker pull 192.168.74.132:5050/adrian-manuel/spvending-managment:latest
+    - docker pull "192.168.74.132:5050/adrian-manuel/spvending-managment:latest"
     #- docker-compose -f docker-compose.deploy.yml down
     #- docker-compose -f docker-compose.deploy.yml up -d
   only:
