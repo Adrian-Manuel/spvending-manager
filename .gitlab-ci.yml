@@ -5,6 +5,7 @@ variables:
   DOCKER_HOST: unix:///var/run/docker.sock
   IMAGE_NAME: "192.168.74.132:5050/adrian-manuel/spvending-managment:latest"  # Nombre de la imagen en GitLab Registry
   COMPOSE_PROJECT_NAME: spvending-managment
+  REGISTRY_URL: "192.168.74.132:5050"
 stages:
   - build
   - deploy
@@ -26,8 +27,8 @@ deploy_app:
     - deploy  # Tag del runner local
   script:
     - $env:DOCKER_HOST = "npipe:////./pipe/docker_cli"
-    - docker login -u "Adrian-Manuel" -p "hakemoto31" "192.168.74.132:5050"
-    - docker pull "192.168.74.132:5050/adrian-manuel/spvending-managment:latest"
+    - docker login -u "$env:CI_REGISTRY_USER" -p "$env:CI_REGISTRY_PASSWORD" "$env:REGISTRY_URL"
+    - docker pull "$env:192.168.74.132:5050/adrian-manuel/spvending-managment:latest"
     #- docker-compose -f docker-compose.deploy.yml down
     #- docker-compose -f docker-compose.deploy.yml up -d
   only:
