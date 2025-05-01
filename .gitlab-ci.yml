@@ -1,11 +1,13 @@
-image: docker:latest
+image: docker:latest  # Usaremos Docker para los builds
 
 services:
-  - docker:dind
+  - docker:dind  # Necesitamos Docker-in-Docker
 
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: tcp://docker:2375/
+  IMAGE_NAME: "192.168.74.132:5050/adrian-manuel/springboot-app"  # Nombre de la imagen en tu GitLab Registry
+  COMPOSE_PROJECT_NAME: springboot-app
 
 stages:
   - build
@@ -15,20 +17,10 @@ stages:
 build_image:
   stage: build
   tags:
-    - build
+    - build  # Asegúrate de que el runner tenga el tag "build"
   script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
-    - docker build -t 192.168.74.132:5050/adrian-manuel/spvending-managment .
-    - docker push 192.168.74.132:5050/adrian-manuel/spvending-managment
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY  # Login al registry de GitLab
+    - docker-compose -f docker-compose.yml build  # Usamos Docker Compose para construir la imagen
+    - docker-compose -f docker-compose.yml push  # Subimos la imagen construida al registry
   only:
-    - main  # Puedes cambiar esto a la rama que usas para producción
-
-# Opcional: paso para limpiar imágenes antiguas o realizar otras tareas
-cleanup:
-  stage: deploy
-  tags:
-    - deploy
-  script:
-    - docker image prune -f
-  only:
-    - main
+    - main  # Asegúrate de que esta es la rama correcta para el deploy
