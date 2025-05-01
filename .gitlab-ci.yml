@@ -3,7 +3,7 @@ image: docker:latest  # Usaremos Docker para los builds
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
-  IMAGE_NAME: "http://192.168.74.132:5050/Adrian-Manuel/spvending-managment"  # Nombre de la imagen en GitLab Registry
+  IMAGE_NAME: "192.168.74.132/Adrian-Manuel/spvending-managment"  # Nombre de la imagen en GitLab Registry
   COMPOSE_PROJECT_NAME: spvending-managment
 
 stages:
