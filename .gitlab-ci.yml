@@ -29,7 +29,7 @@ deploy_app:
     - deploy  # Tag del runner local
   script:
     - $env:DOCKER_HOST = "npipe:////./pipe/docker_cli"
-    - docker login -u "$env:CI_REGISTRY_USER" -p "$env:CI_REGISTRY_PASSWORD" "$env:CI_REGISTRY"
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" "$CI_REGISTRY"
     - docker pull $IMAGE_NAME
     - docker-compose -f docker-compose.deploy.yml down
     - docker-compose -f docker-compose.deploy.yml up -d
