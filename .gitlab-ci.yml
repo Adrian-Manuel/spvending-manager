@@ -1,12 +1,11 @@
-image: docker:24.0.6  # Versión específica para mayor reproducibilidad
+image: docker:latest  # Usaremos Docker para los builds
 
 variables:
-  DOCKER_HOST: "npipe:////./pipe/docker_engine"  # Configuración correcta para Windows
-  IMAGE_NAME: "192.168.74.132:5050/adrian-manuel/spvending-managment:latest"
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: unix:///var/run/docker.sock
+  IMAGE_NAME: "192.168.74.132:5050/adrian-manuel/spvending-managment:latest"  # Nombre de la imagen en GitLab Registry
+  COMPOSE_PROJECT_NAME: spvending-managment
   REGISTRY_URL: "192.168.74.132:5050"
-  COMPOSE_PROJECT_NAME: "spvending-managment"
-  DOCKER_BUILDKIT: 1  # Habilita BuildKit para builds más rápidos
-
 stages:
   - build
   - deploy
@@ -15,38 +14,22 @@ build_image:
   stage: build
   tags:
     - build
-  before_script:
-    - echo "Iniciando proceso de construcción de la imagen..."
-    - docker --version
-    - docker-compose --version
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" -password-stdin $REGISTRY_URL
-    - docker-compose -f docker-compose.yml build --no-cache --pull
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker-compose -f docker-compose.yml build  # Usamos Docker Compose para construir la imagen
     - docker tag spvending-api-image $IMAGE_NAME
     - docker push $IMAGE_NAME
-  after_script:
-    - docker logout $REGISTRY_URL
   only:
     - main
-  timeout: 30 minutes  # Tiempo máximo para el stage de build
-
 deploy_app:
   stage: deploy
   tags:
-    - deploy
-  before_script:
-    - echo "Preparando despliegue en producción..."
-    - docker --version
-    - docker-compose --version
+    - deploy  # Tag del runner local
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
-    - docker pull $IMAGE_NAME || echo "Advertencia:Falló el pull inicial, continuando con imagen local"
-    - docker-compose -f docker-compose.deploy.yml down --remove-orphans
-    - docker-compose -f docker-compose.deploy.yml up -d --force-recreate
-    - docker system prune -f  # Limpieza de recursos no utilizados
-  after_script:
-    - docker logout $REGISTRY_URL
-    - docker ps -a  # Muestra el estado de los contenedores
+    - $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
+    - $env:CI_REGISTRY_PASSWORD | docker login -u "$env:CI_REGISTRY_USER" --password-stdin "$env:REGISTRY_URL"
+    - docker pull "$env:IMAGE_NAME"
+    - docker-compose -f docker-compose.deploy.yml down
+    - docker-compose -f docker-compose.deploy.yml up -d
   only:
     - main
-  timeout: 20 minutes  # Tiempo máximo para el stage de deploy
