@@ -28,8 +28,6 @@ build_image:
     - docker-compose -f docker-compose.yml build --no-cache --pull
     - docker tag spvending-api-image "$IMAGE_NAME"
     - docker push "$IMAGE_NAME"
-    - docker tag spvending-api-image "$IMAGE_NAME_LATEST"
-    - docker push "$IMAGE_NAME_LATEST"
   after_script:
     - docker logout $REGISTRY_URL
 
