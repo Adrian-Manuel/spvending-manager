@@ -28,16 +28,14 @@ public class AuthService {
     private final String REFRESH_TOKEN_COOKIE_NAME="refresh_token";
     private final String ACCESS_TOKEN_COOKIE_NAME="access_token";
     @Transactional
-    public TokenResponse register(final RegisterRequest request){
+    public UserResponse register(final RegisterRequest request){
         final User user = User.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(request.getRole())
                 .build();
         final User savedUser = jpaUserRepository.save(user);
-        final String jwtToken = jwtService.generateToken(savedUser);
-        final String refreshToken = jwtService.generateRefreshToken(savedUser);
-        return new TokenResponse(jwtToken, refreshToken);
+        return new UserResponse(user.getUsername(), user.getRole());
     }
     public UserResponse authenticate(final AuthRequest request, final HttpServletResponse response){
         authenticationManager.authenticate(
@@ -55,7 +53,7 @@ public class AuthService {
         response.addCookie(refreshTokenCookie);
         return new UserResponse(user.getUsername(), user.getRole());
     }
-    public TokenResponse refreshToken(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response) throws IOException {
+    public UserResponse refreshToken(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response) throws IOException {
         String refreshTokenValue = CookieUtil.getCookieValue(request,REFRESH_TOKEN_COOKIE_NAME);
         if (refreshTokenValue == null || refreshTokenValue.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -75,7 +73,7 @@ public class AuthService {
         final  String accessToken= jwtService.generateRefreshToken(user);
         Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,"/");
         response.addCookie(newAccessTokenCookie);
-        return new TokenResponse(accessToken, refreshTokenValue);
+        return new UserResponse(user.getUsername(), user.getRole());
     }
 
 }
