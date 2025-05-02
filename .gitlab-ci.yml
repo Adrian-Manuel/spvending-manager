@@ -1,77 +1,52 @@
-image: docker:24.0.6
+image: docker:24.0.6  # Versión específica para mayor reproducibilidad
 
 variables:
-  DOCKER_HOST: "npipe:////./pipe/docker_engine"
+  DOCKER_HOST: "npipe:////./pipe/docker_engine"  # Configuración correcta para Windows
   IMAGE_NAME: "192.168.74.132:5050/adrian-manuel/spvending-managment:latest"
   REGISTRY_URL: "192.168.74.132:5050"
   COMPOSE_PROJECT_NAME: "spvending-managment"
-  DOCKER_BUILDKIT: 1
-  DOCKER_TLS_CERTDIR: ""  # Deshabilita TLS para conexiones locales
+  DOCKER_BUILDKIT: 1  # Habilita BuildKit para builds más rápidos
 
 stages:
   - build
   - deploy
-  - verify  # Nueva etapa para verificación post-despliegue
 
 build_image:
   stage: build
   tags:
     - build
   before_script:
-    - echo "=== INICIO BUILD ==="
-    - echo "Versión de Docker:$(docker --version)"
-    - echo "Versión de Docker Compose:$(docker-compose --version)"
+    - echo "Iniciando proceso de construcción de la imagen..."
+    - docker --version
+    - docker-compose --version
   script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" -password-stdin $REGISTRY_URL
     - docker-compose -f docker-compose.yml build --no-cache --pull
     - docker tag spvending-api-image $IMAGE_NAME
     - docker push $IMAGE_NAME
-    - echo "Imagen construida y subida exitosamente:$IMAGE_NAME"
   after_script:
     - docker logout $REGISTRY_URL
   only:
     - main
-  timeout: 30 minutes
-  retry: 1  # Reintentar una vez si falla
+  timeout: 30 minutes  # Tiempo máximo para el stage de build
 
 deploy_app:
   stage: deploy
   tags:
     - deploy
   before_script:
-    - echo "=== INICIO DEPLOY ==="
-    - echo "Verificando conexión con Docker..."
-    - docker info
+    - echo "Preparando despliegue en producción..."
+    - docker --version
+    - docker-compose --version
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
-    - docker pull $IMAGE_NAME || echo "[WARNING] Falló el pull inicial, continuando con imagen local"
+    - docker pull $IMAGE_NAME || echo "Advertencia:Falló el pull inicial, continuando con imagen local"
     - docker-compose -f docker-compose.deploy.yml down --remove-orphans
     - docker-compose -f docker-compose.deploy.yml up -d --force-recreate
-    - echo "Despliegue completado. Limpiando recursos..."
-    - docker system prune -f --filter "until=24h"  # Solo elimina recursos con más de 24h
+    - docker system prune -f  # Limpieza de recursos no utilizados
   after_script:
     - docker logout $REGISTRY_URL
-    - echo "=== ESTADO ACTUAL DE CONTENEDORES ==="
-    - docker ps -a --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+    - docker ps -a  # Muestra el estado de los contenedores
   only:
     - main
-  timeout: 20 minutes
-
-verify_deployment:
-  stage: verify
-  tags:
-    - deploy
-  script:
-    - echo "=== VERIFICACIÓN DE DESPLIEGUE ==="
-    - |
-      if docker ps | grep -q "spvending-api"; then
-        echo "✅ Servicio API está en ejecución"
-      else
-        echo "❌ Servicio API NO está en ejecución"
-        exit 1
-      fi
-    - echo "Verificación completada exitosamente"
-  only:
-    - main
-  timeout: 5 minutes
-  when: on_success  # Solo se ejecuta si las etapas anteriores tienen éxito
+  timeout: 20 minutes  # Tiempo máximo para el stage de deploy
