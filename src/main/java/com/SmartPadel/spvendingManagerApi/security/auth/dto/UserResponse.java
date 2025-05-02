@@ -1,2 +1,5 @@
 package com.SmartPadel.spvendingManagerApi.security.auth.dto;
-public record UserResponse(String name){}
+
+import com.SmartPadel.spvendingManagerApi.security.user.Role;
+
+public record UserResponse(String name, Role role){}

@@ -2,6 +2,7 @@ package com.SmartPadel.spvendingManagerApi.security.auth.service;
 import com.SmartPadel.spvendingManagerApi.security.auth.dto.AuthRequest;
 import com.SmartPadel.spvendingManagerApi.security.auth.dto.RegisterRequest;
 import com.SmartPadel.spvendingManagerApi.security.auth.dto.TokenResponse;
+import com.SmartPadel.spvendingManagerApi.security.auth.dto.UserResponse;
 import com.SmartPadel.spvendingManagerApi.security.auth.util.CookieUtil;
 import com.SmartPadel.spvendingManagerApi.security.auth.repository.JpaUserRepository;
 import com.SmartPadel.spvendingManagerApi.security.user.User;
@@ -38,7 +39,7 @@ public class AuthService {
         final String refreshToken = jwtService.generateRefreshToken(savedUser);
         return new TokenResponse(jwtToken, refreshToken);
     }
-    public TokenResponse authenticate(final AuthRequest request, final HttpServletResponse response){
+    public UserResponse authenticate(final AuthRequest request, final HttpServletResponse response){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
@@ -52,7 +53,7 @@ public class AuthService {
         Cookie refreshTokenCookie=CookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,60*60*24,true,true, "/");
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
-        return new TokenResponse(accessToken, refreshToken);
+        return new UserResponse(user.getUsername(), user.getRole());
     }
     public TokenResponse refreshToken(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response) throws IOException {
         String refreshTokenValue = CookieUtil.getCookieValue(request,REFRESH_TOKEN_COOKIE_NAME);

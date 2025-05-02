@@ -2,6 +2,7 @@ package com.SmartPadel.spvendingManagerApi.security.auth.controller;
 import com.SmartPadel.spvendingManagerApi.security.auth.dto.AuthRequest;
 import com.SmartPadel.spvendingManagerApi.security.auth.dto.RegisterRequest;
 import com.SmartPadel.spvendingManagerApi.security.auth.dto.TokenResponse;
+import com.SmartPadel.spvendingManagerApi.security.auth.dto.UserResponse;
 import com.SmartPadel.spvendingManagerApi.security.auth.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,8 +22,8 @@ public class AuthController {
         return ResponseEntity.ok(response);
     }
     @PostMapping("/login")
-    public ResponseEntity<TokenResponse> authenticate(@RequestBody AuthRequest request, HttpServletResponse httpServletResponse) {
-        final TokenResponse response = service.authenticate(request, httpServletResponse);
+    public ResponseEntity<UserResponse> authenticate(@RequestBody AuthRequest request, HttpServletResponse httpServletResponse) {
+        final UserResponse response = service.authenticate(request, httpServletResponse);
         return ResponseEntity.ok(response);
     }
     @PostMapping("/refresh-token")
