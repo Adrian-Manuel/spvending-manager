@@ -32,6 +32,8 @@ deploy_app:
   tags:
     - deploy
   needs: ["build_image"]
+  rules:
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_NAME == "main"
   script:
     - $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
     - $env:CI_REGISTRY_PASSWORD | docker login -u "$env:CI_REGISTRY_USER" --password-stdin "$env:REGISTRY_URL"
