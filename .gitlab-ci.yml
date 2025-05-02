@@ -25,6 +25,7 @@ build_image:
     - echo "IMAGE_NAME_LATEST:$IMAGE_NAME_LATEST"
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
+    - docker-compose -f docker-compose.yml build --no-cache --pull
     - docker tag spvending-api-image "$IMAGE_NAME"
     - docker push "$IMAGE_NAME"
     - docker tag spvending-api-image "$IMAGE_NAME_LATEST"
