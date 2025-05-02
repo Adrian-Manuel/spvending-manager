@@ -1,7 +1,8 @@
-git tag -d v1.0.0
-git push fedoragit --delete v1.0.0
+set VERSION=v1.0.0
+git tag -d %VERSION%
+git push fedoragit --delete %VERSION%
 git add .
 git commit -m "prueba de ci cd"
 git push fedoragit main
-git tag v1.0.0
-git push fedoragit v1.0.0
+git tag %VERSION%
+git push fedoragit %VERSION%
