@@ -1,5 +1,4 @@
-image: docker:latest  # Usaremos Docker para los builds
-
+image: docker:latest
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
