@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   spvending-api-image:
-    image: 192.168.74.132:5050/adrian-manuel/spvending-managment
+    image: 192.168.74.132:5050/adrian-manuel/spvending-managment:latest
     container_name: spvending-api-container
     ports:
       - "8080:8080"
