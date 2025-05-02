@@ -1,4 +1,5 @@
 image: docker:latest
+
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
@@ -7,6 +8,7 @@ variables:
   IMAGE_NAME_LATEST: "$REGISTRY_URL/adrian-manuel/spvending-managment:latest"
   COMPOSE_PROJECT_NAME: "spvending-managment"
   REGISTRY_URL: "192.168.74.132:5050"
+
 stages:
   - build
   - deploy
@@ -19,13 +21,14 @@ build_image:
     - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_NAME == "main"
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
-    - docker-compose -f docker-compose.yml build
+    - docker-compose -f docker-compose.yml build --no-cache --pull
     - docker tag spvending-api-image $IMAGE_NAME
     - docker push $IMAGE_NAME
-    - docker tag spvending-api-image $IMAGE_NAME_LATEST;
-    - docker push $IMAGE_NAME_LATEST;
+    - docker tag spvending-api-image $IMAGE_NAME_LATEST
+    - docker push $IMAGE_NAME_LATEST
   after_script:
     - docker logout $REGISTRY_URL
+
 deploy_app:
   stage: deploy
   tags:
@@ -35,9 +38,11 @@ deploy_app:
     - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_NAME == "main"
   script:
     - $env:DOCKER_HOST = "npipe:////./pipe/docker_engine"
-    - $env:CI_REGISTRY_PASSWORD | docker login -u "$env:CI_REGISTRY_USER" --password-stdin "$env:REGISTRY_URL"
-    - docker pull "$env:IMAGE_NAME_LATEST"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
+    - docker pull $IMAGE_NAME_LATEST
     - docker-compose -f docker-compose.deploy.yml down --remove-orphans
     - docker-compose -f docker-compose.deploy.yml up -d --force-recreate
     - echo "=== RUNNING CONTAINERS ==="
-    - docker ps
+    - docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+  after_script:
+    - docker logout $REGISTRY_URL
