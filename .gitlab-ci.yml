@@ -42,5 +42,3 @@ deploy_app:
     - docker-compose -f docker-compose.deploy.yml up -d --force-recreate
     - echo "=== RUNNING CONTAINERS ==="
     - docker ps
-  only:
-    - main
