@@ -19,7 +19,7 @@ RUN chmod +x mvnw && ./mvnw dependency:go-offline
 COPY ./src /root/src
 
 #Construir app
-RUN ./mvnw clean install -DskipTests
+RUN ./mvnw clean install
 
 #Levantar la app cuando el contenedor inicie
 ENTRYPOINT ["java", "-jar","/root/target/spvending-manager-1.0.0-SNAPSHOT.jar"]
