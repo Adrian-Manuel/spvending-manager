@@ -17,9 +17,7 @@ public class AppConfig {
     private final JpaUserRepository jpaUserRepository;
     @Bean
     public UserDetailsService userDetailsService(){
-        return username -> {
-            return jpaUserRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
-        };
+        return username ->  jpaUserRepository.findByUsername(username).orElseThrow(()->new UsernameNotFoundException("User not found"));
     }
     @Bean
     public PasswordEncoder passwordEncoder() {

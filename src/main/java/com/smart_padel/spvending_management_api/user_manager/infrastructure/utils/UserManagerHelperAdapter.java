@@ -6,6 +6,9 @@ import com.smart_padel.spvending_management_api.user_manager.domain.model.UserMa
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.persistence.repository.JpaUserManagerRepository;
 import java.util.UUID;
 public class UserManagerHelperAdapter {
+    private UserManagerHelperAdapter() {
+        throw new IllegalStateException("Util class");
+    }
     public static void validateClubOrTenant(UUID tenantId, UUID clubId, String userType) {
         if (tenantId == null && clubId == null) {
             throw new ParamRequiredException("some club id or tenant id is required");

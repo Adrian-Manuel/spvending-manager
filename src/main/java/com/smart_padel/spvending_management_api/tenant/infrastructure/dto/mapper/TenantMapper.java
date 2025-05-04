@@ -6,8 +6,10 @@ import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.Tenant
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutPreview;
 import java.util.Collections;
-import java.util.stream.Collectors;
 public class TenantMapper {
+    private TenantMapper() {
+        throw new IllegalStateException("Mapper class");
+    }
     public static TenantDtoOutPreview toDtoPreview(Tenant tenant) {
         return TenantDtoOutPreview.builder()
                 .tenantId( tenant.getTenantId() )
@@ -31,7 +33,7 @@ public class TenantMapper {
                 .managers(tenant.getUserManagers() !=null ? tenant.getUserManagers()
                         .stream()
                         .map(UserManager::getUserName)
-                        .collect(Collectors.toList())
+                        .toList()
                         : Collections.emptyList())
                 .build();
     }

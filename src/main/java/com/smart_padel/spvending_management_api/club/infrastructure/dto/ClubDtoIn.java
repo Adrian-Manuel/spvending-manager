@@ -9,6 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import java.util.UUID;
+
+import static com.smart_padel.spvending_management_api.shared.utils.RegexUtils.EMAIL_REGEX;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -27,7 +30,7 @@ public class ClubDtoIn {
     private String address;
     @Schema(description = "Phone number of the club", example = "+34 966 123 456")
     private String phone;
-    @Pattern(regexp = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$", message = "The email must be composed of a text string followed by @, another text string, a period and another text string, example: example@email.com")
+    @Pattern(regexp = EMAIL_REGEX, message = "The email must be composed of a text string followed by @, another text string, a period and another text string, example: example@email.com")
     @Schema(description = "Contact email of the club", example = "info@clubs.com")
     private String email;
     @Schema(description = "Optional remarks or notes about the club", example = "Club prefers weekend tournaments only.")

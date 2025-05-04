@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 @RestController
 @PreAuthorize("hasAnyRole('ADMIN', 'USER')")
@@ -32,7 +33,7 @@ public class GetUserManagerController {
     }
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{userManagerId}")
-    public ResponseEntity<UserManagerDtoOutDetail> getUserManagerById(@PathVariable UUID userManagerId) throws Exception {
+    public ResponseEntity<UserManagerDtoOutDetail> getUserManagerById(@PathVariable UUID userManagerId) throws GeneralSecurityException {
         UserManager userManagerRequest=retrieveUserManagerUseCase.getUserManagerById(userManagerId);
         return new ResponseEntity<>(UserManagerMapper.toDtoDetail(userManagerRequest),HttpStatus.OK);
     }

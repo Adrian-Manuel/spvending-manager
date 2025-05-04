@@ -14,22 +14,24 @@ import com.smart_padel.spvending_management_api.user_manager.infrastructure.pers
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.utils.UserManagerHelperAdapter;
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.utils.UserManagerSpecification;
 import jakarta.transaction.Transactional;
-import jakarta.websocket.EncodeException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 @Transactional
 @Component
 @RequiredArgsConstructor
 public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
+
     private final JpaUserManagerRepository jpaUserManagerRepository;
     private final JpaClubRepository jpaClubRepository;
     private final JpaTenantRepository jpaTenantRepository;
+
     @Override
-    public UserManager save(UUID tenantId, UUID clubId, UserManager userManager) throws EncodeException {
+    public UserManager save(UUID tenantId, UUID clubId, UserManager userManager) throws GeneralSecurityException {
         UserManagerHelperAdapter.validateClubOrTenant(tenantId, clubId, userManager.getUserType());
         UserManagerHelperAdapter.validateUserUniqueness(jpaUserManagerRepository, userManager);
         if (clubId != null) {

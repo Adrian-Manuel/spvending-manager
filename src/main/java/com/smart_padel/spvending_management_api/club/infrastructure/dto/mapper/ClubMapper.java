@@ -6,8 +6,10 @@ import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoO
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutSummary;
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.persistence.entity.UserManagerEntity;
 import java.util.Collections;
-import java.util.stream.Collectors;
 public class ClubMapper {
+    private ClubMapper() {
+        throw new IllegalStateException("Mapper class");
+    }
     public static ClubDtoOutPreview toDtoPreview(Club club) {
         return ClubDtoOutPreview.builder()
         .clubId( club.getClubId() )
@@ -32,7 +34,7 @@ public class ClubMapper {
             .userManagers((club.getUserManagerEntities() !=null) ? club.getUserManagerEntities()
                     .stream()
                     .map(UserManagerEntity::getUserName)
-                    .collect(Collectors.toList())
+                    .toList()
                     : Collections.emptyList())
             .build();
     }

@@ -8,6 +8,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 public class SpecificationUtils {
+    private SpecificationUtils() {
+        throw new IllegalStateException("Utility class");
+    }
     public static <T> Specification<T> buildFilterSpec(Class<T> clazz, String filter) {
         if (filter == null || filter.trim().isEmpty()) {
             return null;

@@ -4,11 +4,13 @@ import com.smart_padel.spvending_management_api.user_manager.domain.model.UserMa
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.UserManagerDtoIn;
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.UserManagerDtoOutDetail;
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.UserManagerDtoOutPreview;
-import lombok.RequiredArgsConstructor;
+import java.security.GeneralSecurityException;
 
-@RequiredArgsConstructor
+
 public class UserManagerMapper {
-
+    private UserManagerMapper() {
+        throw new IllegalStateException("Utility class");
+    }
     static AESGCMEncryption aesgcmEncryption;
 
     public static UserManagerDtoOutPreview toDtoPreview (UserManager userManager){
@@ -21,7 +23,7 @@ public class UserManagerMapper {
                 .clubEntityName(userManager.getClub() != null ? userManager.getClub().getName() : null)
                 .build();
     }
-    public static UserManagerDtoOutDetail toDtoDetail(UserManager userManager) throws Exception {
+    public static UserManagerDtoOutDetail toDtoDetail(UserManager userManager) throws GeneralSecurityException {
         return UserManagerDtoOutDetail.builder()
                 .userManagerId(userManager.getUserId())
                 .username(userManager.getUserName())
@@ -34,7 +36,7 @@ public class UserManagerMapper {
                 .tenantEntityName(userManager.getTenantEntity() != null ? userManager.getTenantEntity().getName() : null)
                 .build();
     }
-    public static UserManager toModel(UserManagerDtoIn userManagerDtoIn) throws Exception {
+    public static UserManager toModel(UserManagerDtoIn userManagerDtoIn) throws GeneralSecurityException {
         return UserManager.builder()
                 .userName(userManagerDtoIn.getUsername())
                 .password(aesgcmEncryption.encrypt(userManagerDtoIn.getPassword()))

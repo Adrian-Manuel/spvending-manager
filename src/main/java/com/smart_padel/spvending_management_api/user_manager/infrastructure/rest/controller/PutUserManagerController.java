@@ -10,6 +10,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class PutUserManagerController {
     private final UpdateUserManagerUseCase updateUserManagerUseCase;
     @PreAuthorize("hasAuthority('admin:update')")
     @PutMapping("/{userManagerId}")
-    public ResponseEntity<UserManagerDtoOutDetail> updateUserManager(@PathVariable UUID userManagerId, @Valid @RequestBody UserManagerDtoIn userManagerDtoIn) throws Exception {
+    public ResponseEntity<UserManagerDtoOutDetail> updateUserManager(@PathVariable UUID userManagerId, @Valid @RequestBody UserManagerDtoIn userManagerDtoIn) throws GeneralSecurityException {
         UserManager userManagerRequest= UserManagerMapper.toModel(userManagerDtoIn);
         userManagerRequest= updateUserManagerUseCase.updateUserManager(userManagerDtoIn.getTenantEntityId(),userManagerDtoIn.getClubEntityId(), userManagerId, userManagerRequest);
         return new ResponseEntity<>(UserManagerMapper.toDtoDetail(userManagerRequest), HttpStatus.OK);

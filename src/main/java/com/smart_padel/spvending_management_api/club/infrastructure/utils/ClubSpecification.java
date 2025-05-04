@@ -4,6 +4,9 @@ import com.smart_padel.spvending_management_api.shared.utils.SpecificationUtils;
 import org.springframework.data.jpa.domain.Specification;
 import java.util.UUID;
 public class ClubSpecification {
+    private ClubSpecification() {
+        throw new IllegalStateException("Util class");
+    }
     public static Specification<ClubEntity> withFilter(String filter) {
         return SpecificationUtils.buildFilterSpec(ClubEntity.class, filter);
     }

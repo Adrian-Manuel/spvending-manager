@@ -8,6 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import static com.smart_padel.spvending_management_api.shared.utils.RegexUtils.EMAIL_REGEX;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,7 +28,7 @@ public class TenantDtoIn {
     private String address;
     @Schema(description = "Phone number of the tenant", example = "6094852")
     private String phone;
-    @Pattern(regexp = "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$", message = "The email must be composed of a text string followed by @, another text string, a period and another text string, example: example@email.com")
+    @Pattern(regexp = EMAIL_REGEX, message = "The email must be composed of a text string followed by @, another text string, a period and another text string, example: example@email.com")
     @Schema(description = "Contact email address of the tenant", example = "info@padelprix.com")
     private String email;
     @Size(min = 0, max = 255, message = "The number of characters cannot exceed 255")

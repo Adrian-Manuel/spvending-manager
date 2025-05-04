@@ -7,6 +7,8 @@ import com.smart_padel.spvending_management_api.shared.utils.AESGCMEncryption;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.security.GeneralSecurityException;
+
 @Service
 @RequiredArgsConstructor
 public class MachineMapper {
@@ -24,7 +26,7 @@ public class MachineMapper {
                 .build();
     }
 
-    public MachineDtoOutDetail toDtoDetail (Machine machine) throws Exception {
+    public MachineDtoOutDetail toDtoDetail (Machine machine) throws GeneralSecurityException {
         return MachineDtoOutDetail.builder()
                 .machineId(machine.getMachineId())
                 .code(machine.getCode())
@@ -38,7 +40,7 @@ public class MachineMapper {
                 .build();
     }
 
-    public Machine toModel(MachineDtoIn machineDtoIn) throws Exception {
+    public Machine toModel(MachineDtoIn machineDtoIn) throws GeneralSecurityException {
         return Machine.builder()
                 .code(machineDtoIn.getCode())
                 .smartFridgeId(machineDtoIn.getSmartFridgeId())

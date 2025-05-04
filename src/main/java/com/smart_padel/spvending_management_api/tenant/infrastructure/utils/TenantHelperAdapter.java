@@ -5,6 +5,9 @@ import com.smart_padel.spvending_management_api.tenant.infrastructure.persistenc
 import com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.repository.JpaTenantRepository;
 import java.util.UUID;
 public class TenantHelperAdapter {
+    private TenantHelperAdapter() {
+        throw new IllegalStateException("Utility class");
+    }
     public static TenantEntity getTenantOrThrow(JpaTenantRepository repo, UUID tenantId) {
         return repo.findById(tenantId)
                 .orElseThrow(() -> new ResourceNotFoundException("The requested tenant was not found"));
@@ -15,7 +18,7 @@ public class TenantHelperAdapter {
         }
     }
     public static void validateTenantNameNotExists(JpaTenantRepository repo, String name) {
-        if (repo.existsByName(name)) {
+        if (Boolean.TRUE.equals(repo.existsByName(name))) {
             throw new ResourceAlreadyExistsException("There is already a tenant with that name");
         }
     }

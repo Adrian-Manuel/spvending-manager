@@ -24,8 +24,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final String REFRESH_TOKEN_COOKIE_NAME="refresh_token";
-    private final String ACCESS_TOKEN_COOKIE_NAME="access_token";
+    private static final String REFRESH_TOKEN_COOKIE_NAME="refresh_token";
+    private static final String ACCESS_TOKEN_COOKIE_NAME="access_token";
     @Transactional
     public UserResponse register(final RegisterRequest request){
         final User user = User.builder()
@@ -34,7 +34,7 @@ public class AuthService {
                 .role(request.getRole())
                 .build();
         final User savedUser = jpaUserRepository.save(user);
-        return new UserResponse(user.getUsername(), user.getRole());
+        return new UserResponse(savedUser.getUsername(), savedUser.getRole());
     }
     public UserResponse authenticate(final AuthRequest request, final HttpServletResponse response){
         authenticationManager.authenticate(

@@ -3,6 +3,9 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 public class CookieUtil {
+    private CookieUtil() {
+        throw new IllegalStateException("Utility class");
+    }
     public static Cookie createCookie(String name, String value, int maxAge, boolean httpOnly, boolean secure, String path) {
         Cookie cookie = new Cookie(name, value);
         cookie.setHttpOnly(httpOnly);
