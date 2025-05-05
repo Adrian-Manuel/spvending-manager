@@ -1,16 +1,11 @@
 package com.smart_padel.spvending_management_api.machine.infrastructure.persistence.entity;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
 import com.smart_padel.spvending_management_api.machine.domain.model.Machine;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -54,7 +49,7 @@ public class MachineEntity {
     @Schema(description = "Password used for remote access through RustDesk", example = "Padelprix2025")
     private String rustdeskPass;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clubId", nullable = false, referencedColumnName = "clubId")
     @Schema(description = "The club where this machine is installed or managed", implementation = ClubEntity.class)
     private ClubEntity club;

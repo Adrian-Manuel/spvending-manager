@@ -4,14 +4,14 @@ import com.smart_padel.spvending_management_api.user_manager.domain.model.UserMa
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.UserManagerDtoIn;
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.UserManagerDtoOutDetail;
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.UserManagerDtoOutPreview;
+
 import java.security.GeneralSecurityException;
 
-
 public class UserManagerMapper {
+
     private UserManagerMapper() {
         throw new IllegalStateException("Utility class");
     }
-    static AESGCMEncryption aesgcmEncryption;
 
     public static UserManagerDtoOutPreview toDtoPreview (UserManager userManager){
         return UserManagerDtoOutPreview.builder()
@@ -19,30 +19,32 @@ public class UserManagerMapper {
                 .userManagerId(userManager.getUserId())
                 .micronId(userManager.getMicronId())
                 .micronUser(userManager.getMicronUser())
-                .tenantEntityName(userManager.getTenantEntity() != null ? userManager.getTenantEntity().getName() : null)
-                .clubEntityName(userManager.getClub() != null ? userManager.getClub().getName() : null)
+                .tenantEntityName(userManager.getTenantName())
+                .clubEntityName(userManager.getClubName())
                 .build();
     }
-    public static UserManagerDtoOutDetail toDtoDetail(UserManager userManager) throws GeneralSecurityException {
+
+    public static UserManagerDtoOutDetail toDtoDetail(UserManager userManager, String aeSecretKey) throws GeneralSecurityException {
         return UserManagerDtoOutDetail.builder()
                 .userManagerId(userManager.getUserId())
                 .username(userManager.getUserName())
-                .password(aesgcmEncryption.decrypt(userManager.getPassword()))
+                .password(AESGCMEncryption.decrypt(userManager.getPassword(), aeSecretKey))
                 .micronId(userManager.getMicronId())
                 .micronUser(userManager.getMicronUser())
-                .micronPass(aesgcmEncryption.decrypt(userManager.getMicronPass()))
+                .micronPass(AESGCMEncryption.decrypt(userManager.getMicronPass(), aeSecretKey))
                 .userType(userManager.getUserType())
-                .clubEntityName(userManager.getClub() != null ? userManager.getClub().getName() : null)
-                .tenantEntityName(userManager.getTenantEntity() != null ? userManager.getTenantEntity().getName() : null)
+                .clubEntityName(userManager.getClubName())
+                .tenantEntityName(userManager.getTenantName())
                 .build();
     }
-    public static UserManager toModel(UserManagerDtoIn userManagerDtoIn) throws GeneralSecurityException {
+
+    public static UserManager toModel(UserManagerDtoIn userManagerDtoIn, String aeSecretKey) throws GeneralSecurityException {
         return UserManager.builder()
                 .userName(userManagerDtoIn.getUsername())
-                .password(aesgcmEncryption.encrypt(userManagerDtoIn.getPassword()))
+                .password(AESGCMEncryption.encrypt(userManagerDtoIn.getPassword(), aeSecretKey))
                 .micronId(userManagerDtoIn.getMicronId())
                 .micronUser(userManagerDtoIn.getMicronUser())
-                .micronPass(aesgcmEncryption.encrypt(userManagerDtoIn.getMicronPass()))
+                .micronPass(AESGCMEncryption.encrypt(userManagerDtoIn.getMicronPass(), aeSecretKey))
                 .userType(userManagerDtoIn.getUserType())
                 .build();
     }

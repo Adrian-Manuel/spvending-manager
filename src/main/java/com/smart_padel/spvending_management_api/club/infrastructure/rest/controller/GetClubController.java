@@ -25,7 +25,6 @@ import java.util.UUID;
 public class GetClubController {
     private final RetrieveClubUseCase retrieveClubUseCase;
     private final RetrieveMachineUseCase retrieveMachineUseCase;
-    private final MachineMapper machineMapper;
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping
     public ResponseEntity<Page<ClubDtoOutPreview>> getAllClubs(@RequestParam(required = false) String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
@@ -42,7 +41,7 @@ public class GetClubController {
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{clubId}/machines")
     public ResponseEntity<List<MachineDtoOutPreview>> getAllMachinesByClub(@PathVariable UUID clubId){
-        List<MachineDtoOutPreview> machines= retrieveMachineUseCase.findAllMachinesByClubId(clubId).stream().map(machineMapper::toDtoPreview).toList();
+        List<MachineDtoOutPreview> machines= retrieveMachineUseCase.findAllMachinesByClubId(clubId).stream().map(MachineMapper::toDtoPreview).toList();
         return new ResponseEntity<>(machines, HttpStatus.OK);
     }
     @PreAuthorize("hasAuthority('admin:read')")

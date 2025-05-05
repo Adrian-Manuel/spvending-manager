@@ -34,14 +34,15 @@ public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
     public UserManager save(UUID tenantId, UUID clubId, UserManager userManager) throws GeneralSecurityException {
         UserManagerHelperAdapter.validateClubOrTenant(tenantId, clubId, userManager.getUserType());
         UserManagerHelperAdapter.validateUserUniqueness(jpaUserManagerRepository, userManager);
+        UserManagerEntity userManagerEntity = UserManagerEntity.fromDomainModel(userManager);
         if (clubId != null) {
             ClubEntity clubEntity = ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId);
-            userManager.setClub(clubEntity);
+            userManagerEntity.setClubEntity(clubEntity);
         } else {
             TenantEntity tenantEntity = TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, tenantId);
-            userManager.setTenantEntity(tenantEntity);
+            userManagerEntity.setTenantEntity(tenantEntity);
         }
-        UserManagerEntity userManagerEntity = UserManagerEntity.fromDomainModel(userManager);
+
         userManagerEntity = jpaUserManagerRepository.save(userManagerEntity);
         return userManagerEntity.toDomainModel();
     }
@@ -49,15 +50,15 @@ public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
     public UserManager update(UUID tenantId, UUID clubId, UUID userManagerId, UserManager userManager) {
         UserManagerHelperAdapter.validateUserManagerExists(jpaUserManagerRepository, userManagerId);
         UserManagerHelperAdapter.validateClubOrTenant(tenantId, clubId, userManager.getUserType());
-        if (clubId != null) {
-            ClubEntity clubEntity = ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId);
-            userManager.setClub(clubEntity);
-        } else {
-            TenantEntity tenantEntity = TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, tenantId);
-            userManager.setTenantEntity(tenantEntity);
-        }
         userManager.setUserId(userManagerId);
         UserManagerEntity userManagerEntity = UserManagerEntity.fromDomainModel(userManager);
+        if (clubId != null) {
+            ClubEntity clubEntity = ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId);
+            userManagerEntity.setClubEntity(clubEntity);
+        } else {
+            TenantEntity tenantEntity = TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, tenantId);
+            userManagerEntity.setTenantEntity(tenantEntity);
+        }
         userManagerEntity = jpaUserManagerRepository.save(userManagerEntity);
         return userManagerEntity.toDomainModel();
     }

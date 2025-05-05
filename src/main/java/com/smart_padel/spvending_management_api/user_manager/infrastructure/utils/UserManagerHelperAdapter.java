@@ -36,7 +36,7 @@ public class UserManagerHelperAdapter {
     }
     public static void validateUserManagerExists(JpaUserManagerRepository repo, UUID userManagerId) {
         if (!repo.existsById(userManagerId)) {
-            throw new ResourceNotFoundException("The club does not exist");
+            throw new ResourceNotFoundException("The userManager does not exist");
         }
     }
 

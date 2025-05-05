@@ -1,7 +1,4 @@
 package com.smart_padel.spvending_management_api.shared.utils;
-import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import javax.crypto.*;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
@@ -12,9 +9,11 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.KeySpec;
 import java.util.Base64;
 
-@Service
-public class AESGCMEncryption {
 
+public class AESGCMEncryption {
+    private AESGCMEncryption() {
+        throw new IllegalStateException("Utility class");
+    }
     private static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;
     private static final int IV_LENGTH_BYTE = 12;   // 96 bits recomendado para GCM
@@ -22,19 +21,12 @@ public class AESGCMEncryption {
     private static final int KEY_LENGTH_BIT = 256;
     private static final int ITERATION_COUNT = 65536;
 
-    @Value("${app.AESecret_key}")
-    private String aeSecretKey;
-
-    @PostConstruct
-    private void validateSecret() {
+    public static String encrypt(String plainText, String aeSecretKey) throws GeneralSecurityException {
+        byte[] salt = generateRandomBytes(SALT_LENGTH_BYTE);
+        byte[] iv = generateRandomBytes(IV_LENGTH_BYTE);
         if (aeSecretKey == null || aeSecretKey.length() < 12) {
             throw new IllegalArgumentException("The encryption secret key must be defined and at least 12 characters long.");
         }
-    }
-
-    public String encrypt(String plainText) throws GeneralSecurityException {
-        byte[] salt = generateRandomBytes(SALT_LENGTH_BYTE);
-        byte[] iv = generateRandomBytes(IV_LENGTH_BYTE);
 
         SecretKeySpec keySpec = deriveKey(aeSecretKey, salt);
 
@@ -52,8 +44,11 @@ public class AESGCMEncryption {
         return Base64.getEncoder().encodeToString(combined);
     }
 
-    public String decrypt(String encryptedText) throws GeneralSecurityException {
+    public static String decrypt(String encryptedText, String aeSecretKey) throws GeneralSecurityException {
         byte[] decoded = Base64.getDecoder().decode(encryptedText);
+        if (aeSecretKey == null || aeSecretKey.length() < 12) {
+            throw new IllegalArgumentException("The encryption secret key must be defined and at least 12 characters long.");
+        }
 
         if (decoded.length < SALT_LENGTH_BYTE + IV_LENGTH_BYTE) {
             throw new IllegalArgumentException("Encrypted text is too short or corrupted.");
@@ -77,14 +72,14 @@ public class AESGCMEncryption {
         return new String(decryptedBytes, StandardCharsets.UTF_8);
     }
 
-    private SecretKeySpec deriveKey(String secret, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    private static SecretKeySpec deriveKey(String secret, byte[] salt) throws NoSuchAlgorithmException, InvalidKeySpecException {
         SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
         KeySpec spec = new PBEKeySpec(secret.toCharArray(), salt, ITERATION_COUNT, KEY_LENGTH_BIT);
         byte[] keyBytes = factory.generateSecret(spec).getEncoded();
         return new SecretKeySpec(keyBytes, "AES");
     }
 
-    private byte[] generateRandomBytes(int length) {
+    private static byte[] generateRandomBytes(int length) {
         byte[] bytes = new byte[length];
         new SecureRandom().nextBytes(bytes);
         return bytes;

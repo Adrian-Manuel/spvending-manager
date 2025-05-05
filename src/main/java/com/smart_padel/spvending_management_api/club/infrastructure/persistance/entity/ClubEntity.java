@@ -1,7 +1,10 @@
 package com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.smart_padel.spvending_management_api.club.domain.model.Club;
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.persistence.entity.UserManagerEntity;
 import com.smart_padel.spvending_management_api.machine.infrastructure.persistence.entity.MachineEntity;
@@ -52,14 +55,14 @@ public class ClubEntity {
     private String micronId;
 
     @Filtrable(name="tenantEntity.name")
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenantId", nullable = false, referencedColumnName = "tenantId")
     private TenantEntity tenantEntity;
 
     @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<MachineEntity> machineEntities;
-
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "clubEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<UserManagerEntity> userManagerEntities;
 
     public static ClubEntity fromDomainModel(Club club){
@@ -67,15 +70,12 @@ public class ClubEntity {
                 .clubId(club.getClubId())
                 .address(club.getAddress())
                 .cif(club.getCif())
-                .machineEntities(club.getMachineEntities())
                 .email(club.getEmail())
                 .micronId(club.getMicronId())
                 .name(club.getName())
                 .phone(club.getPhone())
                 .remark(club.getRemark())
                 .accountingId(club.getAccountingId())
-                .tenantEntity(club.getTenantEntity())
-                .userManagerEntities(club.getUserManagerEntities())
                 .build();
     }
     public Club toDomainModel(){
@@ -83,15 +83,15 @@ public class ClubEntity {
                 .clubId(clubId)
                 .address(address)
                 .cif(cif)
-                .machineEntities(machineEntities)
                 .email(email)
                 .micronId(micronId)
                 .name(name)
                 .phone(phone)
                 .remark(remark)
                 .accountingId(accountingId)
-                .tenantEntity(tenantEntity)
-                .userManagerEntities(userManagerEntities)
+                .tenantName(tenantEntity.getName())
+                .machinesCount(machineEntities !=null ? machineEntities.size() : 0)
+                .managers(userManagerEntities!=null ? userManagerEntities.stream().map(UserManagerEntity::getUserName).toList(): Collections.emptyList())
                 .build();
     }
 }

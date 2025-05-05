@@ -6,10 +6,13 @@ import com.smart_padel.spvending_management_api.machine.infrastructure.dto.Machi
 import com.smart_padel.spvending_management_api.machine.infrastructure.dto.mapper.MachineMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.GeneralSecurityException;
 import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
@@ -18,12 +21,13 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutMachineController {
     private final UpdateMachineUseCase updateMachineUseCase;
-    private final MachineMapper machineMapper;
+    @Value("${app.AESecret_key}")
+    private String aeSecretKey;
     @PreAuthorize("hasAuthority('admin:update')")
     @PutMapping("/{machineId}")
-    public ResponseEntity<MachineDtoOutDetail> updateMachine(@PathVariable UUID machineId, @Valid @RequestBody MachineDtoIn machineDtoIn) throws Exception {
-        Machine machineRequest= machineMapper.toModel(machineDtoIn);
+    public ResponseEntity<MachineDtoOutDetail> updateMachine(@PathVariable UUID machineId, @Valid @RequestBody MachineDtoIn machineDtoIn) throws GeneralSecurityException {
+        Machine machineRequest= MachineMapper.toModel(machineDtoIn, aeSecretKey);
         machineRequest=updateMachineUseCase.updateMachine(machineDtoIn.getClubId(),machineId, machineRequest);
-        return new ResponseEntity<>(machineMapper.toDtoDetail(machineRequest), HttpStatus.OK);
+        return new ResponseEntity<>(MachineMapper.toDtoDetail(machineRequest, aeSecretKey), HttpStatus.OK);
     }
 }

@@ -1,5 +1,7 @@
 package com.smart_padel.spvending_management_api.user_manager.infrastructure.persistence.entity;
 import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
 import com.smart_padel.spvending_management_api.shared.utils.Filtrable;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.entity.TenantEntity;
@@ -33,14 +35,16 @@ public class UserManagerEntity {
     private String micronPass;
     @Column(name = "usertype", nullable = false)
     private String userType;
+
     @Filtrable(name = "tenantEntity.name")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenantId", referencedColumnName = "tenantId", nullable = true)
     private TenantEntity tenantEntity;
-    @Filtrable(name = "club.name")
-    @ManyToOne (cascade = CascadeType.ALL)
+
+    @Filtrable(name = "clubEntity.name")
+    @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "clubId", referencedColumnName = "clubId", nullable = true)
-    private ClubEntity club;
+    private ClubEntity clubEntity;
 
     public static UserManagerEntity fromDomainModel(UserManager userManager){
         return UserManagerEntity.builder()
@@ -51,8 +55,6 @@ public class UserManagerEntity {
                 .micronUser(userManager.getMicronUser())
                 .micronPass(userManager.getMicronPass())
                 .userType(userManager.getUserType())
-                .tenantEntity(userManager.getTenantEntity())
-                .club(userManager.getClub())
                 .build();
     }
     public UserManager toDomainModel(){
@@ -64,8 +66,8 @@ public class UserManagerEntity {
                 .micronUser(micronUser)
                 .micronPass(micronPass)
                 .userType(userType)
-                .tenantEntity(tenantEntity)
-                .club(club)
+                .tenantName(tenantEntity!=null ? tenantEntity.getName():null)
+                .clubName(clubEntity!=null ? clubEntity.getName():null)
                 .build();
     }
 }

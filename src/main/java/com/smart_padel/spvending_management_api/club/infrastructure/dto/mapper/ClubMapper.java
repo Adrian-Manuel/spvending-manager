@@ -4,20 +4,19 @@ import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoI
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutDetail;
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutPreview;
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutSummary;
-import com.smart_padel.spvending_management_api.user_manager.infrastructure.persistence.entity.UserManagerEntity;
-import java.util.Collections;
 public class ClubMapper {
     private ClubMapper() {
         throw new IllegalStateException("Mapper class");
     }
     public static ClubDtoOutPreview toDtoPreview(Club club) {
         return ClubDtoOutPreview.builder()
-        .clubId( club.getClubId() )
-        .name( club.getName() )
-        .address( club.getAddress() )
-        .phone( club.getPhone() )
-        .tenantEntityName(club.getTenantEntity().getName())
-        .machinesCount((club.getMachineEntities()!=null) ? club.getMachineEntities().size(): 0).build();
+                .clubId( club.getClubId() )
+                .name( club.getName() )
+                .address( club.getAddress() )
+                .phone( club.getPhone() )
+                .tenantEntityName(club.getTenantName())
+                .machinesCount(club.getMachinesCount())
+                .build();
     }
     public static ClubDtoOutDetail toDtoDetail(Club club) {
     return  ClubDtoOutDetail.builder()
@@ -29,13 +28,9 @@ public class ClubMapper {
             .email( club.getEmail() )
             .remark( club.getRemark() )
             .accountingId( club.getAccountingId() )
-            .tenantEntityName(club.getTenantEntity().getName())
+            .tenantEntityName(club.getTenantName())
             .micronId(club.getMicronId())
-            .userManagers((club.getUserManagerEntities() !=null) ? club.getUserManagerEntities()
-                    .stream()
-                    .map(UserManagerEntity::getUserName)
-                    .toList()
-                    : Collections.emptyList())
+            .userManagers(club.getManagers())
             .build();
     }
     public static Club toModel(ClubDtoIn clubDtoIn){

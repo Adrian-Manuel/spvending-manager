@@ -1,11 +1,9 @@
 package com.smart_padel.spvending_management_api.tenant.infrastructure.dto.mapper;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutSummary;
-import com.smart_padel.spvending_management_api.user_manager.domain.model.UserManager;
 import com.smart_padel.spvending_management_api.tenant.domain.model.Tenant;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoIn;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutPreview;
-import java.util.Collections;
 public class TenantMapper {
     private TenantMapper() {
         throw new IllegalStateException("Mapper class");
@@ -17,7 +15,7 @@ public class TenantMapper {
                 .name( tenant.getName() )
                 .phone( tenant.getPhone() )
                 .email( tenant.getEmail() )
-                .clubsCount((tenant.getClubs()!=null)?tenant.getClubs().size():0)
+                .clubsCount(tenant.getClubsCount())
                 .build();
     }
     public static TenantDtoOutDetail toDtoDetail(Tenant tenant) {
@@ -30,11 +28,7 @@ public class TenantMapper {
                 .address(tenant.getAddress())
                 .remark(tenant.getRemark())
                 .micronId(tenant.getMicronId())
-                .managers(tenant.getUserManagers() !=null ? tenant.getUserManagers()
-                        .stream()
-                        .map(UserManager::getUserName)
-                        .toList()
-                        : Collections.emptyList())
+                .managers(tenant.getManagers())
                 .build();
     }
     public static Tenant toModel(TenantDtoIn tenantDto) {

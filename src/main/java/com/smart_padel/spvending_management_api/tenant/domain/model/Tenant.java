@@ -1,10 +1,9 @@
 package com.smart_padel.spvending_management_api.tenant.domain.model;
-import com.smart_padel.spvending_management_api.user_manager.domain.model.UserManager;
-import com.smart_padel.spvending_management_api.club.domain.model.Club;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
 import java.util.List;
 import java.util.UUID;
 @Data
@@ -20,6 +19,6 @@ public class Tenant {
     private String email;
     private String remark;
     private String micronId;
-    private List<Club> clubs;
-    private List <UserManager> userManagers;
+    private int clubsCount;
+    private List<String> managers;
 }

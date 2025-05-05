@@ -4,18 +4,13 @@ import com.smart_padel.spvending_management_api.machine.infrastructure.dto.Machi
 import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachineDtoOutDetail;
 import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachineDtoOutPreview;
 import com.smart_padel.spvending_management_api.shared.utils.AESGCMEncryption;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.security.GeneralSecurityException;
-
-@Service
-@RequiredArgsConstructor
 public class MachineMapper {
-
-     private final AESGCMEncryption aesgcmEncryption;
-
-    public MachineDtoOutPreview toDtoPreview(Machine machine){
+    private MachineMapper() {
+        throw new IllegalStateException("Utility class");
+    }
+    public static MachineDtoOutPreview toDtoPreview(Machine machine){
         return MachineDtoOutPreview.builder()
                 .machineId(machine.getMachineId())
                 .code(machine.getCode())
@@ -26,7 +21,7 @@ public class MachineMapper {
                 .build();
     }
 
-    public MachineDtoOutDetail toDtoDetail (Machine machine) throws GeneralSecurityException {
+    public static MachineDtoOutDetail toDtoDetail (Machine machine,String aeSecretKey) throws GeneralSecurityException {
         return MachineDtoOutDetail.builder()
                 .machineId(machine.getMachineId())
                 .code(machine.getCode())
@@ -35,20 +30,20 @@ public class MachineMapper {
                 .terminalId(machine.getTerminalId())
                 .toaSerialNumber(machine.getToaSerialNumber())
                 .rustdeskId(machine.getRustdeskId())
-                .rustdeskPass(aesgcmEncryption.decrypt(machine.getRustdeskPass()))
-                .smartFridgePassword(aesgcmEncryption.decrypt(machine.getSmartFridgePassword()))
+                .rustdeskPass(AESGCMEncryption.decrypt(machine.getRustdeskPass(), aeSecretKey))
+                .smartFridgePassword(AESGCMEncryption.decrypt(machine.getSmartFridgePassword(), aeSecretKey))
                 .build();
     }
 
-    public Machine toModel(MachineDtoIn machineDtoIn) throws GeneralSecurityException {
+    public static Machine toModel(MachineDtoIn machineDtoIn, String aeSecretKey) throws GeneralSecurityException {
         return Machine.builder()
                 .code(machineDtoIn.getCode())
                 .smartFridgeId(machineDtoIn.getSmartFridgeId())
                 .terminalId(machineDtoIn.getTerminalId())
                 .toaSerialNumber(machineDtoIn.getToaSerialNumber())
                 .rustdeskId(machineDtoIn.getRustdeskId())
-                .rustdeskPass(aesgcmEncryption.encrypt(machineDtoIn.getRustdeskPass()))
-                .smartFridgePassword(aesgcmEncryption.encrypt(machineDtoIn.getSmartFridgePassword()))
+                .rustdeskPass(AESGCMEncryption.encrypt(machineDtoIn.getRustdeskPass(), aeSecretKey))
+                .smartFridgePassword(AESGCMEncryption.encrypt(machineDtoIn.getSmartFridgePassword(), aeSecretKey))
                 .build();
     }
 }

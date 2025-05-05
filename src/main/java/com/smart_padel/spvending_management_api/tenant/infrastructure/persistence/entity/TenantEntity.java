@@ -1,7 +1,9 @@
 package com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.entity;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.smart_padel.spvending_management_api.club.domain.model.Club;
 import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
 import com.smart_padel.spvending_management_api.shared.utils.Filtrable;
@@ -51,10 +53,10 @@ public class TenantEntity {
 
     @Column(name = "micron_id")
     private String micronId;
-
+    @JsonManagedReference
     @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<ClubEntity> clubs;
-
+    private List<ClubEntity> clubsEntities;
+    @JsonManagedReference
     @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<UserManagerEntity> userManagerEntities;
 
@@ -63,17 +65,11 @@ public class TenantEntity {
                 .tenantId(tenant.getTenantId())
                 .address(tenant.getAddress())
                 .cif(tenant.getCif())
-                .clubs(tenant.getClubs() != null
-                        ? tenant.getClubs().stream().map(ClubEntity::fromDomainModel).toList()
-                        : List.of())
                 .email(tenant.getEmail())
                 .micronId(tenant.getMicronId())
                 .name(tenant.getName())
                 .phone(tenant.getPhone())
                 .remark(tenant.getRemark())
-                .userManagerEntities(tenant.getUserManagers() != null
-                        ? tenant.getUserManagers().stream().map(UserManagerEntity::fromDomainModel).toList()
-                        : List.of())
                 .build();
     }
     public Tenant toDomainModel(){
@@ -81,17 +77,13 @@ public class TenantEntity {
                 .tenantId(tenantId)
                 .address(address)
                 .cif(cif)
-                .clubs(clubs != null
-                        ? clubs.stream().map(ClubEntity::toDomainModel).toList()
-                        : List.of())
                 .email(email)
                 .micronId(micronId)
                 .name(name)
                 .phone(phone)
                 .remark(remark)
-                .userManagers(userManagerEntities != null
-                        ? userManagerEntities.stream().map(UserManagerEntity::toDomainModel).toList()
-                        : List.of())
+                .clubsCount(clubsEntities !=null ? clubsEntities.size(): 0)
+                .managers(userManagerEntities!=null ? userManagerEntities.stream().map(UserManagerEntity::getUserName).toList():Collections.emptyList())
                 .build();
     }
 }

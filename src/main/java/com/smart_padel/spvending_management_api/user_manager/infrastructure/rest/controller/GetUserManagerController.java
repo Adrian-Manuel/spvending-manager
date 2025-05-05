@@ -5,6 +5,7 @@ import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.UserManagerDtoOutPreview;
 import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.mapper.UserManagerMapper;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +23,8 @@ import java.util.UUID;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GetUserManagerController {
     private final RetrieveUserManagerUseCase retrieveUserManagerUseCase;
+    @Value("${app.AESecret_key}")
+    private String aeSecretKey;
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping
     public ResponseEntity<Page<UserManagerDtoOutPreview>> getAllUserManagers(@RequestParam(required = false) String search,
@@ -35,7 +38,7 @@ public class GetUserManagerController {
     @GetMapping("/{userManagerId}")
     public ResponseEntity<UserManagerDtoOutDetail> getUserManagerById(@PathVariable UUID userManagerId) throws GeneralSecurityException {
         UserManager userManagerRequest=retrieveUserManagerUseCase.getUserManagerById(userManagerId);
-        return new ResponseEntity<>(UserManagerMapper.toDtoDetail(userManagerRequest),HttpStatus.OK);
+        return new ResponseEntity<>(UserManagerMapper.toDtoDetail(userManagerRequest, aeSecretKey),HttpStatus.OK);
     }
 
 }
