@@ -12,7 +12,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/clubs")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class DeleteClubController {
     private final DeleteClubUseCase deleteClubUseCase;
     @PreAuthorize("hasAuthority('admin:delete')")

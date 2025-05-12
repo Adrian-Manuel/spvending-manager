@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.GeneralSecurityException;
 @RestController
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/user-managers")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostUserManagerController {

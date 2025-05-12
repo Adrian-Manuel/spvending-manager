@@ -16,7 +16,6 @@ import java.security.GeneralSecurityException;
 import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/user-managers")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutUserManagerController {

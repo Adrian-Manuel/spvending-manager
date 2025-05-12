@@ -32,8 +32,8 @@ public class MachineRepositoryAdapter implements MachineRepositoryPort {
     @Override
     public Machine save(UUID clubId, Machine machine) {
         ClubEntity clubEntity= ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId);
-        machine.setClub(clubEntity);
         MachineEntity machineEntity=MachineEntity.fromDomainModel(machine);
+        machineEntity.setClub(clubEntity);
         return jpaMachineRepository.save(machineEntity).toDomainModel();
     }
     @Override

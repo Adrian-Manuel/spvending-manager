@@ -16,14 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/tenants")
-@PreAuthorize("hasRole('ADMIN')")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostTenantController {
     private final CreateTenantUseCase createTenantUseCase;
     @PreAuthorize("hasAuthority('admin:create')")
     @PostMapping
-    public ResponseEntity<TenantDtoOutPreview> createTenant(@RequestBody @Valid TenantDtoIn tenantDtoIn){
+    public ResponseEntity<TenantDtoOutPreview> createTenant(@Valid @RequestBody TenantDtoIn tenantDtoIn){
         Tenant tenantRequest=TenantMapper.toModel(tenantDtoIn);
         tenantRequest=createTenantUseCase.createTenant(tenantRequest);
         return new ResponseEntity<>(TenantMapper.toDtoPreview(tenantRequest), HttpStatus.CREATED);

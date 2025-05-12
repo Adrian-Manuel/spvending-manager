@@ -13,7 +13,6 @@ import java.util.UUID;
 @RequestMapping("/api/v1/machines")
 @RestController
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DeleteMachineController {
     private final DeleteMachineUseCase deleteMachineUseCase;

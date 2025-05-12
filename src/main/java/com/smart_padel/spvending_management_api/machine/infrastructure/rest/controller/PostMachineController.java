@@ -21,7 +21,6 @@ import java.security.GeneralSecurityException;
 @RestController
 @RequestMapping("/api/v1/machines")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostMachineController {
     @Value("${app.AESecret_key}")

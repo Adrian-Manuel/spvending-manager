@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/clubs")
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 public class PostClubController {
    private final CreateClubUseCase createClubUseCase;
     @PreAuthorize("hasAuthority('admin:create')")

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
-@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/tenants")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutTenantController {

@@ -4,7 +4,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 import java.util.function.Function;
 public class PersistenceUtils {
-    private PersistenceUtils() {
+    PersistenceUtils() {
         throw new IllegalStateException("Utility class");
     }
     public static <T, R> Page<R> mapPageOrThrow(Page<T> page, String errorMessage, Function<T, R> mapper) {

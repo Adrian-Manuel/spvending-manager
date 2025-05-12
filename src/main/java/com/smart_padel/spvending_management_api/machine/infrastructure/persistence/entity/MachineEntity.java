@@ -4,6 +4,7 @@ import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
 import com.smart_padel.spvending_management_api.machine.domain.model.Machine;
+import com.smart_padel.spvending_management_api.shared.utils.Filtrable;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,22 +22,26 @@ public class MachineEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID machineId;
 
+    @Filtrable
     @Column(name = "code", nullable = false, unique = true)
-    @Schema(description = "Unique internal code of the machine", example = "2341")
     private String code;
 
+    @Column(name = "micronId")
+    private String micronId;
+
+    @Filtrable
     @Column(name = "smartFridgeId",unique = true, nullable = false)
-    @Schema(description = "ID assigned to the smart fridge module of the machine", example = "12")
     private String smartFridgeId;
 
     @Column(name = "smartFridgPassword", nullable = false)
-    @Schema(description = "Password to access the smart fridge", example = "abc123.")
     private String smartFridgePassword;
 
+    @Filtrable
     @Column(name = "terminalId",unique = true, nullable = false)
     @Schema(description = "Unique terminal ID used for payment or control systems", example = "14")
     private String terminalId;
 
+    @Filtrable
     @Column(name = "toaSerialNumber", nullable = false, unique = true)
     @Schema(description = "Serial number assigned by TOA (provider or manufacturer)", example = "14455")
     private String toaSerialNumber;
@@ -49,6 +54,7 @@ public class MachineEntity {
     @Schema(description = "Password used for remote access through RustDesk", example = "Padelprix2025")
     private String rustdeskPass;
 
+    @Filtrable(name = "club.name")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clubId", nullable = false, referencedColumnName = "clubId")
     @Schema(description = "The club where this machine is installed or managed", implementation = ClubEntity.class)
@@ -64,7 +70,7 @@ public class MachineEntity {
                 .toaSerialNumber(machine.getToaSerialNumber())
                 .rustdeskId(machine.getRustdeskId())
                 .rustdeskPass(machine.getRustdeskPass())
-                .club(machine.getClub())
+                .micronId(machine.getMicronId())
                 .build();
     }
     public Machine toDomainModel(){
@@ -77,7 +83,8 @@ public class MachineEntity {
                 .toaSerialNumber(toaSerialNumber)
                 .rustdeskId(rustdeskId)
                 .rustdeskPass(rustdeskPass)
-                .club(club)
+                .clubName(club.getName())
+                .micronId(micronId)
                 .build();
     }
 

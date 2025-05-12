@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 @RestController
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -29,7 +28,12 @@ public class GetTenantController {
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping
     public ResponseEntity <Page<TenantDtoOutPreview>> getAllTenants(@RequestParam(required = false) String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        if (size<1 || page<0){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         Pageable pageable = PageRequest.of(page, size);
+
         Page<TenantDtoOutPreview> tenants = (search != null)
                 ? retrieveTenantUseCase.getAllTenants(search, pageable).map(TenantMapper::toDtoPreview)
                 : retrieveTenantUseCase.getAllTenants(pageable).map(TenantMapper::toDtoPreview);

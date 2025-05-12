@@ -8,11 +8,20 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<String> handleTypeMismatch(MethodArgumentTypeMismatchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("Invalid parameter: " + ex.getName());
+    }
+
     private static final String ERROR = "Error";
     @ExceptionHandler(NotResourcesFoundException.class)
     public ResponseEntity<Map<String, String>> handleNotResourcesFoundException(NotResourcesFoundException ex){
@@ -89,5 +98,12 @@ public class GlobalExceptionHandler {
         Map<String, String> errors=new HashMap<>();
         errors.put(ERROR, "An unexpected error ocurred: "+ ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);
+    }
+
+    @ExceptionHandler({ IllegalArgumentException.class })
+    public ResponseEntity<Map<String, String>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        Map<String, String> errors=new HashMap<>();
+        errors.put(ERROR, "Invalid Parameter: "+ ex.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 }

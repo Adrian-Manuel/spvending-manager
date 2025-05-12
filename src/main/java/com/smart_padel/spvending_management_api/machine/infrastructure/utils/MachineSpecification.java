@@ -8,9 +8,15 @@ public class MachineSpecification {
         throw new IllegalStateException("Specification class");
     }
     public static Specification<MachineEntity> withFilter(String filter) {
+        if (filter == null || filter.isEmpty()) {
+            return (root, query, criteriaBuilder) -> criteriaBuilder.conjunction();
+        }
         return SpecificationUtils.buildFilterSpec(MachineEntity.class, filter);
     }
     public static Specification<MachineEntity> belongsToClub(UUID clubId) {
+        if (clubId == null) {
+            throw new IllegalArgumentException("clubId must not be null");
+        }
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("club").get("clubId"), clubId);
     }
 }

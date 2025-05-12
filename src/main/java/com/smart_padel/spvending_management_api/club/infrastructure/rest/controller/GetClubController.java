@@ -21,7 +21,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/clubs")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 public class GetClubController {
     private final RetrieveClubUseCase retrieveClubUseCase;
     private final RetrieveMachineUseCase retrieveMachineUseCase;

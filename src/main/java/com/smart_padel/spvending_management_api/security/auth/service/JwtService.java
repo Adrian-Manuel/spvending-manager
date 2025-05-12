@@ -25,6 +25,9 @@ public class JwtService {
         return Keys.hmacShaKeyFor(keyBytes);
     }
     public String extractUsername(String token){
+        if (token == null || token.trim().isEmpty()) {
+            throw new IllegalArgumentException("Token cannot be null or empty");
+        }
         return Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()
@@ -49,7 +52,7 @@ public class JwtService {
     public String generateRefreshToken(final User user){
         return buildToken(user, refreshExpiration);
     }
-    private Date extractExpiration(String token){
+    Date extractExpiration(String token){
         return Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()
@@ -57,13 +60,23 @@ public class JwtService {
                 .getPayload()
                 .getExpiration();
     }
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    boolean isTokenExpired(String token) {
+        try {
+            return extractExpiration(token).before(new Date());
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            return true;
+        }
     }
     public Boolean isTokenValid(String token, UserDetails user){
-        final String username = extractUsername(token);
-
-        return (username.equals(user.getUsername())) && !isTokenExpired(token);
+        try {
+            if (token == null || token.trim().isEmpty()) {
+                return false;
+            }
+            final String username = extractUsername(token);
+            return (username.equals(user.getUsername())) && !isTokenExpired(token);
+        } catch (Exception exception) {
+            return false;
+        }
     }
     public long getJwtExpiration(String token){
         Claims claims=Jwts.parser()

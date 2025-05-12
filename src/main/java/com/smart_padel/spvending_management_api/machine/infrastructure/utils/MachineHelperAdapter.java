@@ -7,6 +7,10 @@ public class MachineHelperAdapter {
         throw new IllegalStateException("Helper class");
     }
     public static void validateMachineExists(JpaMachineRepository repo, UUID machineId){
+        if (machineId==null){
+            throw new IllegalArgumentException("Machine ID cannot be null");
+        }
+
         if(!repo.existsById(machineId)){
             throw new ResourceNotFoundException("The machine does not exist");
         }

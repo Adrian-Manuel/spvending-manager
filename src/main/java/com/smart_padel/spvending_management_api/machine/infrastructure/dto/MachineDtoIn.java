@@ -21,6 +21,9 @@ public class MachineDtoIn {
     @NotNull(message = "The Smart Fridge ID of the machine is required")
     @Schema(description = "ID assigned to the smart fridge module of the machine", example = "12")
     private String smartFridgeId;
+    @NotNull(message = "The Micron ID of the machine is required")
+    @Schema(description = "ID assigned to the machine by Micron", example = "12")
+    private String micronId;
     @NotNull(message = "The Smart Fridge password of the machine is required")
     @Schema(description = "Password to access the smart fridge", example = "abc123.")
     private String smartFridgePassword;

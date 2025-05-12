@@ -1,6 +1,6 @@
 package com.smart_padel.spvending_management_api.club.infrastructure.rest.controller;
-import com.smart_padel.spvending_management_api.club.application.usecases.UpdateClubUseCaseImpl;
 import com.smart_padel.spvending_management_api.club.domain.model.Club;
+import com.smart_padel.spvending_management_api.club.domain.ports.in.UpdateClubUseCase;
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoIn;
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutDetail;
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.mapper.ClubMapper;
@@ -13,11 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 @RequiredArgsConstructor
 @RestController
-@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/clubs")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutClubController {
-    private final UpdateClubUseCaseImpl updateClubUseCase;
+    private final UpdateClubUseCase updateClubUseCase;
     @PreAuthorize("hasAuthority('admin:update')")
     @PutMapping("/{clubId}")
     public ResponseEntity<ClubDtoOutDetail> updateClub(@PathVariable UUID clubId, @Valid @RequestBody ClubDtoIn clubDtoIn){

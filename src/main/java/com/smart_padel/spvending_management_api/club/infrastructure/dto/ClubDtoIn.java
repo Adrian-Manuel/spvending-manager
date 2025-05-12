@@ -36,7 +36,7 @@ public class ClubDtoIn {
     @Schema(description = "Optional remarks or notes about the club", example = "Club prefers weekend tournaments only.")
     private String remark;
     private String micronId;
-    @NotNull(message = "tenant name is required")
+    @NotNull(message = "tenant Id is required")
     private UUID tenantId;
     @NotNull(message = "accountingId is required")
     @Schema(description = "ID used for accounting purposes", example = "ACC-4567")

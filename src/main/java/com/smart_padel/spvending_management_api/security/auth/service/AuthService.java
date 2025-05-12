@@ -4,11 +4,14 @@ import com.smart_padel.spvending_management_api.security.auth.dto.RegisterReques
 import com.smart_padel.spvending_management_api.security.auth.dto.UserResponse;
 import com.smart_padel.spvending_management_api.security.auth.util.CookieUtil;
 import com.smart_padel.spvending_management_api.security.auth.repository.JpaUserRepository;
+import com.smart_padel.spvending_management_api.security.config.SecurityConfig;
 import com.smart_padel.spvending_management_api.security.user.User;
+import com.smart_padel.spvending_management_api.shared.exceptions.ResourceAlreadyExistsException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,9 +31,13 @@ public class AuthService {
     private static final String ACCESS_TOKEN_COOKIE_NAME="access_token";
     @Transactional
     public UserResponse register(final RegisterRequest request){
+        if (jpaUserRepository.findByUsername(request.getUsername()).isPresent()){
+            throw new ResourceAlreadyExistsException("User already exists");
+        }
+
         final User user = User.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
+                .username(request.getUsername().trim())
+                .password(passwordEncoder.encode(request.getPassword().trim()))
                 .role(request.getRole())
                 .build();
         final User savedUser = jpaUserRepository.save(user);
@@ -39,11 +46,11 @@ public class AuthService {
     public UserResponse authenticate(final AuthRequest request, final HttpServletResponse response){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.username(),
-                        request.password()
+                        request.getUsername(),
+                        request.getPassword()
                 )
         );
-        final User user= jpaUserRepository.findByUsername(request.username()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
+        final User user= jpaUserRepository.findByUsername(request.getUsername()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         final String accessToken = jwtService.generateToken(user);
         final String refreshToken = jwtService.generateRefreshToken(user);
         Cookie accessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,"/");
@@ -57,17 +64,20 @@ public class AuthService {
         if (refreshTokenValue == null || refreshTokenValue.trim().isEmpty()) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Authentication required: Refresh token cookie missing or empty.");
+            return null;
         }
         final String username = jwtService.extractUsername(refreshTokenValue);
         if (username==null){
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid Refresh Token: Username cant be found");
+            return null;
         }
         final User user = this.jpaUserRepository.findByUsername(username).orElseThrow();
         final boolean isTokenValid= jwtService.isTokenValid(refreshTokenValue, user);
         if (!isTokenValid) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write("Invalid refresh token: Token validation failed.");
+            return null;
         }
         final  String accessToken= jwtService.generateRefreshToken(user);
         Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,"/");

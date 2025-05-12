@@ -4,7 +4,7 @@ import com.smart_padel.spvending_management_api.club.infrastructure.persistance.
 import com.smart_padel.spvending_management_api.shared.exceptions.ResourceNotFoundException;
 import java.util.UUID;
 public class ClubHelperAdapter {
-    private ClubHelperAdapter() {
+    ClubHelperAdapter() {
         throw new IllegalStateException("Helper class");
     }
     public static ClubEntity getClubOrThrow(JpaClubRepository repo, UUID clubId) {

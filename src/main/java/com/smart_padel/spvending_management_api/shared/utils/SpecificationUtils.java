@@ -33,7 +33,12 @@ public class SpecificationUtils {
             return criteriaBuilder.or(predicates.toArray(new Predicate[0]));
         };
     }
-    private static Path<?> getPath(From<?, ?> root, String path) {
+    static Path<?> getPath(From<?, ?> root, String path) {
+        if (path==null || path.trim().isEmpty()) {
+
+            throw new IllegalArgumentException("Path cannot be null");
+        }
+
         String[] parts = path.split("\\.");
         From<?, ?> from = root;
         Path<?> result = root;

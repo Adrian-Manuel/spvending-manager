@@ -24,6 +24,11 @@ public class AESGCMEncryption {
     public static String encrypt(String plainText, String aeSecretKey) throws GeneralSecurityException {
         byte[] salt = generateRandomBytes(SALT_LENGTH_BYTE);
         byte[] iv = generateRandomBytes(IV_LENGTH_BYTE);
+
+        if (plainText==null || plainText.isEmpty()) {
+            throw new IllegalArgumentException("The text to encrypt must be defined.");
+        }
+
         if (aeSecretKey == null || aeSecretKey.length() < 12) {
             throw new IllegalArgumentException("The encryption secret key must be defined and at least 12 characters long.");
         }
@@ -45,6 +50,10 @@ public class AESGCMEncryption {
     }
 
     public static String decrypt(String encryptedText, String aeSecretKey) throws GeneralSecurityException {
+        if (encryptedText == null) {
+            throw new IllegalArgumentException("Encrypted text is too short or corrupted.");
+        }
+
         byte[] decoded = Base64.getDecoder().decode(encryptedText);
         if (aeSecretKey == null || aeSecretKey.length() < 12) {
             throw new IllegalArgumentException("The encryption secret key must be defined and at least 12 characters long.");

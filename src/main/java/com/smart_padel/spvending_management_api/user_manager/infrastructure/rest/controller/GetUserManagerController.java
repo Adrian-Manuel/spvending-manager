@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 import java.security.GeneralSecurityException;
 import java.util.UUID;
 @RestController
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 @RequestMapping("/api/v1/user-managers")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*", allowedHeaders = "*")

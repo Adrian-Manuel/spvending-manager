@@ -45,7 +45,6 @@ public class TenantRepositoryAdapter implements TenantRepositoryPort {
     @Override
     public Tenant update(UUID tenantId, Tenant tenant) {
         TenantHelperAdapter.validateTenantExists(jpaTenantRepository, tenantId);
-        TenantHelperAdapter.validateTenantNameNotExists(jpaTenantRepository, tenant.getName());
         tenant.setTenantId(tenantId);
         TenantEntity tenantEntity=TenantEntity.fromDomainModel(tenant);
         return jpaTenantRepository.save(tenantEntity).toDomainModel();

@@ -20,6 +20,8 @@ public class MachineDtoOutDetail {
     private String code;
     @Schema(description = "ID assigned to the smart fridge module of the machine", example = "12")
     private String smartFridgeId;
+    @Schema(description = "ID assigned to the machine by Micron", example = "12")
+    private String micronId;
     @Schema(description = "Password to access the smart fridge", example = "abc123.")
     private String smartFridgePassword;
     @Schema(description = "Unique terminal ID used for payment or control systems", example = "14")

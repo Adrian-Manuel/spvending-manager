@@ -4,12 +4,13 @@ import com.smart_padel.spvending_management_api.tenant.domain.ports.out.TenantRe
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class DeleteTenantUseCaseImpl implements DeleteTenantUseCase {
     private final TenantRepositoryPort tenantRepositoryPort;
     @Override
     public void deleteTenant(UUID tenantId) {
-        tenantRepositoryPort.deleteById(tenantId);
+            tenantRepositoryPort.deleteById(tenantId);
     }
 }

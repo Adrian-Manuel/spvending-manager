@@ -55,7 +55,6 @@ public class ClubEntity {
     private String micronId;
 
     @Filtrable(name="tenantEntity.name")
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tenantId", nullable = false, referencedColumnName = "tenantId")
     private TenantEntity tenantEntity;

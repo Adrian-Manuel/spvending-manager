@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
-@PreAuthorize("hasRole('ADMIN')")
 @RequestMapping("/api/v1/user-managers")
 @RequiredArgsConstructor
 @RestController

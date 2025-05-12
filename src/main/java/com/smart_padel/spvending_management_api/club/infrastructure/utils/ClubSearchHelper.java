@@ -3,7 +3,7 @@ import com.smart_padel.spvending_management_api.club.infrastructure.persistance.
 import org.springframework.data.jpa.domain.Specification;
 import java.util.UUID;
 public class ClubSearchHelper {
-    private ClubSearchHelper() {
+    ClubSearchHelper() {
         throw new IllegalStateException("Helper class");
     }
     public static Specification<ClubEntity> buildClubSearchSpec(UUID tenantId, String search) {

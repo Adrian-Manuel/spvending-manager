@@ -19,7 +19,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/machines")
 @RequiredArgsConstructor
-@PreAuthorize("hasAnyRole('ADMIN', 'USER')")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GetMachineController {
     @Value("${app.AESecret_key}")
