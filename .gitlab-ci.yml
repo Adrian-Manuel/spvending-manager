@@ -1,4 +1,4 @@
 test_repository_url:
-  stage: test
+  stage: build
   script:
-    - echo "URL del repositorio: $CI_REPOSITORY_URL"
+    - echo "URL del repositorio:$CI_REPOSITORY_URL"
