@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller.PostMachineControllerTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.482 s -- in com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller.PostMachineControllerTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.468 s -- in com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller.PostMachineControllerTest
