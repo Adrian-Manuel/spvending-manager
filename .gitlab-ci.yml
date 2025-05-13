@@ -22,6 +22,7 @@ build_image:
   rules:
     - if: $CI_COMMIT_TAG
   before_script:
+    - apt update && apt add git
     - echo "Validando nombre de imagen..."
     - export IMAGE_NAME="$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
     - echo "IMAGE_NAME:$IMAGE_NAME"
@@ -47,7 +48,6 @@ deploy_app:
   rules:
     - if: $CI_COMMIT_TAG
   before_script:
-    - apt update && apt add git
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
   script:
     - echo "=== DESPLEGANDO VERSIÓN ==="
