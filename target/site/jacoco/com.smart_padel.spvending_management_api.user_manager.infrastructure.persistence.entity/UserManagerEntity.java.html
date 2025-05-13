@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserManagerEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.user_manager.infrastructure.persistence.entity</a> &gt; <span class="el_source">UserManagerEntity.java</span></div><h1>UserManagerEntity.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.user_manager.infrastructure.persistence.entity;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
+import com.smart_padel.spvending_management_api.shared.utils.Filtrable;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.entity.TenantEntity;
+import com.smart_padel.spvending_management_api.user_manager.domain.model.UserManager;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = &quot;user_managers&quot;)
+@Builder
+public class UserManagerEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID userId;
+    @Filtrable
+    @Column(name = &quot;userName&quot;, nullable = false, unique = true)
+    private String userName;
+    @Column(name = &quot;password&quot;, nullable = false)
+    private String password;
+    @Column(name = &quot;micron_id&quot;, nullable = false, unique = true)
+    private String micronId;
+    @Filtrable
+    @Column(name = &quot;micronUser&quot;, nullable = false, unique = true)
+    private String micronUser;
+    @Column(name = &quot;micronPass&quot;, nullable = false)
+    private String micronPass;
+    @Column(name = &quot;usertype&quot;, nullable = false)
+    private String userType;
+
+    @Filtrable(name = &quot;tenantEntity.name&quot;)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;tenantId&quot;, referencedColumnName = &quot;tenantId&quot;, nullable = true)
+    private TenantEntity tenantEntity;
+
+    @Filtrable(name = &quot;clubEntity.name&quot;)
+    @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;clubId&quot;, referencedColumnName = &quot;clubId&quot;, nullable = true)
+    private ClubEntity clubEntity;
+
+    public static UserManagerEntity fromDomainModel(UserManager userManager){
+<span class="fc" id="L50">        return UserManagerEntity.builder()</span>
+<span class="fc" id="L51">                .userId(userManager.getUserId())</span>
+<span class="fc" id="L52">                .userName(userManager.getUserName())</span>
+<span class="fc" id="L53">                .password(userManager.getPassword())</span>
+<span class="fc" id="L54">                .micronId(userManager.getMicronId())</span>
+<span class="fc" id="L55">                .micronUser(userManager.getMicronUser())</span>
+<span class="fc" id="L56">                .micronPass(userManager.getMicronPass())</span>
+<span class="fc" id="L57">                .userType(userManager.getUserType())</span>
+<span class="fc" id="L58">                .build();</span>
+    }
+    public UserManager toDomainModel(){
+<span class="fc" id="L61">        return UserManager.builder()</span>
+<span class="fc" id="L62">                .userId(userId)</span>
+<span class="fc" id="L63">                .userName(userName)</span>
+<span class="fc" id="L64">                .password(password)</span>
+<span class="fc" id="L65">                .micronId(micronId)</span>
+<span class="fc" id="L66">                .micronUser(micronUser)</span>
+<span class="fc" id="L67">                .micronPass(micronPass)</span>
+<span class="fc" id="L68">                .userType(userType)</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">                .tenantName(tenantEntity!=null ? tenantEntity.getName():null)</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">                .clubName(clubEntity!=null ? clubEntity.getName():null)</span>
+<span class="fc" id="L71">                .build();</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -116,7 +116,6 @@ class ClubRepositoryAdapterTest {
         assertThatThrownBy(() -> clubRepositoryAdapter.findAllClubsByTenantId("name:Club", tenantId, pageable))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessageContaining("Tenant not found");
-
         verify(jpaTenantRepository).existsById(tenantId);
         verify(jpaClubRepository, never()).findAll(any(Specification.class), eq(pageable));
     }

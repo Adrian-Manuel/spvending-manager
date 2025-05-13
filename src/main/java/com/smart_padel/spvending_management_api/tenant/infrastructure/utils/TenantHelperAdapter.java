@@ -5,8 +5,8 @@ import com.smart_padel.spvending_management_api.tenant.infrastructure.persistenc
 import com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.repository.JpaTenantRepository;
 import java.util.UUID;
 public class TenantHelperAdapter {
-    private TenantHelperAdapter() {
-        throw new IllegalStateException("Utility class");
+    TenantHelperAdapter() {
+        throw new IllegalStateException("Util class");
     }
     public static TenantEntity getTenantOrThrow(JpaTenantRepository repo, UUID tenantId) {
         return repo.findById(tenantId)

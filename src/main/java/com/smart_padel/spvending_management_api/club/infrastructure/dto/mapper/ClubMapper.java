@@ -5,8 +5,8 @@ import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoO
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutPreview;
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutSummary;
 public class ClubMapper {
-    private ClubMapper() {
-        throw new IllegalStateException("Mapper class");
+    ClubMapper() {
+        throw new IllegalStateException("Util class");
     }
     public static ClubDtoOutPreview toDtoPreview(Club club) {
         return ClubDtoOutPreview.builder()

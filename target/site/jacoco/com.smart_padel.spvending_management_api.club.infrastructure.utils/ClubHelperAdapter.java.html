@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClubHelperAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.club.infrastructure.utils</a> &gt; <span class="el_source">ClubHelperAdapter.java</span></div><h1>ClubHelperAdapter.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.club.infrastructure.utils;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.repository.JpaClubRepository;
+import com.smart_padel.spvending_management_api.shared.exceptions.ResourceNotFoundException;
+import java.util.UUID;
+public class ClubHelperAdapter {
+<span class="fc" id="L7">    ClubHelperAdapter() {</span>
+<span class="fc" id="L8">        throw new IllegalStateException(&quot;Helper class&quot;);</span>
+    }
+    public static ClubEntity getClubOrThrow(JpaClubRepository repo, UUID clubId) {
+<span class="fc" id="L11">        return repo.findById(clubId).orElseThrow(() -&gt; new ResourceNotFoundException(&quot;The requested club was not found&quot;));</span>
+    }
+    public static void validateClubExists(JpaClubRepository repo, UUID clubId) {
+<span class="fc bfc" id="L14" title="All 2 branches covered.">        if (!repo.existsById(clubId)) {</span>
+<span class="fc" id="L15">            throw new ResourceNotFoundException(&quot;The club does not exist&quot;);</span>
+        }
+<span class="fc" id="L17">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

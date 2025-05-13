@@ -2,6 +2,7 @@ package com.smart_padel.spvending_management_api.shared.utils;
 import org.junit.jupiter.api.Test;
 import java.security.GeneralSecurityException;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
 class AESGCMEncryptionTest {
@@ -44,5 +45,12 @@ class AESGCMEncryptionTest {
         String encryptedText = AESGCMEncryption.encrypt(largePlainText, SECRET_KEY);
         String decryptedText = AESGCMEncryption.decrypt(encryptedText, SECRET_KEY);
         assertEquals(largePlainText, decryptedText);
+    }
+
+    @Test
+    void constructor_ThrowsException() {
+        assertThatThrownBy(AESGCMEncryption::new)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Util class");
     }
 }

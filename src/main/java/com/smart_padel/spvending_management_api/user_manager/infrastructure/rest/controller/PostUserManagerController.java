@@ -15,7 +15,6 @@ import java.security.GeneralSecurityException;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/user-managers")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PostUserManagerController {
     private final CreateUserManagerUseCase createUserManagerUseCase;
     @Value("${app.AESecret_key}")

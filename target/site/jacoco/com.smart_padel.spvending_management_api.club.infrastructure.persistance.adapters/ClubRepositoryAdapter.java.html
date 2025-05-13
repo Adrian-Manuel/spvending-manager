@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClubRepositoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.club.infrastructure.persistance.adapters</a> &gt; <span class="el_source">ClubRepositoryAdapter.java</span></div><h1>ClubRepositoryAdapter.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.club.infrastructure.persistance.adapters;
+import com.smart_padel.spvending_management_api.club.domain.model.Club;
+import com.smart_padel.spvending_management_api.club.domain.ports.out.ClubRepositoryPort;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.repository.JpaClubRepository;
+import com.smart_padel.spvending_management_api.club.infrastructure.utils.ClubHelperAdapter;
+import com.smart_padel.spvending_management_api.club.infrastructure.utils.ClubSearchHelper;
+import com.smart_padel.spvending_management_api.club.infrastructure.utils.ClubSpecification;
+import com.smart_padel.spvending_management_api.shared.exceptions.ResourceNotFoundException;
+import com.smart_padel.spvending_management_api.shared.utils.PersistenceUtils;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.entity.TenantEntity;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.repository.JpaTenantRepository;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.utils.TenantHelperAdapter;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.UUID;
+@Transactional
+@Component
+@RequiredArgsConstructor
+public class ClubRepositoryAdapter implements ClubRepositoryPort {
+    private final JpaClubRepository jpaClubRepository;
+    private final JpaTenantRepository jpaTenantRepository;
+    @Override
+    public Page&lt;Club&gt; findAll(String search, Pageable pageable) {
+<span class="fc" id="L30">        Specification&lt;ClubEntity&gt; spec = ClubSpecification.withFilter(search);</span>
+<span class="fc" id="L31">        return PersistenceUtils.mapPageOrThrow(jpaClubRepository.findAll(spec, pageable), &quot;Clubs not found&quot;, ClubEntity::toDomainModel);</span>
+    }
+    @Override
+    public Page&lt;Club&gt; findAllClubsByTenantId(String search, UUID tenantId, Pageable pageable) {
+<span class="fc" id="L35">        TenantHelperAdapter.validateTenantExists(jpaTenantRepository, tenantId);</span>
+<span class="fc" id="L36">        Specification&lt;ClubEntity&gt; spec= ClubSearchHelper.buildClubSearchSpec(tenantId,search);</span>
+<span class="fc" id="L37">        return PersistenceUtils.mapPageOrThrow(jpaClubRepository.findAll(spec, pageable), &quot;No clubs found for this tenant&quot;, ClubEntity::toDomainModel);</span>
+    }
+    @Override
+    public List&lt;Club&gt; findAllClubsSummary() {
+<span class="fc" id="L41">        return PersistenceUtils.mapListOrThrow(jpaClubRepository.findAll(), &quot;Clubs not found&quot;, ClubEntity::toDomainModel);</span>
+    }
+    @Override
+    public Club save(UUID tenantId, Club club) {
+<span class="fc" id="L45">        TenantEntity tenantEntity = TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, tenantId);</span>
+<span class="fc" id="L46">        ClubEntity clubEntity=ClubEntity.fromDomainModel(club);</span>
+<span class="fc" id="L47">        clubEntity.setTenantEntity(tenantEntity);</span>
+<span class="fc" id="L48">        return jpaClubRepository.save(clubEntity).toDomainModel();</span>
+    }
+    @Override
+    public Club findById(UUID clubId) {
+<span class="fc" id="L52">        return jpaClubRepository.findById(clubId)</span>
+<span class="fc" id="L53">                .map(ClubEntity::toDomainModel)</span>
+<span class="fc" id="L54">                .orElseThrow(() -&gt; new ResourceNotFoundException(&quot;There is no club with that Id&quot;));</span>
+    }
+    @Override
+    public Club update(UUID tenantId,UUID clubId, Club club) {
+<span class="fc" id="L58">        ClubHelperAdapter.validateClubExists(jpaClubRepository,clubId);</span>
+<span class="fc" id="L59">        TenantEntity tenantEntity=TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, tenantId);</span>
+<span class="fc" id="L60">        club.setClubId(clubId);</span>
+<span class="fc" id="L61">        ClubEntity clubEntity=ClubEntity.fromDomainModel(club);</span>
+<span class="fc" id="L62">        clubEntity.setTenantEntity(tenantEntity);</span>
+<span class="fc" id="L63">        return jpaClubRepository.save(clubEntity).toDomainModel();</span>
+    }
+    @Override
+    public void deleteById(UUID clubId) {
+<span class="fc" id="L67">        ClubHelperAdapter.validateClubExists(jpaClubRepository, clubId);</span>
+<span class="fc" id="L68">        jpaClubRepository.deleteById(clubId);</span>
+<span class="fc" id="L69">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

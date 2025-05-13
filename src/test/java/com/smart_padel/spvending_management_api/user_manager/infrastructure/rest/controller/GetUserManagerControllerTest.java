@@ -1,5 +1,7 @@
 package com.smart_padel.spvending_management_api.user_manager.infrastructure.rest.controller;
 import com.smart_padel.spvending_management_api.shared.exceptions.ResourceNotFoundException;
+import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.UserManagerDtoIn;
+import com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.mapper.UserManagerMapper;
 import org.springframework.data.domain.Pageable;
 import com.smart_padel.spvending_management_api.security.auth.service.JwtService;
 import com.smart_padel.spvending_management_api.security.auth.service.TokenBlacklistService;
@@ -17,9 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-
 import java.util.UUID;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,6 +64,22 @@ class GetUserManagerControllerTest {
         mockMvc.perform(get("/api/v1/user-managers"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").isArray());
+    }
+
+    @Test
+    @DisplayName("should return 200 OK when UserManager is retrieved by ID successfully")
+    void shouldGetUserManagerByIdSuccessfully() throws Exception {
+        UUID userId = UUID.randomUUID();
+        UUID tenantId = UUID.randomUUID();
+        UserManagerDtoIn userManagerDtoIn = new UserManagerDtoIn("userName", "userPassword", "userMicronId", "micronUser", "micronPass", "1", tenantId, null);
+        UserManager userManager= UserManagerMapper.toModel(userManagerDtoIn, aeSecretKey);
+        userManager.setUserId(userId);
+        userManager.setTenantName("tenantName");
+        Mockito.when(retrieveUserManagerUseCase.getUserManagerById(userId)).thenReturn(userManager);
+
+        mockMvc.perform(get("/api/v1/user-managers/" + userId))
+                .andExpect(status().isOk());
+        Mockito.verify(retrieveUserManagerUseCase).getUserManagerById(userId);
     }
 
     @Test

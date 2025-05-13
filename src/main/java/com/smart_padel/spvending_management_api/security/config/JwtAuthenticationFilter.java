@@ -24,12 +24,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final TokenBlacklistService tokenBlacklistService;
     private static final String ACCESS_TOKEN_COOKIE_NAME = "access_token";
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
+    public boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
         final String requestURI=request.getRequestURI();
         return requestURI.startsWith("/api/v1/auth/");
     }
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,@NonNull FilterChain filterChain) throws ServletException, IOException {
+    public void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String  jwtAccess= CookieUtil.getCookieValue(request, ACCESS_TOKEN_COOKIE_NAME);
         if (jwtAccess == null || jwtAccess.trim().isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

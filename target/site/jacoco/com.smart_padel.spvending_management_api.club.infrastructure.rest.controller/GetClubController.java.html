@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetClubController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.club.infrastructure.rest.controller</a> &gt; <span class="el_source">GetClubController.java</span></div><h1>GetClubController.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.club.infrastructure.rest.controller;
+import com.smart_padel.spvending_management_api.club.domain.model.Club;
+import com.smart_padel.spvending_management_api.club.domain.ports.in.RetrieveClubUseCase;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutDetail;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutPreview;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutSummary;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.mapper.ClubMapper;
+import com.smart_padel.spvending_management_api.machine.domain.ports.in.RetrieveMachineUseCase;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachineDtoOutPreview;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.mapper.MachineMapper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.UUID;
+@RestController
+@RequestMapping(&quot;/api/v1/clubs&quot;)
+@RequiredArgsConstructor
+public class GetClubController {
+    private final RetrieveClubUseCase retrieveClubUseCase;
+    private final RetrieveMachineUseCase retrieveMachineUseCase;
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping
+    public ResponseEntity&lt;Page&lt;ClubDtoOutPreview&gt;&gt; getAllClubs(@RequestParam(required = false) String search, @RequestParam(defaultValue = &quot;0&quot;) int page, @RequestParam(defaultValue = &quot;10&quot;) int size) {
+<span class="fc" id="L30">        Pageable pageable = PageRequest.of(page, size);</span>
+<span class="fc" id="L31">        Page&lt;ClubDtoOutPreview&gt; clubs = retrieveClubUseCase.getAllClubs(search, pageable).map(ClubMapper::toDtoPreview);</span>
+<span class="fc" id="L32">        return new ResponseEntity&lt;&gt;(clubs, HttpStatus.OK);</span>
+    }
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping(&quot;/{clubId}&quot;)
+    public ResponseEntity&lt;ClubDtoOutDetail&gt; getClubById(@PathVariable UUID clubId){
+<span class="fc" id="L37">        Club clubRequest=retrieveClubUseCase.getClubById(clubId);</span>
+<span class="fc" id="L38">        return new ResponseEntity&lt;&gt;(ClubMapper.toDtoDetail(clubRequest), HttpStatus.OK);</span>
+    }
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping(&quot;/{clubId}/machines&quot;)
+    public ResponseEntity&lt;List&lt;MachineDtoOutPreview&gt;&gt; getAllMachinesByClub(@PathVariable UUID clubId){
+<span class="fc" id="L43">        List&lt;MachineDtoOutPreview&gt; machines= retrieveMachineUseCase.findAllMachinesByClubId(clubId).stream().map(MachineMapper::toDtoPreview).toList();</span>
+<span class="fc" id="L44">        return new ResponseEntity&lt;&gt;(machines, HttpStatus.OK);</span>
+    }
+    @PreAuthorize(&quot;hasAuthority('admin:read')&quot;)
+    @GetMapping(&quot;/all-summary&quot;)
+    public ResponseEntity&lt;List&lt;ClubDtoOutSummary&gt;&gt; getClubsSummary(){
+<span class="fc" id="L49">        List&lt;ClubDtoOutSummary&gt; tenantsSummary=retrieveClubUseCase.getAllClubsSummary().stream().map(ClubMapper::toDtoSummary).toList();</span>
+<span class="fc" id="L50">        return new ResponseEntity&lt;&gt;(tenantsSummary, HttpStatus.OK);</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

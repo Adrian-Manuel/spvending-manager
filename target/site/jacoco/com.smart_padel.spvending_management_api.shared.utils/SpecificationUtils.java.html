@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SpecificationUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.shared.utils</a> &gt; <span class="el_source">SpecificationUtils.java</span></div><h1>SpecificationUtils.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.shared.utils;
+import jakarta.persistence.criteria.From;
+import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Path;
+import jakarta.persistence.criteria.Predicate;
+import org.springframework.data.jpa.domain.Specification;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+public class SpecificationUtils {
+<span class="fc" id="L11">    private SpecificationUtils() {</span>
+<span class="fc" id="L12">        throw new IllegalStateException(&quot;Utility class&quot;);</span>
+    }
+    public static &lt;T&gt; Specification&lt;T&gt; buildFilterSpec(Class&lt;T&gt; clazz, String filter) {
+<span class="fc bfc" id="L15" title="All 4 branches covered.">        if (filter == null || filter.trim().isEmpty()) {</span>
+<span class="fc" id="L16">            return null;</span>
+        }
+<span class="fc" id="L18">        return (root, query, criteriaBuilder) -&gt; {</span>
+<span class="fc" id="L19">            String like = &quot;%&quot; + filter.toLowerCase() + &quot;%&quot;;</span>
+<span class="fc" id="L20">            List&lt;Predicate&gt; predicates = new ArrayList&lt;&gt;();</span>
+
+<span class="fc bfc" id="L22" title="All 2 branches covered.">            for (Field field : clazz.getDeclaredFields()) {</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">                if (field.isAnnotationPresent(Filtrable.class)) {</span>
+<span class="fc" id="L24">                    Filtrable annotation = field.getAnnotation(Filtrable.class);</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">                    String path = annotation.name().isEmpty() ? field.getName() : annotation.name();</span>
+
+<span class="fc" id="L27">                    predicates.add(criteriaBuilder.like(</span>
+<span class="fc" id="L28">                            criteriaBuilder.lower(getPath(root, path).as(String.class)),</span>
+                            like
+                    ));
+                }
+            }
+<span class="fc" id="L33">            return criteriaBuilder.or(predicates.toArray(new Predicate[0]));</span>
+        };
+    }
+    static Path&lt;?&gt; getPath(From&lt;?, ?&gt; root, String path) {
+<span class="pc bpc" id="L37" title="1 of 4 branches missed.">        if (path==null || path.trim().isEmpty()) {</span>
+
+<span class="fc" id="L39">            throw new IllegalArgumentException(&quot;Path cannot be null&quot;);</span>
+        }
+
+<span class="fc" id="L42">        String[] parts = path.split(&quot;\\.&quot;);</span>
+<span class="fc" id="L43">        From&lt;?, ?&gt; from = root;</span>
+<span class="fc" id="L44">        Path&lt;?&gt; result = root;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (int i = 0; i &lt; parts.length; i++) {</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">            if (i &lt; parts.length - 1) {</span>
+<span class="fc" id="L47">                from = from.join(parts[i], JoinType.LEFT); // JOIN seguro</span>
+<span class="fc" id="L48">                result = from;</span>
+            } else {
+<span class="fc" id="L50">                result = result.get(parts[i]); // Último campo</span>
+            }
+        }
+<span class="fc" id="L53">        return result;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

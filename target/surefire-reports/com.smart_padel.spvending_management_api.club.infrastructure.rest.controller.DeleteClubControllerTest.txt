@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.smart_padel.spvending_management_api.club.infrastructure.rest.controller.DeleteClubControllerTest
+-------------------------------------------------------------------------------
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.800 s -- in com.smart_padel.spvending_management_api.club.infrastructure.rest.controller.DeleteClubControllerTest

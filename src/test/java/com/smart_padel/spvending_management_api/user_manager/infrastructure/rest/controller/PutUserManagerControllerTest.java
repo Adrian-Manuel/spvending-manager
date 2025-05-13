@@ -1,7 +1,5 @@
 package com.smart_padel.spvending_management_api.user_manager.infrastructure.rest.controller;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.smart_padel.spvending_management_api.machine.domain.ports.in.UpdateMachineUseCase;
 import com.smart_padel.spvending_management_api.security.auth.service.JwtService;
 import com.smart_padel.spvending_management_api.security.auth.service.TokenBlacklistService;
 import com.smart_padel.spvending_management_api.shared.exceptions.ParamRequiredException;
@@ -22,8 +20,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import java.util.UUID;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

@@ -1,7 +1,7 @@
 image: docker:latest
 
 variables:
-  REGISTRY_URL: "192.168.74.132:5050"
+  REGISTRY_URL: "localhost:5050"
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
   IMAGE_TAG: ${CI_COMMIT_TAG:-latest}

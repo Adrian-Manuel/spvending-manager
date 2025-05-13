@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.smart_padel.spvending_management_api.club.application.usecases.DeleteClubUseCaseImplTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.012 s -- in com.smart_padel.spvending_management_api.club.application.usecases.DeleteClubUseCaseImplTest

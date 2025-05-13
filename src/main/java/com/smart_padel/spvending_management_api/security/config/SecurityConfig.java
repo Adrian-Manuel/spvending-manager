@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,7 +31,7 @@ public class SecurityConfig {
     private final AuthenticationProvider authenticationProvider;
     private final TokenBlacklistService tokenBlacklistService;
 
-    private void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
+    public void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
         String accessToken= CookieUtil.getCookieValue(request, "acces_token");
         String refreshToken=CookieUtil.getCookieValue(request, "refresh_token");
 
@@ -75,7 +74,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(true); // Importante para cookies
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);

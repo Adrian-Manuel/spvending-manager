@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TenantEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.entity</a> &gt; <span class="el_source">TenantEntity.java</span></div><h1>TenantEntity.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.tenant.infrastructure.persistence.entity;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.smart_padel.spvending_management_api.club.domain.model.Club;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
+import com.smart_padel.spvending_management_api.shared.utils.Filtrable;
+import com.smart_padel.spvending_management_api.user_manager.domain.model.UserManager;
+import com.smart_padel.spvending_management_api.tenant.domain.model.Tenant;
+import com.smart_padel.spvending_management_api.user_manager.infrastructure.persistence.entity.UserManagerEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = &quot;Tenants&quot;)
+@Schema(description = &quot;Detailed information about a tenant&quot;)
+public class TenantEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID tenantId;
+
+    @Filtrable
+    @Column(name = &quot;name&quot;, nullable = false, unique = true)
+    private String name;
+
+    @Filtrable
+    @Column(name = &quot;cif&quot;)
+    private String cif;
+
+    @Filtrable
+    @Column(name = &quot;address&quot;)
+    private String address;
+
+    @Filtrable
+    @Column(name = &quot;phone&quot;)
+    private String phone;
+
+    @Filtrable
+    @Column(name = &quot;email&quot;)
+    private String email;
+
+    @Column(name = &quot;remark&quot;)
+    private String remark;
+
+    @Column(name = &quot;micron_id&quot;)
+    private String micronId;
+    @JsonManagedReference
+    @OneToMany(mappedBy = &quot;tenantEntity&quot;, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List&lt;ClubEntity&gt; clubsEntities;
+    @JsonManagedReference
+    @OneToMany(mappedBy = &quot;tenantEntity&quot;, cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List&lt;UserManagerEntity&gt; userManagerEntities;
+
+    public static TenantEntity fromDomainModel(Tenant tenant){
+<span class="fc" id="L64">        return TenantEntity.builder()</span>
+<span class="fc" id="L65">                .tenantId(tenant.getTenantId())</span>
+<span class="fc" id="L66">                .address(tenant.getAddress())</span>
+<span class="fc" id="L67">                .cif(tenant.getCif())</span>
+<span class="fc" id="L68">                .email(tenant.getEmail())</span>
+<span class="fc" id="L69">                .micronId(tenant.getMicronId())</span>
+<span class="fc" id="L70">                .name(tenant.getName())</span>
+<span class="fc" id="L71">                .phone(tenant.getPhone())</span>
+<span class="fc" id="L72">                .remark(tenant.getRemark())</span>
+<span class="fc" id="L73">                .build();</span>
+    }
+    public Tenant toDomainModel(){
+<span class="fc" id="L76">        return  Tenant.builder()</span>
+<span class="fc" id="L77">                .tenantId(tenantId)</span>
+<span class="fc" id="L78">                .address(address)</span>
+<span class="fc" id="L79">                .cif(cif)</span>
+<span class="fc" id="L80">                .email(email)</span>
+<span class="fc" id="L81">                .micronId(micronId)</span>
+<span class="fc" id="L82">                .name(name)</span>
+<span class="fc" id="L83">                .phone(phone)</span>
+<span class="fc" id="L84">                .remark(remark)</span>
+<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                .clubsCount(clubsEntities !=null ? clubsEntities.size(): 0)</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">                .managers(userManagerEntities!=null ? userManagerEntities.stream().map(UserManagerEntity::getUserName).toList():Collections.emptyList())</span>
+<span class="fc" id="L87">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

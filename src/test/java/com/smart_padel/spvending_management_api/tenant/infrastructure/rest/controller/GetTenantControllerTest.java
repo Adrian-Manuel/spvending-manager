@@ -5,9 +5,6 @@ import com.smart_padel.spvending_management_api.security.auth.service.TokenBlack
 import com.smart_padel.spvending_management_api.shared.exceptions.ResourceNotFoundException;
 import com.smart_padel.spvending_management_api.tenant.domain.model.Tenant;
 import com.smart_padel.spvending_management_api.tenant.domain.ports.in.RetrieveTenantUseCase;
-import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutPreview;
-import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutSummary;
-import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.mapper.TenantMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,10 +15,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 

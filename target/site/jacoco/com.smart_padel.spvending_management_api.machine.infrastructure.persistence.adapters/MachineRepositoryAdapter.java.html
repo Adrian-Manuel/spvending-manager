@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MachineRepositoryAdapter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.machine.infrastructure.persistence.adapters</a> &gt; <span class="el_source">MachineRepositoryAdapter.java</span></div><h1>MachineRepositoryAdapter.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.machine.infrastructure.persistence.adapters;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.repository.JpaClubRepository;
+import com.smart_padel.spvending_management_api.club.infrastructure.utils.ClubHelperAdapter;
+import com.smart_padel.spvending_management_api.machine.domain.model.Machine;
+import com.smart_padel.spvending_management_api.machine.domain.ports.out.MachineRepositoryPort;
+import com.smart_padel.spvending_management_api.machine.infrastructure.persistence.entity.MachineEntity;
+import com.smart_padel.spvending_management_api.machine.infrastructure.persistence.repository.JpaMachineRepository;
+import com.smart_padel.spvending_management_api.machine.infrastructure.utils.MachineHelperAdapter;
+import com.smart_padel.spvending_management_api.machine.infrastructure.utils.MachineSpecification;
+import com.smart_padel.spvending_management_api.shared.exceptions.ResourceNotFoundException;
+import com.smart_padel.spvending_management_api.shared.utils.PersistenceUtils;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+import java.util.List;
+import java.util.UUID;
+@Transactional
+@Component
+@RequiredArgsConstructor
+public class MachineRepositoryAdapter implements MachineRepositoryPort {
+    private final JpaMachineRepository jpaMachineRepository;
+    private final JpaClubRepository jpaClubRepository;
+    @Override
+    public Page&lt;Machine&gt; findAll(String search, Pageable pageable) {
+<span class="fc" id="L29">        Specification&lt;MachineEntity&gt; spec = MachineSpecification.withFilter(search);</span>
+<span class="fc" id="L30">        return PersistenceUtils.mapPageOrThrow(jpaMachineRepository.findAll(spec,pageable), &quot;No machines have been added yet&quot;, MachineEntity::toDomainModel);</span>
+    }
+    @Override
+    public Machine save(UUID clubId, Machine machine) {
+<span class="fc" id="L34">        ClubEntity clubEntity= ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId);</span>
+<span class="fc" id="L35">        MachineEntity machineEntity=MachineEntity.fromDomainModel(machine);</span>
+<span class="fc" id="L36">        machineEntity.setClub(clubEntity);</span>
+<span class="fc" id="L37">        return jpaMachineRepository.save(machineEntity).toDomainModel();</span>
+    }
+    @Override
+    public Machine findById(UUID machineId) {
+<span class="fc" id="L41">        return jpaMachineRepository.findById(machineId)</span>
+<span class="fc" id="L42">                .map(MachineEntity::toDomainModel)</span>
+<span class="fc" id="L43">                .orElseThrow(()-&gt;new ResourceNotFoundException(&quot;There is no machine with that id&quot;));</span>
+    }
+    @Override
+    public Machine update(UUID clubId, UUID machineId, Machine machine) {
+<span class="fc" id="L47">        MachineHelperAdapter.validateMachineExists(jpaMachineRepository, machineId);</span>
+<span class="fc" id="L48">        ClubEntity clubEntity=ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId);</span>
+<span class="fc" id="L49">        machine.setMachineId(machineId);</span>
+<span class="fc" id="L50">        MachineEntity machineEntity=MachineEntity.fromDomainModel(machine);</span>
+<span class="fc" id="L51">        machineEntity.setClub(clubEntity);</span>
+<span class="fc" id="L52">        return jpaMachineRepository.save(machineEntity).toDomainModel();</span>
+    }
+    @Override
+    public void deleteById(UUID machineId) {
+<span class="fc" id="L56">        MachineHelperAdapter.validateMachineExists(jpaMachineRepository, machineId);</span>
+<span class="fc" id="L57">        jpaMachineRepository.deleteById(machineId);</span>
+<span class="fc" id="L58">    }</span>
+    @Override
+    public List&lt;Machine&gt; findAllMachinesByClubId(UUID clubId) {
+<span class="fc" id="L61">        ClubHelperAdapter.validateClubExists(jpaClubRepository,clubId);</span>
+<span class="fc" id="L62">        Specification&lt;MachineEntity&gt; spec= MachineSpecification.belongsToClub(clubId);</span>
+<span class="fc" id="L63">        return PersistenceUtils.mapListOrThrow(jpaMachineRepository.findAll(spec), &quot;No clubs found for this tenant&quot;, MachineEntity::toDomainModel);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

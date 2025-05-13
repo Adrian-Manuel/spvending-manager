@@ -6,7 +6,7 @@ import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.Tenant
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutPreview;
 public class TenantMapper {
     private TenantMapper() {
-        throw new IllegalStateException("Mapper class");
+        throw new IllegalStateException("Util class");
     }
     public static TenantDtoOutPreview toDtoPreview(Tenant tenant) {
         return TenantDtoOutPreview.builder()

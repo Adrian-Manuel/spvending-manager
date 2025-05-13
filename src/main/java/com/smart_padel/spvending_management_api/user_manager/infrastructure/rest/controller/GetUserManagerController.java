@@ -19,7 +19,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/user-managers")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class GetUserManagerController {
     private final RetrieveUserManagerUseCase retrieveUserManagerUseCase;
     @Value("${app.AESecret_key}")

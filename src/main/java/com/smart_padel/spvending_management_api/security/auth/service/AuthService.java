@@ -4,14 +4,12 @@ import com.smart_padel.spvending_management_api.security.auth.dto.RegisterReques
 import com.smart_padel.spvending_management_api.security.auth.dto.UserResponse;
 import com.smart_padel.spvending_management_api.security.auth.util.CookieUtil;
 import com.smart_padel.spvending_management_api.security.auth.repository.JpaUserRepository;
-import com.smart_padel.spvending_management_api.security.config.SecurityConfig;
 import com.smart_padel.spvending_management_api.security.user.User;
 import com.smart_padel.spvending_management_api.shared.exceptions.ResourceAlreadyExistsException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;

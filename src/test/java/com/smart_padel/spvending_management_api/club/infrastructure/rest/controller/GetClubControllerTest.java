@@ -82,6 +82,7 @@ class GetClubControllerTest {
     void shouldGetClubByIdSuccessfully() throws Exception {
         UUID clubId = UUID.randomUUID();
         Club club = new Club();
+        club.setClubId(clubId);
         Mockito.when(retrieveClubUseCase.getClubById(clubId)).thenReturn(club);
 
         mockMvc.perform(get("/api/v1/clubs/" + clubId))
