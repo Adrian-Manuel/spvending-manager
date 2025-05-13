@@ -59,9 +59,9 @@ public class ClubEntity {
     @JoinColumn(name = "tenantId", nullable = false, referencedColumnName = "tenantId")
     private TenantEntity tenantEntity;
 
-    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "club", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<MachineEntity> machineEntities;
-    @OneToMany(mappedBy = "clubEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "clubEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserManagerEntity> userManagerEntities;
 
     public static ClubEntity fromDomainModel(Club club){

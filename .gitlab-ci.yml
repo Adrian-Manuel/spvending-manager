@@ -1,7 +1,7 @@
 image: docker:latest
 
 variables:
-  REGISTRY_URL: "gitlab:5050"
+  REGISTRY_URL: "localhost:5050"
   DOCKER_DRIVER: overlay2
   #DOCKER_HOST: unix:///var/run/docker.sock
   DOCKER_HOST: "tcp://docker:2375"
