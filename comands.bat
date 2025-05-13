@@ -21,7 +21,7 @@ echo Creando tag local %VERSION%
 git tag %VERSION%
 
 echo Pushing tag remoto %VERSION%
-git push fedoragit %VERSION%
+git push %REMOTE% %VERSION%
 
 echo Listo. Se ha creado y subido la versión %VERSION%.
 pause
