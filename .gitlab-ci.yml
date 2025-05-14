@@ -52,7 +52,6 @@ build_image:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
       - docker-compose -f docker-compose.yml build --no-cache --pull
       - echo "Obteniendo el tag con git describe..."
-      - export IMAGE_TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "main")
       - echo "Tag obtenido:$IMAGE_TAG"
       - export IMAGE_NAME_WITH_TAG="$IMAGE_NAME_BASE:$IMAGE_TAG"
       - echo "Etiquetando imagen como:$IMAGE_NAME_WITH_TAG"
