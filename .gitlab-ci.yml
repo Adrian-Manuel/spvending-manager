@@ -12,13 +12,15 @@ variables:
 
 
 stages:
-  - sonarqube
+
   - build
+  - sonarqube
   - deploy
 
 sonarqube:
   image: sonarsource/sonar-scanner-cli:latest
   stage: sonarqube
+
   tags:
     - sonar
   variables:
@@ -29,7 +31,11 @@ sonarqube:
     paths:
       - .sonar/cache
   script:
-    - sonar-scanner
+    - echo "Iniciando análisis con SonarQube..."
+    - sonar-scanner \
+        -Dsonar.host.url=${SONAR_HOST_URL} \
+        -Dsonar.login=${SONAR_TOKEN} \
+        -Dsonar.projectVersion=${CI_COMMIT_TAG}
   allow_failure: true
   only:
     - main
@@ -38,7 +44,6 @@ build_image:
   stage: build
   tags:
     - build
-  needs: ["sonarqube"]
   rules:
     - if: $CI_COMMIT_TAG
   before_script:
