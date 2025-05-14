@@ -42,10 +42,6 @@ build_image:
   tags:
     - build
 
-  before_script:
-    - echo "Validando nombre de imagen..."
-    - echo "IMAGE_NAME:$IMAGE_NAME"
-    - echo "IMAGE_NAME_LATEST:$IMAGE_NAME_LATEST"
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
     - docker-compose -f docker-compose.yml build --no-cache --pull
