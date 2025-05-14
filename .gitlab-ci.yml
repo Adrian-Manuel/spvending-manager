@@ -60,8 +60,6 @@ build_image:
   after_script:
     - docker logout $REGISTRY_URL
   needs: ["sonarqube"]
-  only:
-    - main
 deploy_app:
   stage: deploy
   tags:
@@ -83,5 +81,3 @@ deploy_app:
     - docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
   after_script:
     - docker logout $REGISTRY_URL
-  only:
-    - main
