@@ -59,7 +59,7 @@ build_image:
     - docker push "$IMAGE_NAME_LATEST"
   after_script:
     - docker logout $REGISTRY_URL
-
+  needs: ["sonarqube"]
 deploy_app:
   stage: deploy
   tags:
