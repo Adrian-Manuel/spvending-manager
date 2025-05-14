@@ -38,7 +38,6 @@ sonarqube:
   allow_failure: true
   rules:
     - if: $CI_COMMIT_TAG
-    - if: $CI_COMMIT_BRANCH == "main"
 
 build_image:
   stage: build
@@ -60,6 +59,8 @@ build_image:
   after_script:
     - docker logout $REGISTRY_URL
   needs: ["sonarqube"]
+  only:
+    - main
 deploy_app:
   stage: deploy
   tags:
