@@ -36,8 +36,7 @@ sonarqube:
         -Dsonar.login=${SONAR_TOKEN}
         -Dsonar.projectVersion=${CI_COMMIT_TAG}
   allow_failure: true
-  only:
-    - main
+
 
 build_image:
   stage: build
