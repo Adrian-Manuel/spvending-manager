@@ -32,11 +32,10 @@ sonarqube:
       - .sonar/cache
   script:
     - echo "Iniciando análisis con SonarQube..."
-    - sonar-scanner \
+    - sonar-scanner -X \
         -Dsonar.host.url=${SONAR_HOST_URL} \
         -Dsonar.login=${SONAR_TOKEN} \
-        -Dsonar.projectVersion=${CI_COMMIT_TAG} \
-        -X
+        -Dsonar.projectVersion=${CI_COMMIT_TAG}
   allow_failure: true
   only:
     - main
