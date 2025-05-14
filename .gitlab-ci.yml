@@ -45,8 +45,6 @@ build_image:
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
     - docker-compose -f docker-compose.yml build --no-cache --pull
-    - echo "Obteniendo el tag con git describe..."
-    - echo "Tag obtenido:$IMAGE_NAME"
     - docker tag spvending-api-image "$IMAGE_NAME"
     - docker push "$IMAGE_NAME"
     - docker tag spvending-api-image "$IMAGE_NAME_LATEST"
