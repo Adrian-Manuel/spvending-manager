@@ -1,9 +1,87 @@
-stages:
-  - check_tag
+image: docker:latest
 
-check_commit_tag:
-  stage: check_tag
+variables:
+  REGISTRY_URL: "localhost:5050"
+  DOCKER_DRIVER: overlay2
+  DOCKER_HOST: unix:///var/run/docker.sock
+  IMAGE_TAG: ${CI_COMMIT_TAG:-latest}
+  IMAGE_NAME_BASE: "$REGISTRY_URL/adrian-manuel/spvending-managment"
+  IMAGE_NAME_LATEST: "$IMAGE_NAME_BASE:latest"
+  COMPOSE_PROJECT_NAME: "spvending-managment"
+
+stages:
+  - sonarqube
+  - build
+  - deploy
+
+sonarqube:
+  image: sonarsource/sonar-scanner-cli:latest
+  stage: sonarqube
+
+  tags:
+    - sonar
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  cache:
+    key: "${CI_JOB_NAME}"
+    paths:
+      - .sonar/cache
+  script:
+    - echo "Iniciando análisis con SonarQube..."
+    - >
+      sonar-scanner -X
+      -Dsonar.projectVersion=${CI_COMMIT_TAG}
+  allow_failure: true
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: always
+build_image:
+  stage: build
   tags:
     - build
+
+  before_script:
+    - echo "Validando nombre de imagen..."
+    - export IMAGE_NAME="$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
+    - echo "IMAGE_NAME:$IMAGE_NAME"
+    - echo "IMAGE_NAME_LATEST:$IMAGE_NAME_LATEST"
   script:
-    - echo "El valor de CI_COMMIT_TAG es:$CI_COMMIT_TAG"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
+    - docker-compose -f docker-compose.yml build --no-cache --pull
+    - echo "Obteniendo el tag con git describe..."
+    - echo "Tag obtenido:$IMAGE_NAME"
+    - docker tag spvending-api-image "$IMAGE_NAME"
+    - docker push "$IMAGE_NAME"
+    - docker tag spvending-api-image "$IMAGE_NAME_LATEST"
+    - docker push "$IMAGE_NAME_LATEST"
+
+  after_script:
+    - docker logout $REGISTRY_URL
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: always
+  needs: ["sonarqube"]
+
+deploy_app:
+  stage: deploy
+  tags:
+    - deploy
+  needs: ["build_image"]
+  services: []
+  variables:
+    DOCKER_HOST: "unix:///var/run/docker.sock"
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
+  script:
+    - echo "=== DESPLEGANDO VERSIÓN ==="
+    - docker pull "$IMAGE_NAME_LATEST"
+    - docker-compose -f docker-compose.deploy.yml down --remove-orphans
+    - docker-compose -f docker-compose.deploy.yml up -d --force-recreate
+    - echo "=== CONTENEDORES EN EJECUCIÓN ==="
+    - docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+  after_script:
+    - docker logout $REGISTRY_URL
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: always
