@@ -27,6 +27,7 @@ sonarqube:
       - .sonar/cache
   script:
     - echo "Iniciando análisis con SonarQube..."
+    - curl -v ${SONAR_HOST_URL}/api/system/status
     - >
       sonar-scanner -X
       -Dsonar.host.url=${SONAR_HOST_URL}
