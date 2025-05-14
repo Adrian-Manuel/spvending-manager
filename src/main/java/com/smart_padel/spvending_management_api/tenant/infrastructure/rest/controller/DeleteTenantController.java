@@ -9,7 +9,6 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DeleteTenantController {
     private final DeleteTenantUseCase deleteTenantUseCase;
     @PreAuthorize("hasAuthority('admin:delete')")

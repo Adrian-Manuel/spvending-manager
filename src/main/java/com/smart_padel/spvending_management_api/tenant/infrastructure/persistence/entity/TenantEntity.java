@@ -54,10 +54,10 @@ public class TenantEntity {
     @Column(name = "micron_id")
     private String micronId;
     @JsonManagedReference
-    @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ClubEntity> clubsEntities;
     @JsonManagedReference
-    @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "tenantEntity", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserManagerEntity> userManagerEntities;
 
     public static TenantEntity fromDomainModel(Tenant tenant){

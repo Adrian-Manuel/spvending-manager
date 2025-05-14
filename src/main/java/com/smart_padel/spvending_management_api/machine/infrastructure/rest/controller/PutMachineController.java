@@ -17,7 +17,6 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/machines")
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class PutMachineController {
     private final UpdateMachineUseCase updateMachineUseCase;
     @Value("${app.AESecret_key}")

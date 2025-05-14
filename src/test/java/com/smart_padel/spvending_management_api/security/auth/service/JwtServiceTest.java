@@ -4,6 +4,8 @@ import com.smart_padel.spvending_management_api.security.user.Role;
 import com.smart_padel.spvending_management_api.security.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Date;
@@ -83,5 +85,14 @@ class JwtServiceTest {
         assertThrows(IllegalArgumentException.class, () -> jwtService.extractExpiration(null));
         assertThrows(IllegalArgumentException.class, () -> jwtService.isTokenExpired(null));
         assertThrows(IllegalArgumentException.class, () -> jwtService.getJwtExpiration(null));
+    }
+
+    @Test
+    void isTokenValid_shouldReturnFalse_whenTokenThrowsJwtException() {
+        String invalidToken = "invalid.token.value";
+        UserDetails mockUser = Mockito.mock(UserDetails.class);
+        Mockito.when(mockUser.getUsername()).thenReturn("usuario");
+        boolean result = jwtService.isTokenValid(invalidToken, mockUser);
+        assertFalse(result);
     }
 }

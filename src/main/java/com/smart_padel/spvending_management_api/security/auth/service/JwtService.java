@@ -1,6 +1,8 @@
 package com.smart_padel.spvending_management_api.security.auth.service;
 import com.smart_padel.spvending_management_api.security.user.User;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -63,7 +65,7 @@ public class JwtService {
     boolean isTokenExpired(String token) {
         try {
             return extractExpiration(token).before(new Date());
-        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+        } catch (ExpiredJwtException _) {
             return true;
         }
     }
@@ -74,7 +76,7 @@ public class JwtService {
             }
             final String username = extractUsername(token);
             return (username.equals(user.getUsername())) && !isTokenExpired(token);
-        } catch (Exception exception) {
+        } catch (JwtException _) {
             return false;
         }
     }

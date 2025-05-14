@@ -1,7 +1,6 @@
 package com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller;
 import com.smart_padel.spvending_management_api.machine.domain.model.Machine;
 import com.smart_padel.spvending_management_api.machine.domain.ports.in.RetrieveMachineUseCase;
-import com.smart_padel.spvending_management_api.machine.infrastructure.dto.mapper.MachineMapper;
 import com.smart_padel.spvending_management_api.security.auth.service.JwtService;
 import com.smart_padel.spvending_management_api.security.auth.service.TokenBlacklistService;
 import com.smart_padel.spvending_management_api.shared.exceptions.ResourceNotFoundException;

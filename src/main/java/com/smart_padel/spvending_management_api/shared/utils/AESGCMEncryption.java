@@ -11,8 +11,8 @@ import java.util.Base64;
 
 
 public class AESGCMEncryption {
-    private AESGCMEncryption() {
-        throw new IllegalStateException("Utility class");
+    AESGCMEncryption() {
+        throw new IllegalStateException("Util class");
     }
     private static final String ENCRYPTION_ALGORITHM = "AES/GCM/NoPadding";
     private static final int TAG_LENGTH_BIT = 128;

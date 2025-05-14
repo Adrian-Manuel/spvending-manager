@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 class TenantHelperAdapterTest {
@@ -66,5 +67,12 @@ class TenantHelperAdapterTest {
         ResourceAlreadyExistsException exception = assertThrows(ResourceAlreadyExistsException.class,
                 () -> TenantHelperAdapter.validateTenantNameNotExists(tenantRepository, "DuplicateTenant"));
         assertEquals("There is already a tenant with that name", exception.getMessage());
+    }
+
+    @Test
+    void constructor_ThrowsException() {
+        assertThatThrownBy(TenantHelperAdapter::new)
+                .isInstanceOf(IllegalStateException.class)
+                .hasMessage("Util class");
     }
 }

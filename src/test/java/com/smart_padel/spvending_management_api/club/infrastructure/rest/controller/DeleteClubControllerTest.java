@@ -3,14 +3,12 @@ package com.smart_padel.spvending_management_api.club.infrastructure.rest.contro
 import com.smart_padel.spvending_management_api.club.domain.ports.in.DeleteClubUseCase;
 import com.smart_padel.spvending_management_api.security.auth.service.JwtService;
 import com.smart_padel.spvending_management_api.security.auth.service.TokenBlacklistService;
-import com.smart_padel.spvending_management_api.tenant.domain.ports.in.UpdateTenantUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 

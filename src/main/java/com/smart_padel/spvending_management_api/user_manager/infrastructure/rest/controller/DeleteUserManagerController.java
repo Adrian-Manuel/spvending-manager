@@ -8,12 +8,10 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 @RequestMapping("/api/v1/user-managers")
 @RequiredArgsConstructor
 @RestController
-@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class DeleteUserManagerController {
     private final DeleteUserManagerUseCase deleteUserManagerUseCase;
     @PreAuthorize("hasAuthority('admin:delete')")
