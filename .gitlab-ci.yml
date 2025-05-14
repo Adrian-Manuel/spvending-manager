@@ -4,11 +4,9 @@ variables:
   REGISTRY_URL: "localhost:5050"
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
-  IMAGE_TAG: ${CI_COMMIT_TAG:-latest}
   IMAGE_NAME_BASE: "$REGISTRY_URL/adrian-manuel/spvending-managment"
-  IMAGE_NAME_LATEST: "$REGISTRY_URL/adrian-manuel/spvending-managment:latest"
+  IMAGE_NAME_LATEST: "$IMAGE_NAME_BASE:latest"
   COMPOSE_PROJECT_NAME: "spvending-managment"
-
 
 stages:
   - sonarqube
@@ -18,7 +16,6 @@ stages:
 sonarqube:
   image: sonarsource/sonar-scanner-cli:latest
   stage: sonarqube
-
   tags:
     - sonar
   variables:
@@ -30,11 +27,11 @@ sonarqube:
       - .sonar/cache
   script:
     - echo "Iniciando análisis con SonarQube..."
-    - > 
-        sonar-scanner -X
-        -Dsonar.host.url=${SONAR_HOST_URL}
-        -Dsonar.login=${SONAR_TOKEN}
-        -Dsonar.projectVersion=${CI_COMMIT_TAG}
+    - >
+      sonar-scanner -X
+      -Dsonar.host.url=${SONAR_HOST_URL}
+      -Dsonar.login=${SONAR_TOKEN}
+      -Dsonar.projectVersion=${CI_COMMIT_TAG}
   allow_failure: true
   only:
     - main
@@ -48,24 +45,22 @@ build_image:
     - if: $CI_COMMIT_BRANCH == "main"
   before_script:
     - echo "Validando nombre de imagen..."
-    - export IMAGE_NAME="$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
-    - echo "IMAGE_NAME:$IMAGE_NAME"
-    - echo "IMAGE_NAME_LATEST:$IMAGE_NAME_LATEST"
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
     - docker-compose -f docker-compose.yml build --no-cache --pull
-    - echo "Intentando obtener el tag con git describe..."
-    - export GIT_TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "main")
-    - echo "Tag obtenido con git describe:$GIT_TAG"
-    - export IMAGE_TAG_FOR_DOCKER="$GIT_TAG"
-    - echo "Etiquetando imagen con:$IMAGE_TAG_FOR_DOCKER"
-    - docker tag spvending-api-image "$REGISTRY_URL/adrian-manuel/spvending-managment:$IMAGE_TAG_FOR_DOCKER"
-    - docker push "$REGISTRY_URL/adrian-manuel/spvending-managment:$IMAGE_TAG_FOR_DOCKER"
+    - echo "Obteniendo el tag con git describe..."
+    - export IMAGE_TAG=$(git describe --tags --exact-match HEAD 2>/dev/null || echo "main")
+    - echo "Tag obtenido: $IMAGE_TAG"
+    - export IMAGE_NAME_WITH_TAG="$IMAGE_NAME_BASE:$IMAGE_TAG"
+    - echo "Etiquetando imagen como: $IMAGE_NAME_WITH_TAG"
+    - docker tag spvending-api-image "$IMAGE_NAME_WITH_TAG"
+    - docker push "$IMAGE_NAME_WITH_TAG"
     - docker tag spvending-api-image "$IMAGE_NAME_LATEST"
     - docker push "$IMAGE_NAME_LATEST"
   after_script:
     - docker logout $REGISTRY_URL
   needs: ["sonarqube"]
+
 deploy_app:
   stage: deploy
   tags:
