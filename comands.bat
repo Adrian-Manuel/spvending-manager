@@ -17,6 +17,9 @@ git commit -m %MENSAJE%
 echo Creando tag local %VERSION%
 git tag %VERSION%
 
+echo Pushing a la rama main
+git push %REMOTE% main
+
 echo Pushing tag remoto %VERSION%
 git push %REMOTE% %VERSION%
 
