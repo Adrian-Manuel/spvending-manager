@@ -9,7 +9,6 @@ variables:
   IMAGE_NAME_LATEST: "$REGISTRY_URL/adrian-manuel/spvending-managment:latest"
   COMPOSE_PROJECT_NAME: "spvending-managment"
 
-
 stages:
   - sonarqube
   - build
@@ -36,9 +35,6 @@ sonarqube:
         -Dsonar.login=${SONAR_TOKEN}
         -Dsonar.projectVersion=${CI_COMMIT_TAG}
   allow_failure: true
-  rules:
-    - if: $CI_COMMIT_TAG
-    - if: $CI_BRANCH_NAME == main
 
 build_image:
   stage: build
@@ -59,7 +55,9 @@ build_image:
     - docker push "$IMAGE_NAME_LATEST"
   after_script:
     - docker logout $REGISTRY_URL
-  needs: ["sonarqube"]
+  rules:
+    - if: $CI_COMMIT_TAG
+    - if: $CI_BRANCH_NAME == main
 
 deploy_app:
   stage: deploy
