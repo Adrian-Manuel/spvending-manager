@@ -11,8 +11,8 @@ variables:
 
 
 stages:
-  - sonarqube
   - build
+  - sonarqube
   - deploy
 
 sonarqube:
