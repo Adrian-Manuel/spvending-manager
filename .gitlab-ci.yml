@@ -53,19 +53,19 @@ build_image:
     - echo "IMAGE_NAME_LATEST:$IMAGE_NAME_LATEST"
   script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
-        - docker-compose -f docker-compose.yml build --no-cache --pull
-        - echo "Valor de CI_COMMIT_TAG (intento 2):$CI_COMMIT_TAG"
-        - echo "Valor de CI_COMMIT_REF_NAME:$CI_COMMIT_REF_NAME"
-        - echo "Valor de CI_BUILD_TAG:$CI_BUILD_TAG" # Nueva variable
-        - echo "Valor de CI_JOB_TAG:$CI_JOB_TAG"     # Nueva variable
-        - export IMAGE_TAG_FOR_DOCKER="$CI_BUILD_TAG" # Intentamos con CI_BUILD_TAG
-        - if [ -z "$IMAGE_TAG_FOR_DOCKER" ]; then
-        - export IMAGE_TAG_FOR_DOCKER="$CI_COMMIT_REF_NAME" # Si está vacío, volvemos a REF_NAME
-        - fi
-        - docker tag spvending-api-image "$REGISTRY_URL/adrian-manuel/spvending-managment:$IMAGE_TAG_FOR_DOCKER"
-        - docker push "$REGISTRY_URL/adrian-manuel/spvending-managment:$IMAGE_TAG_FOR_DOCKER"
-        - docker tag spvending-api-image "$IMAGE_NAME_LATEST"
-        - docker push "$IMAGE_NAME_LATEST"
+    - docker-compose -f docker-compose.yml build --no-cache --pull
+    - echo "Valor de CI_COMMIT_TAG (intento 2):$CI_COMMIT_TAG"
+    - echo "Valor de CI_COMMIT_REF_NAME:$CI_COMMIT_REF_NAME"
+    - echo "Valor de CI_BUILD_TAG:$CI_BUILD_TAG" # Nueva variable
+    - echo "Valor de CI_JOB_TAG:$CI_JOB_TAG"     # Nueva variable
+    - export IMAGE_TAG_FOR_DOCKER="$CI_BUILD_TAG" # Intentamos con CI_BUILD_TAG
+    - if [ -z "$IMAGE_TAG_FOR_DOCKER" ]; then
+    - export IMAGE_TAG_FOR_DOCKER="$CI_COMMIT_REF_NAME" # Si está vacío, volvemos a REF_NAME
+    - fi
+    - docker tag spvending-api-image "$REGISTRY_URL/adrian-manuel/spvending-managment:$IMAGE_TAG_FOR_DOCKER"
+    - docker push "$REGISTRY_URL/adrian-manuel/spvending-managment:$IMAGE_TAG_FOR_DOCKER"
+    - docker tag spvending-api-image "$IMAGE_NAME_LATEST"
+    - docker push "$IMAGE_NAME_LATEST"
   after_script:
     - docker logout $REGISTRY_URL
   needs: ["sonarqube"]
