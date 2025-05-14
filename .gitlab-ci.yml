@@ -19,7 +19,6 @@ stages:
 sonarqube:
   image: sonarsource/sonar-scanner-cli:latest
   stage: sonarqube
-  entrypoint: ["sonar-scanner"]
   tags:
     - sonar
   variables:
