@@ -1,0 +1,9 @@
+stages:
+  - check_tag
+
+check_commit_tag:
+  stage: check_tag
+  tags:
+    - build
+  script:
+    - echo "El valor de CI_COMMIT_TAG es:$CI_COMMIT_TAG"
