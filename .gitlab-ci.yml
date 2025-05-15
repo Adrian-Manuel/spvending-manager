@@ -39,7 +39,7 @@ sonarqube:
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then
               git fetch localgit main
-              MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" localgit/main)
+              MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" origin/main)
               TAG_COMMIT=$(git rev-list -n 1 "$CI_COMMIT_TAG")
               if [ "$MERGE_BASE" = "$TAG_COMMIT" ]; then
                 echo "Iniciando análisis con SonarQube..."
@@ -71,7 +71,7 @@ build_image:
     - |
         if [ -n "$CI_COMMIT_TAG" ]; then
           git fetch localgit main
-          MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" localgit/main)
+          MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" origin/main)
           TAG_COMMIT=$(git rev-list -n 1 "$CI_COMMIT_TAG")
           if [ "$MERGE_BASE" = "$TAG_COMMIT" ]; then
                     echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
@@ -111,7 +111,7 @@ deploy_production:
       if [ -n "$CI_COMMIT_TAG" ]; then
         git remote set-url localgit "$CI_REPOSITORY_URL"
         git fetch localgit main
-        MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" localgit/main)
+        MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" origin/main)
         TAG_COMMIT=$(git rev-list -n 1 "$CI_COMMIT_TAG")
         if [ "$MERGE_BASE" = "$TAG_COMMIT" ]; then
           echo "=== DESPLEGANDO VERSIÓN: $DEPLOY_TAG==="
