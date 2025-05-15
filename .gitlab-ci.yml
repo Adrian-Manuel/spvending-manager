@@ -14,7 +14,7 @@ stages:
   - test
   - sonarqube
   - build
-  - deploy
+  - deploy_production
 
 sonarqube:
   #image: sonarsource/sonar-scanner-cli:latest
@@ -89,10 +89,10 @@ build_image:
       when: always
   needs: ["sonarqube"]
 
-deploy_app:
-  stage: deploy
+deploy_production:
+  stage: deploy_production
   tags:
-    - deploy
+    - production
   needs: ["build_image"]
   services: []
   variables:
