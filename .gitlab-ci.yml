@@ -2,8 +2,6 @@ image: docker:latest
 
 variables:
   REGISTRY_URL: "gitlab:5050"
-
-
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
   IMAGE_NAME_BASE: "$REGISTRY_URL/adrian-manuel/spvending-managment"
