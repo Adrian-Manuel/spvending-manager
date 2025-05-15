@@ -100,12 +100,24 @@ deploy_app:
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
   script:
-    - echo "=== DESPLEGANDO VERSIÓN ==="
-    - docker pull "$IMAGE_NAME_LATEST"
-    - docker-compose -f docker-compose.deploy.yml down --remove-orphans
-    - docker-compose -f docker-compose.deploy.yml up -d --force-recreate
-    - echo "=== CONTENEDORES EN EJECUCIÓN ==="
-    - docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        git fetch origin main
+        MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" origin/main)
+        TAG_COMMIT=$(git rev-list -n 1 "$CI_COMMIT_TAG")
+        if [ "$MERGE_BASE" = "$TAG_COMMIT" ]; then
+          echo "=== DESPLEGANDO VERSIÓN ==="
+          docker pull "$IMAGE_NAME_LATEST"
+          docker-compose -f docker-compose.deploy.yml down --remove-orphans
+          docker-compose -f docker-compose.deploy.yml up -d --force-recreate
+          echo "=== CONTENEDORES EN EJECUCIÓN ==="
+          docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+        else
+          echo "El tag NO proviene de main. Saltando build."
+        fi
+      else
+        echo "No es un tag. Saltando build."
+      fi
   after_script:
     - docker logout $REGISTRY_URL
   rules:
