@@ -9,9 +9,5 @@ public class SPVendingManagementApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(SPVendingManagementApplication.class, args != null ? args : new String[]{});
 	}
-
-
-
-
 }
 
