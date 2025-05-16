@@ -26,7 +26,6 @@ public class SPVendingManagementApplication {
 						.allowedOrigins("http://localhost:5173")
 						.allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
 						.allowCredentials(true);
-
 			}
 		};
 	}
