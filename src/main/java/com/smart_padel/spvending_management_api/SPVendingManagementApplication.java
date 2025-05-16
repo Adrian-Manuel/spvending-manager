@@ -17,6 +17,7 @@ public class SPVendingManagementApplication {
 
 	}
 
+
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
@@ -30,5 +31,6 @@ public class SPVendingManagementApplication {
 			}
 		};
 	}
+
 }
 
