@@ -96,6 +96,7 @@ deploy_app:
   needs: ["build_image"]
   services: []
   variables:
+    DEPLOY_TAG: "latest"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
@@ -107,7 +108,7 @@ deploy_app:
         TAG_COMMIT=$(git rev-list -n 1 "$CI_COMMIT_TAG")
         if [ "$MERGE_BASE" = "$TAG_COMMIT" ]; then
           echo "=== DESPLEGANDO VERSIÓN ==="
-          docker pull "$IMAGE_NAME_LATEST"
+          docker pull "$IMAGE_NAME_BASE:$DEPLOY_TAG"
           docker-compose -f docker-compose.deploy.yml down --remove-orphans
           docker-compose -f docker-compose.deploy.yml up -d --force-recreate
           echo "=== CONTENEDORES EN EJECUCIÓN ==="
@@ -122,4 +123,4 @@ deploy_app:
     - docker logout $REGISTRY_URL
   rules:
     - if: $CI_COMMIT_TAG
-      when: always
+      when: manual
