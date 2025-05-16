@@ -17,7 +17,7 @@ public class SPVendingManagementApplication {
 
 	}
 
-
+<<<<<<< Updated upstream
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
 		return new WebMvcConfigurer() {
@@ -31,6 +31,8 @@ public class SPVendingManagementApplication {
 			}
 		};
 	}
+=======
 
+>>>>>>> Stashed changes
 }
 
