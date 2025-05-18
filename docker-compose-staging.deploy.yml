@@ -10,7 +10,8 @@ services:
     depends_on:
       - postgres-staging
       - redis-staging
-
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-staging:5432/tenants_managment_staging
   redis-staging:
     image: redis
     container_name: redis_cache
