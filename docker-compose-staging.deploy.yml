@@ -4,38 +4,38 @@ services:
     image: gitlab:5050/adrian-manuel/spvending-managment:${DEPLOY_TAG}
     container_name: spvending-api-staging-container
     ports:
-      - "8080:8080"
+      - "8081:8080"
     networks:
       - spring-network-staging
     depends_on:
-      - postgres
-      - redis
+      - postgres-staging
+      - redis-staging
 
-  redis:
+  redis-staging:
     image: redis
     container_name: redis_cache
     ports:
-      - "6379:6379"
+      - "6380:6379"
     networks:
       - spring-network-staging
 
-  postgres:
+  postgres-staging:
     image: postgres
-    container_name: postgres_database
+    container_name: postgres_database_staging
     environment:
       POSTGRES_PASSWORD: abc123.
-      POSTGRES_DB: tenants_managment
+      POSTGRES_DB: tenants_managment_staging
       POSTGRES_USER: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     networks:
       - spring-network-staging
     volumes:
-      - postgres-volume:/var/lib/postgresql/data
+      - postgres-volume-staging:/var/lib/postgresql/data
 
 networks:
   spring-network-staging:
     driver: bridge
 
 volumes:
-  postgres-volume:
+  postgres-volume-staging:

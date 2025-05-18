@@ -4,38 +4,38 @@ services:
     image: gitlab:5050/adrian-manuel/spvending-managment:${DEPLOY_TAG}
     container_name: spvending-api-production-container
     ports:
-      - "8081:8080"
+      - "8082:8080"
     networks:
-      - spring-network
+      - spring-network-production
     depends_on:
-      - postgres
-      - redis
+      - postgres-production
+      - redis-production
 
-  redis:
+  redis-production:
     image: redis
-    container_name: redis_cache
+    container_name: redis_cache_production
     ports:
-      - "6380:6379"
+      - "6381:6379"
     networks:
-      - spring-network
+      - spring-network-production
 
-  postgres:
+  postgres-production:
     image: postgres
-    container_name: postgres_database
+    container_name: postgres_database_production
     environment:
       POSTGRES_PASSWORD: abc123.
-      POSTGRES_DB: tenants_managment
+      POSTGRES_DB: tenants_managment_production
       POSTGRES_USER: postgres
     ports:
-      - "5433:5432"
+      - "5434:5432"
     networks:
-      - spring-network
+      - spring-network-production
     volumes:
-      - postgres-volume:/var/lib/postgresql/data
+      - postgres-volume-production:/var/lib/postgresql/data
 
 networks:
-  spring-network:
+  spring-network-production:
     driver: bridge
 
 volumes:
-  postgres-volume:
+  postgres-volume-production:
