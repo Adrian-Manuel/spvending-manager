@@ -105,7 +105,7 @@ deploy_app_staging:
           echo "=== DESPLEGANDO VERSIÓN ==="
           docker pull "$IMAGE_NAME_BASE:$DEPLOY_TAG"
           docker-compose -f docker-compose-staging.deploy.yml down --remove-orphans
-          docker-compose -f docker-compose-staging.deploy.yml up -d --force-recreate
+          docker-compose -f docker-compose-staging.deploy.yml up -d 
           echo "=== CONTENEDORES EN EJECUCIÓN ==="
           docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
         else
@@ -138,14 +138,14 @@ deploy_app_production:
           echo "=== DESPLEGANDO VERSIÓN ==="
           docker pull "$IMAGE_NAME_BASE:$DEPLOY_TAG"
           docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
-          docker-compose -f docker-compose-production.deploy.yml up -d --force-recreate
+          docker-compose -f docker-compose-production.deploy.yml up -d 
           echo "=== CONTENEDORES EN EJECUCIÓN ==="
           docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
         else
-          echo "El tag NO proviene de main. Saltando build."
+          echo "El tag NO proviene de main. Saltando despliegue."
         fi
       else
-        echo "No es un tag. Saltando build."
+        echo "No es un tag. Saltando despliegue."
       fi
   after_script:
     - docker logout $REGISTRY_URL
