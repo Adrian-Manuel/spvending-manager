@@ -93,6 +93,7 @@ deploy_app_staging:
   needs: ["build_image"]
   services: []
   variables:
+    COMPOSE_PROJECT_NAME: "spvending-managment-staging"
     DEPLOY_TAG: "$CI_COMMIT_TAG"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
@@ -127,6 +128,7 @@ deploy_app_production:
   services: []
   variables:
     DEPLOY_TAG: "$CI_COMMIT_TAG"
+    COMPOSE_PROJECT_NAME: "spvending-managment-production"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
