@@ -93,7 +93,7 @@ deploy_app_staging:
   needs: ["build_image"]
   services: []
   variables:
-    DEPLOY_TAG: "latest"
+    DEPLOY_TAG: "$CI_COMMIT_TAG"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
@@ -126,7 +126,7 @@ deploy_app_production:
   needs: ["deploy_app_staging"]
   services: []
   variables:
-    DEPLOY_TAG: "latest"
+    DEPLOY_TAG: "$CI_COMMIT_TAG"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
