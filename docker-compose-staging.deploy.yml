@@ -6,7 +6,7 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - spring-network
+      - spring-network-staging
     depends_on:
       - postgres
       - redis
@@ -17,7 +17,7 @@ services:
     ports:
       - "6379:6379"
     networks:
-      - spring-network
+      - spring-network-staging
 
   postgres:
     image: postgres
@@ -29,12 +29,12 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - spring-network
+      - spring-network-staging
     volumes:
       - postgres-volume:/var/lib/postgresql/data
 
 networks:
-  spring-network:
+  spring-network-staging:
     driver: bridge
 
 volumes:
