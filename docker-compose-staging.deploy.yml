@@ -12,6 +12,9 @@ services:
       - redis-staging
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-staging:5432/tenants_managment_staging
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=abc123.
+      - SPRING_REDIS_HOST=redis-staging
   redis-staging:
     image: redis
     container_name: redis_cache

@@ -12,6 +12,9 @@ services:
       - redis-production
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-production:5432/tenants_managment_production
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=abc123.
+      - SPRING_REDIS_HOST=redis-production
   redis-production:
     image: redis
     container_name: redis_cache_production
