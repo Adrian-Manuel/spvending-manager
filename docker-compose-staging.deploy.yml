@@ -2,7 +2,7 @@ version: "3.9"
 services:
   spvending-api-image:
     image: gitlab:5050/adrian-manuel/spvending-managment:${DEPLOY_TAG}
-    container_name: spvending-api-container
+    container_name: spvending-api-staging-container
     ports:
       - "8080:8080"
     networks:
