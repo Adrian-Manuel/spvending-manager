@@ -13,6 +13,11 @@ services:
     depends_on:
       - postgres
       - redis
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_database:5432/tenants_managment
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=abc123.
+      - SPRING_REDIS_HOST=redis_cache
   redis:
     image: redis
     container_name: redis_cache

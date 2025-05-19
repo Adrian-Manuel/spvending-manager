@@ -8,6 +8,13 @@ import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.Tenant
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutPreview;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutSummary;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.mapper.TenantMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,12 +28,29 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
+@Tag(name= "Tenant", description = "Retrieve tenant information")
 public class GetTenantController {
     private final RetrieveClubUseCase retrieveClubUseCase;
     private final RetrieveTenantUseCase retrieveTenantUseCase;
+
+    @Operation(
+            summary = "Get all tenants",
+            description = "Returns a paginated list of all tenants. Requires 'admin:read' or 'user:read' authority."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tenants retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = TenantDtoOutPreview.class))),
+            @ApiResponse(responseCode = "400", description = "Invalid pagination parameters",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content),
+    })
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping
-    public ResponseEntity <Page<TenantDtoOutPreview>> getAllTenants(@RequestParam(required = false) String search, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity <Page<TenantDtoOutPreview>> getAllTenants(
+            @Parameter(description = "Text search filter for tenant name or attributes", example = "Acme") @RequestParam(required = false) String search,
+            @Parameter(description = "Requested page number (0-based)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Number of items per page", example = "10") @RequestParam(defaultValue = "10") int size) {
         if (size<1 || page<0){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -38,22 +62,68 @@ public class GetTenantController {
                 : retrieveTenantUseCase.getAllTenants(pageable).map(TenantMapper::toDtoPreview);
         return new ResponseEntity<>(tenants, HttpStatus.OK);
     }
+
+    @Operation(
+            summary = "Get tenant details by ID",
+            description = "Returns detailed information about a tenant by its unique identifier. Requires 'admin:read' or 'user:read' authority."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tenant details retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = TenantDtoOutDetail.class))),
+            @ApiResponse(responseCode = "404", description = "Tenant not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid Tenant ID",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content),
+    })
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{tenantId}")
-    public ResponseEntity<TenantDtoOutDetail> getTenantById(@PathVariable UUID tenantId){
+    public ResponseEntity<TenantDtoOutDetail> getTenantById(
+            @Parameter(description = "Tenant UUID", required = true) @PathVariable UUID tenantId){
         Tenant tenantRequest=retrieveTenantUseCase.getTenantById(tenantId);
         return new ResponseEntity<>(TenantMapper.toDtoDetail(tenantRequest), HttpStatus.OK);
     }
+
+
+    @Operation(
+            summary = "Get all clubs for a tenant",
+            description = "Returns a paginated list of clubs associated with the specified tenant. Requires 'admin:read' or 'user:read' authority."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Clubs for tenant retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = ClubDtoOutPreview.class))),
+            @ApiResponse(responseCode = "404", description = "Tenant not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "400", description = "Invalid Tenant ID or pagination parameters",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content),
+    })
     @PreAuthorize("hasAnyAuthority('admin:read', 'user:read')")
     @GetMapping("/{tenantId}/clubs")
-    public ResponseEntity<Page<ClubDtoOutPreview>> getAllClubsByTenantId(@RequestParam(required = false) String search,
-                                                                         @RequestParam(defaultValue = "0") int page,
-                                                                         @RequestParam(defaultValue = "10")int size,
-                                                                         @PathVariable UUID tenantId){
+    public ResponseEntity<Page<ClubDtoOutPreview>> getAllClubsByTenantId(
+            @Parameter(description = "Text search filter for club name or attributes", example = "Padel Club") @RequestParam(required = false) String search,
+            @Parameter(description = "Requested page number (0-based)", example = "0") @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "Number of items per page", example = "10") @RequestParam(defaultValue = "10")int size,
+            @Parameter(description = "Tenant UUID", required = true) @PathVariable UUID tenantId){
         Pageable pageable=PageRequest.of(page, size);
         Page<ClubDtoOutPreview> clubs = retrieveClubUseCase.getAllClubsByTenantId(search, tenantId,pageable).map(ClubMapper::toDtoPreview);
         return new ResponseEntity<>(clubs, HttpStatus.OK);
     }
+
+    @Operation(
+            summary = "Get summary of all tenants",
+            description = "Returns a summary list of all tenants in the system. Requires 'admin:read' authority."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Tenant summary list retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = TenantDtoOutSummary.class))),
+            @ApiResponse(responseCode = "404", description = "Tenants not found",
+                    content = @Content),
+            @ApiResponse(responseCode = "401", description = "Unauthorized",
+                    content = @Content),
+    })
     @PreAuthorize("hasAuthority('admin:read')")
     @GetMapping("/all-summary")
     public ResponseEntity<List<TenantDtoOutSummary>> getTenantsSummary(){

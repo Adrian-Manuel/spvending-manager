@@ -26,7 +26,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     public boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
         final String requestURI=request.getRequestURI();
-        return requestURI.startsWith("/api/v1/auth/");
+        return requestURI.startsWith("/api/v1/auth/")
+                || requestURI.equals("/swagger-ui.html")
+                || requestURI.startsWith("/swagger-ui/")
+                || requestURI.equals("/v3/api-docs")
+                || requestURI.startsWith("/v3/api-docs/")
+                || requestURI.equals("/v3/api-docs.yaml");
     }
     @Override
     public void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
