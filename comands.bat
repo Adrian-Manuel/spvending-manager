@@ -1,6 +1,6 @@
 @echo off
 set VERSION=v1.0.0
-set MENSAJE="documentacion de los endpoints de User Managers"
+set MENSAJE="documentacion de los endpoints de atenticacion y autorizacion"
 set REMOTE=localgit
 echo Eliminando tag local %VERSION%
 git tag -d %VERSION%
