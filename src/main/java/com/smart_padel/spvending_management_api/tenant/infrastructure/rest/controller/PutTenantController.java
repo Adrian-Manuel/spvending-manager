@@ -4,6 +4,12 @@ import com.smart_padel.spvending_management_api.tenant.domain.ports.in.UpdateTen
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoIn;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.mapper.TenantMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,8 +20,36 @@ import java.util.UUID;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/tenants")
+@Tag(name= "Tenant", description = "Update tenant information")
 public class PutTenantController {
     private final UpdateTenantUseCase updateTenantUseCase;
+
+    @Operation(
+            summary = "Update a tenant",
+            description = "Updates the information of a tenant by ID. Requires 'admin:update' authority."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Tenant updated successfully",
+                    content = @Content(schema = @Schema(implementation = TenantDtoOutDetail.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Invalid input data",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Tenant not found",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized",
+                    content = @Content
+            )
+    })
     @PreAuthorize("hasAuthority('admin:update')")
     @PutMapping("/{tenantId}")
     public ResponseEntity<TenantDtoOutDetail> updateTenant(@PathVariable UUID tenantId, @Valid @RequestBody TenantDtoIn tenantDtoIn){

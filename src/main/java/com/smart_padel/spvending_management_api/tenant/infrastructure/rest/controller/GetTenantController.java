@@ -1,15 +1,18 @@
 package com.smart_padel.spvending_management_api.tenant.infrastructure.rest.controller;
 import com.smart_padel.spvending_management_api.club.domain.ports.in.RetrieveClubUseCase;
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutPreview;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubPagePreviewSwagger;
 import com.smart_padel.spvending_management_api.club.infrastructure.dto.mapper.ClubMapper;
 import com.smart_padel.spvending_management_api.tenant.domain.model.Tenant;
 import com.smart_padel.spvending_management_api.tenant.domain.ports.in.RetrieveTenantUseCase;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutPreview;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutSummary;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantPagePreviewSwagger;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.mapper.TenantMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,7 +42,7 @@ public class GetTenantController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tenants retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = TenantDtoOutPreview.class))),
+                    content = @Content(schema = @Schema(implementation = TenantPagePreviewSwagger.class))),
             @ApiResponse(responseCode = "400", description = "Invalid pagination parameters",
                     content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
@@ -91,8 +94,8 @@ public class GetTenantController {
             description = "Returns a paginated list of clubs associated with the specified tenant. Requires 'admin:read' or 'user:read' authority."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Clubs for tenant retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = ClubDtoOutPreview.class))),
+            @ApiResponse(responseCode = "200", description = "Clubs of a tenant retrieved successfully",
+                    content = @Content(schema = @Schema(implementation = ClubPagePreviewSwagger.class))),
             @ApiResponse(responseCode = "404", description = "Tenant not found",
                     content = @Content),
             @ApiResponse(responseCode = "400", description = "Invalid Tenant ID or pagination parameters",
@@ -118,7 +121,7 @@ public class GetTenantController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Tenant summary list retrieved successfully",
-                    content = @Content(schema = @Schema(implementation = TenantDtoOutSummary.class))),
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = TenantDtoOutSummary.class)))),
             @ApiResponse(responseCode = "404", description = "Tenants not found",
                     content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized",
