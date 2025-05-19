@@ -13,7 +13,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/v1/tenants")
 @RequiredArgsConstructor
-@Tag(name= "Tenant", description = "Retrieve tenant information")
+@Tag(name= "Tenant", description = "Delete tenant information")
 public class DeleteTenantController {
     private final DeleteTenantUseCase deleteTenantUseCase;
 
