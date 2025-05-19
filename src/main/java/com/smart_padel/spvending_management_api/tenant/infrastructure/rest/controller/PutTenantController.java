@@ -5,6 +5,7 @@ import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.Tenant
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutDetail;
 import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.mapper.TenantMapper;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,20 +40,34 @@ public class PutTenantController {
                     description = "Invalid input data",
                     content = @Content
             ),
+
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized",
+                    content = @Content
+            ),
             @ApiResponse(
                     responseCode = "404",
                     description = "Tenant not found",
                     content = @Content
             ),
             @ApiResponse(
-                    responseCode = "401",
-                    description = "Unauthorized",
+                    responseCode = "409",
+                    description = "There is already a tenant with that name",
                     content = @Content
             )
     })
     @PreAuthorize("hasAuthority('admin:update')")
     @PutMapping("/{tenantId}")
-    public ResponseEntity<TenantDtoOutDetail> updateTenant(@PathVariable UUID tenantId, @Valid @RequestBody TenantDtoIn tenantDtoIn){
+    public ResponseEntity<TenantDtoOutDetail> updateTenant(
+            @Parameter(description = "UUID of the tenant to update", example = "d290f1ee-6c54-4b01-90e6-d701748f0851")
+            @PathVariable UUID tenantId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Tenant data to update",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = TenantDtoIn.class))
+            )
+            @Valid @RequestBody TenantDtoIn tenantDtoIn){
         Tenant tenantRequest=TenantMapper.toModel(tenantDtoIn);
         tenantRequest=updateTenantUseCase.updateTenant(tenantId, tenantRequest);
         return new ResponseEntity<>(TenantMapper.toDtoDetail(tenantRequest), HttpStatus.OK);

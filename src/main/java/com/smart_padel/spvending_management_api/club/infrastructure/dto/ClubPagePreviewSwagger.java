@@ -8,7 +8,7 @@ public class ClubPagePreviewSwagger {
     public List<ClubDtoOutPreview> content;
 
     @Schema(description = "Page info")
-    public ClubPagePreviewSwagger.PageInfo page;
+    public PageInfo page;
 
     @Schema(description = "Pagination metadata")
     public static class PageInfo {

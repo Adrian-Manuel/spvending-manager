@@ -78,8 +78,8 @@ class GetMachineControllerTest {
     }
 
     @Test
-    @DisplayName("should return 200 OK when club is retrieved by ID successfully")
-    void shouldGetClubByIdSuccessfully() throws Exception {
+    @DisplayName("should return 200 OK when machine is retrieved by ID successfully")
+    void shouldGetMachineByIdSuccessfully() throws Exception {
         UUID machineId = UUID.randomUUID();
 
         Machine machine = new Machine();

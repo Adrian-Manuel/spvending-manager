@@ -56,6 +56,11 @@ public class PutClubController {
     public ResponseEntity<ClubDtoOutDetail> updateClub(
             @Parameter(description = "UUID of the club to update", example = "d290f1ee-6c54-4b01-90e6-d701748f0851")
             @PathVariable UUID clubId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Club information for update",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = ClubDtoIn.class))
+            )
             @Valid @RequestBody ClubDtoIn clubDtoIn){
         Club clubRequest= ClubMapper.toModel(clubDtoIn);
         clubRequest=updateClubUseCase.updateClub(clubDtoIn.getTenantId(),clubId, clubRequest);
