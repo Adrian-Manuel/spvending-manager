@@ -9,8 +9,9 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@Schema(description = "DTO containing the summary information of a club.")
 public class ClubDtoOutSummary {
-    @Schema(description = "Identificator of the club ")
+    @Schema(description = "UUID of the club", example = "12313432-54ab-4cde-1234-567812345678")
     private UUID clubId;
     @Schema(description = "Name of the club", example = "PadelPrix Ourense")
     private String name;
