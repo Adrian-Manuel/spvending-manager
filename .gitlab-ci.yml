@@ -43,7 +43,7 @@ sonarqube:
                 mv sonar-scanner-5.0.1.3006-linux sonar-scanner
                 export PATH=$PATH:$(pwd)/sonar-scanner/bin
                 echo "El tag proviene de main. Ejecutando análisis..."
-                sonar-scanner -X -Dsonar.projectVersion=${CI_COMMIT_TAG} -Dsonar.login=$SONAR_TOKEN
+                sonar-scanner -X -Dsonar.projectVersion=${CI_COMMIT_TAG} -Dsonar.token=$SONAR_TOKEN
               else
                 echo "El tag NO proviene de main. Saltando análisis."
               fi
