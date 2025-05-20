@@ -83,6 +83,8 @@ deploy_app_staging:
   stage: deploy_staging
   tags:
     - deploy
+  extra_hosts:
+    - "gitlab:172.19.0.4"
   needs: ["build_image"]
   services: []
   variables:
@@ -93,10 +95,6 @@ deploy_app_staging:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
     - |
-        git config --global http.lowSpeedLimit 0
-        git config --global http.lowSpeedTime 999999
-        git config --global http.connectTimeout 60 # Aumenta el timeout de conexión a 60 segundos
-        git config --global http.proxy "" # Asegurarse de que no haya un proxy que interfiera
       if [ -n "$CI_COMMIT_TAG" ]; then
         git fetch origin main
         if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
