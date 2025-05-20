@@ -3,7 +3,7 @@ image: docker:latest
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
-  IMAGE_NAME_BASE: "$CI_REGISTRY/adrian-manuel/spvending-managment"
+  IMAGE_NAME_BASE: "$CI_REGISTRY/Adrian-Manuel/spvending-managment"
 
 stages:
   - test
