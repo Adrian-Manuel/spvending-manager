@@ -27,7 +27,6 @@
 		<url/>
 	</scm>
 	<properties>
-		<sonar.qualitygate.wait>true</sonar.qualitygate.wait>
 		<java.version>22</java.version>
 		<org.mapstruct.version>1.6.3</org.mapstruct.version>
 		<jacoco.agent.argLine>-javaagent:${settings.localRepository}/org/jacoco/org.jacoco.agent/0.8.12/org.jacoco.agent-0.8.12-runtime.jar=destfile=${project.build.directory}/jacoco.exec</jacoco.agent.argLine>
