@@ -83,7 +83,6 @@ deploy_app_staging:
   stage: deploy_staging
   tags:
     - deploy
-  needs: ["build_image"]
   services: []
   variables:
     COMPOSE_PROJECT_NAME: "spvending-managment-staging"
