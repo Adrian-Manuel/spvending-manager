@@ -87,7 +87,6 @@ deploy_app_staging:
   services: []
   variables:
     COMPOSE_PROJECT_NAME: "spvending-managment-staging"
-    DEPLOY_TAG: "$CI_COMMIT_TAG#deploy-staging-"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
@@ -96,6 +95,7 @@ deploy_app_staging:
       if [ -n "$CI_COMMIT_TAG" ]; then
         git fetch origin main
         if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
+          export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-staging-}"
           echo "=== DESPLEGANDO VERSIÓN ==="
           docker pull "$IMAGE_NAME_BASE:$DEPLOY_TAG"
           docker-compose -f docker-compose-staging.deploy.yml down --remove-orphans
