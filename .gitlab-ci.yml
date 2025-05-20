@@ -93,21 +93,10 @@ deploy_app_staging:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
     - |
-      echo "--- INICIO DEPURACIÓN CONECTIVIDAD ---"
-      echo "Fecha y hora: $(date)"
-      echo "Host del job: $(hostname)"
-      echo "Contenido de /etc/resolv.conf:"
-      cat /etc/resolv.conf
-      echo "Comprobando resolución de 'gitlab':"
-      getent hosts gitlab || echo "ERROR: No se pudo resolver 'gitlab' vía getent"
-
-      echo "Intentando PING a gitlab (3 paquetes):"
-      ping -c 3 gitlab || echo "--- PING a gitlab FALLÓ ---"
-
-      echo "Intentando CURL a http://gitlab (verboso):"
-      curl -v http://gitlab || echo "--- CURL a http://gitlab FALLÓ ---"
-
-      echo "--- FIN DEPURACIÓN CONECTIVIDAD ---"
+        git config --global http.lowSpeedLimit 0
+        git config --global http.lowSpeedTime 999999
+        git config --global http.connectTimeout 60 # Aumenta el timeout de conexión a 60 segundos
+        git config --global http.proxy "" # Asegurarse de que no haya un proxy que interfiera
       if [ -n "$CI_COMMIT_TAG" ]; then
         git fetch origin main
         if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
