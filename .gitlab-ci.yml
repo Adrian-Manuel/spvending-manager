@@ -3,7 +3,7 @@ image: docker:latest
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
-  IMAGE_NAME_BASE: "$CI_REGISTRY/Adrian-Manuel/spvending-managment"
+  IMAGE_NAME_BASE: "$CI_REGISTRY/adrian-manuel/spvending-managment"
 
 stages:
   - test
@@ -87,7 +87,7 @@ deploy_app_staging:
   services: []
   variables:
     COMPOSE_PROJECT_NAME: "spvending-managment-staging"
-    DEPLOY_TAG: $CI_COMMIT_TAG
+    DEPLOY_TAG: "$CI_COMMIT_TAG"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
