@@ -4,6 +4,7 @@ variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
   IMAGE_NAME_BASE: "$CI_REGISTRY/adrian-manuel/spvending-managment"
+  IMAGE_NAME: "$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
 
 stages:
   - test
@@ -62,8 +63,8 @@ build_image:
         git fetch origin main
         if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
                   docker-compose -f docker-compose.yml build --no-cache --pull
-                  docker tag spvending-api-image "$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
-                  docker push "$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
+                  docker tag spvending-api-image "$IMAGE_NAME"
+                  docker push "$IMAGE_NAME"
           else
               echo "El tag NO proviene de main. Saltando build."
         fi
