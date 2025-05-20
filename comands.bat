@@ -1,6 +1,6 @@
 @echo off
 set VERSION=v1.0.0
-set MENSAJE="arreglo del tag de clubs"
+set MENSAJE="prueba ci cd 1"
 set REMOTE=localgit
 echo Eliminando tag local %VERSION%
 git tag -d %VERSION%
