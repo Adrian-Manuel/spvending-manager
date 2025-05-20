@@ -1,6 +1,6 @@
 @echo off
 set TAG=asd
-set MENSAJE="prueba ci cd 1"
+set MENSAJE="deploy-staging-v1.0.0"
 set REMOTE=localgit
 echo Eliminando tag local %TAG%
 git tag -d %TAG%
