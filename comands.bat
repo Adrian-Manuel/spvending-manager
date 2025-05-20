@@ -1,5 +1,5 @@
 @echo off
-set VERSION=v1.0.0
+set VERSION=v1.0
 set MENSAJE="prueba ci cd 1"
 set REMOTE=localgit
 echo Eliminando tag local %VERSION%
