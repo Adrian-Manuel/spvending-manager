@@ -1,0 +1,46 @@
+# Define las etapas (stages) de tu pipeline.
+# Puedes añadir más etapas si tu proyecto las necesita (build, test, deploy).
+stages:
+  - test # Esta etapa es para nuestro job de prueba de artefactos
+
+# Definición del job para probar la subida de artefactos
+test_artifact_upload:
+  # Asigna el job a la etapa 'test'
+  stage: test
+
+  # Define los comandos que se ejecutarán en este job
+  script:
+    # Creamos un archivo simple con contenido de prueba
+    - echo "Este es un archivo de prueba para artefactos." > test_artifact.txt
+    # Añadimos la fecha y hora actual al archivo para que sea único en cada ejecución
+    - echo "La fecha y hora de la prueba es $(date)" >> test_artifact.txt
+    # Mostramos el contenido del archivo para verificarlo en los logs del job
+    - cat test_artifact.txt
+
+  # Configuración de los artefactos que este job producirá
+  artifacts:
+    # Especifica las rutas de los archivos/directorios a incluir como artefactos
+    paths:
+      - test_artifact.txt # Aquí indicamos que queremos guardar el archivo que acabamos de crear
+
+    # Opcional: Define un nombre para el archivo ZIP de los artefactos
+    # name: "my-test-artifacts" 
+
+    # Opcional pero ALTAMENTE RECOMENDADO para pruebas:
+    # Define por cuánto tiempo se mantendrán los artefactos.
+    # Después de este tiempo, GitLab los eliminará automáticamente para liberar espacio.
+    expire_in: 5 min # Los artefactos de este job se eliminarán después de 5 minutos
+
+  # Configuración del job:
+  # Si la subida de artefactos (o cualquier parte del script) falla,
+  # este job se marcará como "fallido". Esto es lo que queremos para la prueba.
+  allow_failure: false
+
+  # Opcional: Especifica en qué ramas se ejecutará este job.
+  # 'only: ['main']' significa que solo se ejecutará en la rama 'main'.
+  # Si quieres que se ejecute en todas las ramas, puedes usar 'only: ['branches']'
+  # o simplemente omitir esta sección si quieres que se ejecute por defecto en todas las pushes.
+  # only:
+  #   - main
+  #   - master
+  #   - your-test-branch # Puedes especificar tu rama de prueba aquí

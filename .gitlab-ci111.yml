@@ -1,20 +1,35 @@
 image: docker:latest
 
 variables:
-  REGISTRY_URL: "gitlab:5050"
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
-
-  IMAGE_NAME_BASE: "$REGISTRY_URL/adrian-manuel/spvending-managment"
+  IMAGE_NAME_BASE: "$CI_REGISTRY/adrian-manuel/spvending-managment"
   IMAGE_NAME: "$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
-  IMAGE_NAME_LATEST: "$IMAGE_NAME_BASE:latest"
-  COMPOSE_PROJECT_NAME: "spvending-managment"
-
+  GITLAB_ADVANCED_SAST_ENABLED: "true"
 stages:
+  - dependency_check
   - test
   - sonarqube
   - build
-  - deploy
+  - deploy_staging
+  - deploy_production
+
+dependency_check:
+  stage: dependency_check
+  image: maven:3.9.6-eclipse-temurin-22
+  script:
+    - mvn org.owasp:dependency-check-maven:check
+    - |
+      if grep -q "<severity>Critical</severity>" target/dependency-check-report.xml; then
+        echo "❌ Vulnerabilidades críticas detectadas"; exit 1;
+      fi
+  artifacts:
+    when: always
+    paths:
+      - target/dependency-check-report/dependency-check-report.html
+      - target/dependency-check-report/dependency-check-report.xml
+    reports:
+      dependency_scanning: target/dependency-check-report/dependency-check-report.xml
 
 sonarqube:
   #image: sonarsource/sonar-scanner-cli:latest
@@ -33,9 +48,7 @@ sonarqube:
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then
               git fetch origin main
-              MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" origin/main)
-              TAG_COMMIT=$(git rev-list -n 1 "$CI_COMMIT_TAG")
-              if [ "$MERGE_BASE" = "$TAG_COMMIT" ]; then
+              if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
                 echo "Iniciando análisis con SonarQube..."
                 mvn clean verify
                 apt-get update && apt-get install -y wget unzip
@@ -44,7 +57,7 @@ sonarqube:
                 mv sonar-scanner-5.0.1.3006-linux sonar-scanner
                 export PATH=$PATH:$(pwd)/sonar-scanner/bin
                 echo "El tag proviene de main. Ejecutando análisis..."
-                sonar-scanner -X -Dsonar.projectVersion=${CI_COMMIT_TAG}
+                sonar-scanner -X -Dsonar.projectVersion=${CI_COMMIT_TAG} -Dsonar.token=$SONAR_TOKEN
               else
                 echo "El tag NO proviene de main. Saltando análisis."
               fi
@@ -53,27 +66,22 @@ sonarqube:
       fi
 
   rules:
-    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
       when: always
-
 build_image:
   stage: build
   tags:
     - build
-
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then
         git fetch origin main
-        MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" origin/main)
-        TAG_COMMIT=$(git rev-list -n 1 "$CI_COMMIT_TAG")
-        if [ "$MERGE_BASE" = "$TAG_COMMIT" ]; then
-                  echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin $REGISTRY_URL
+        if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
                   docker-compose -f docker-compose.yml build --no-cache --pull
                   docker tag spvending-api-image "$IMAGE_NAME"
                   docker push "$IMAGE_NAME"
-                  docker tag spvending-api-image "$IMAGE_NAME_LATEST"
-                  docker push "$IMAGE_NAME_LATEST"
           else
               echo "El tag NO proviene de main. Saltando build."
         fi
@@ -83,33 +91,32 @@ build_image:
   
 
   after_script:
-    - docker logout $REGISTRY_URL
+    - docker logout $CI_REGISTRY
   rules:
-    - if: $CI_COMMIT_TAG
+    - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
       when: always
   needs: ["sonarqube"]
 
-deploy_app:
-  stage: deploy
+deploy_app_staging:
+  stage: deploy_staging
   tags:
     - deploy
-  needs: ["build_image"]
   services: []
   variables:
+    COMPOSE_PROJECT_NAME: "spvending-managment-staging"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$REGISTRY_URL"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then
         git fetch origin main
-        MERGE_BASE=$(git merge-base "$CI_COMMIT_TAG" origin/main)
-        TAG_COMMIT=$(git rev-list -n 1 "$CI_COMMIT_TAG")
-        if [ "$MERGE_BASE" = "$TAG_COMMIT" ]; then
+        if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
+          export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-staging-}"
           echo "=== DESPLEGANDO VERSIÓN ==="
-          docker pull "$IMAGE_NAME_LATEST"
-          docker-compose -f docker-compose.deploy.yml down --remove-orphans
-          docker-compose -f docker-compose.deploy.yml up -d --force-recreate
+          docker pull "$IMAGE_NAME_BASE:$DEPLOY_TAG"
+          docker-compose -f docker-compose-staging.deploy.yml down --remove-orphans
+          docker-compose -f docker-compose-staging.deploy.yml up -d 
           echo "=== CONTENEDORES EN EJECUCIÓN ==="
           docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
         else
@@ -119,7 +126,39 @@ deploy_app:
         echo "No es un tag. Saltando build."
       fi
   after_script:
-    - docker logout $REGISTRY_URL
+    - docker logout $CI_REGISTRY
   rules:
-    - if: $CI_COMMIT_TAG
-      when: always
+    - if: $CI_COMMIT_TAG=~ /^deploy-staging-v\d+\.\d+\.\d+$/
+
+deploy_app_production:
+  stage: deploy_production
+  tags:
+    - deploy
+  services: []
+  variables:
+    COMPOSE_PROJECT_NAME: "spvending-managment-production"
+    DOCKER_HOST: "unix:///var/run/docker.sock"
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+  script:
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        git fetch origin main
+        if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
+          export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
+          echo "=== DESPLEGANDO VERSIÓN ==="
+          docker pull "$IMAGE_NAME_BASE:$DEPLOY_TAG"
+          docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
+          docker-compose -f docker-compose-production.deploy.yml up -d 
+          echo "=== CONTENEDORES EN EJECUCIÓN ==="
+          docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+        else
+          echo "El tag NO proviene de main. Saltando despliegue."
+        fi
+      else
+        echo "No es un tag. Saltando despliegue."
+      fi
+  after_script:
+    - docker logout $CI_REGISTRY
+  rules:
+    - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
