@@ -6,7 +6,7 @@ import java.security.GeneralSecurityException;
 import java.util.UUID;
 public interface UserManagerRepositoryPort {
     UserManager save (UUID tenantId, UUID clubId, UserManager userManager) throws GeneralSecurityException;
-    UserManager update(UUID tenantId, UUID clubId, UUID userManagerId, UserManager userManager);
+    UserManager update(UUID userManagerId, UserManager userManager);
     void delete(UUID userManagerId);
     Page<UserManager> findAll(String search, Pageable pageable);
     UserManager findById(UUID userManager);

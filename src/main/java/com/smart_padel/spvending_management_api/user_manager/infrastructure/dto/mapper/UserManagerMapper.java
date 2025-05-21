@@ -46,6 +46,8 @@ public class UserManagerMapper {
                 .micronUser(userManagerDtoIn.getMicronUser())
                 .micronPass(AESGCMEncryption.encrypt(userManagerDtoIn.getMicronPass(), aeSecretKey))
                 .userType(userManagerDtoIn.getUserType())
+                .tenantId(userManagerDtoIn.getTenantEntityId())
+                .clubId(userManagerDtoIn.getClubEntityId())
                 .build();
     }
 }

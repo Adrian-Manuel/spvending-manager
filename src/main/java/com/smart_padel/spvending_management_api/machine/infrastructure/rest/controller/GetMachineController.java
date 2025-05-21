@@ -74,9 +74,7 @@ public class GetMachineController {
                     description = "Machine found",
                     content = @Content(schema = @Schema(implementation = MachineDtoOutDetail.class))
             ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Invalid UUID format"),
+            @ApiResponse(responseCode = "400", description = "Invalid UUID format"),
             @ApiResponse(responseCode = "404", description = "Machine not found", content = @Content),
             @ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content)
     })

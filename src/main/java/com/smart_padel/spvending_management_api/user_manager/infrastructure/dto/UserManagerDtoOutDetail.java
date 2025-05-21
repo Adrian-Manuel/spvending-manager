@@ -35,6 +35,12 @@ public class UserManagerDtoOutDetail {
     @Schema(description = "Tenant name associated with this user, if any", example = "PadelPrix Group")
     private String tenantEntityName;
 
+    @Schema(description = "Tenant ID associated with this user, if any", example = "d290f1ee-6c54-4b01-90e6-d701748f0851")
+    private UUID tenantEntityId;
+
     @Schema(description = "Club name associated with this user, if any", example = "PadelPrix Ourense")
     private String clubEntityName;
+
+    @Schema(description = "Club ID associated with this user, if any", example = "cde1f5a8-75b2-4aa9-9826-0bd7f6f1a2bd")
+    private UUID clubEntityId;
 }

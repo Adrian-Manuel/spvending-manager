@@ -68,7 +68,7 @@ public class PutUserManagerController {
             )
             @Valid @RequestBody UserManagerDtoIn userManagerDtoIn) throws GeneralSecurityException {
         UserManager userManagerRequest= UserManagerMapper.toModel(userManagerDtoIn,aeSecretKey);
-        userManagerRequest= updateUserManagerUseCase.updateUserManager(userManagerDtoIn.getTenantEntityId(),userManagerDtoIn.getClubEntityId(), userManagerId, userManagerRequest);
+        userManagerRequest= updateUserManagerUseCase.updateUserManager(userManagerId, userManagerRequest);
         return new ResponseEntity<>(UserManagerMapper.toDtoDetail(userManagerRequest, aeSecretKey), HttpStatus.OK);
     }
 }

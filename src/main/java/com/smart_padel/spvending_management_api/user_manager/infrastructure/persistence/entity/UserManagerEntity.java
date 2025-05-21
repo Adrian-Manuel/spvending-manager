@@ -68,6 +68,8 @@ public class UserManagerEntity {
                 .userType(userType)
                 .tenantName(tenantEntity!=null ? tenantEntity.getName():null)
                 .clubName(clubEntity!=null ? clubEntity.getName():null)
+                .clubId(clubEntity!=null ? clubEntity.getClubId():null)
+                .tenantId(tenantEntity!= null ? tenantEntity.getTenantId():null)
                 .build();
     }
 }

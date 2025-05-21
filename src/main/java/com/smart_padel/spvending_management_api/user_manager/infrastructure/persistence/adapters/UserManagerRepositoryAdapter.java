@@ -47,16 +47,16 @@ public class UserManagerRepositoryAdapter implements UserManagerRepositoryPort {
         return userManagerEntity.toDomainModel();
     }
     @Override
-    public UserManager update(UUID tenantId, UUID clubId, UUID userManagerId, UserManager userManager) {
+    public UserManager update(UUID userManagerId, UserManager userManager) {
         UserManagerHelperAdapter.validateUserManagerExists(jpaUserManagerRepository, userManagerId);
-        UserManagerHelperAdapter.validateClubOrTenant(tenantId, clubId, userManager.getUserType());
+        UserManagerHelperAdapter.validateClubOrTenant(userManager.getTenantId(), userManager.getClubId(), userManager.getUserType());
         userManager.setUserId(userManagerId);
         UserManagerEntity userManagerEntity = UserManagerEntity.fromDomainModel(userManager);
-        if (clubId != null) {
-            ClubEntity clubEntity = ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId);
+        if (userManager.getClubId() != null) {
+            ClubEntity clubEntity = ClubHelperAdapter.getClubOrThrow(jpaClubRepository, userManager.getClubId());
             userManagerEntity.setClubEntity(clubEntity);
         } else {
-            TenantEntity tenantEntity = TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, tenantId);
+            TenantEntity tenantEntity = TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, userManager.getTenantId());
             userManagerEntity.setTenantEntity(tenantEntity);
         }
         userManagerEntity = jpaUserManagerRepository.save(userManagerEntity);

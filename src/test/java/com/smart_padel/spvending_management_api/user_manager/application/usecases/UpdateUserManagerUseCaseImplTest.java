@@ -24,18 +24,17 @@ class UpdateUserManagerUseCaseImplTest {
 
     @Test
     void updateUserManager_ReturnsUpdatedUserManager_WhenValidInputsProvided() {
-        UUID tenantId = UUID.randomUUID();
-        UUID clubId = UUID.randomUUID();
+
         UUID userManagerId = UUID.randomUUID();
         UserManager userManager = mock(UserManager.class);
         UserManager updatedUserManager = mock(UserManager.class);
 
-        when(userManagerRepositoryPort.update(tenantId, clubId, userManagerId, userManager)).thenReturn(updatedUserManager);
+        when(userManagerRepositoryPort.update(userManagerId, userManager)).thenReturn(updatedUserManager);
 
-        UserManager result = updateUserManagerUseCase.updateUserManager(tenantId, clubId, userManagerId, userManager);
+        UserManager result = updateUserManagerUseCase.updateUserManager(userManagerId, userManager);
 
         assertThat(result).isEqualTo(updatedUserManager);
-        verify(userManagerRepositoryPort).update(tenantId, clubId, userManagerId, userManager);
+        verify(userManagerRepositoryPort).update(userManagerId, userManager);
     }
 
 }

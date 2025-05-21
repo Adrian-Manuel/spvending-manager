@@ -18,5 +18,6 @@ public class UserManager {
     private String userType;
     private String tenantName;
     private String clubName;
-
+    private UUID tenantId;
+    private UUID clubId;
 }

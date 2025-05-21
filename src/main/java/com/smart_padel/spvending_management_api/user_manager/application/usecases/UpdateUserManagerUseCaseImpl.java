@@ -10,7 +10,7 @@ import java.util.UUID;
 public class UpdateUserManagerUseCaseImpl implements UpdateUserManagerUseCase {
     private final UserManagerRepositoryPort userManagerRepositoryPort;
     @Override
-    public UserManager updateUserManager(UUID tenantId, UUID clubId, UUID userManagerId, UserManager userManager) {
-        return userManagerRepositoryPort.update(tenantId, clubId, userManagerId, userManager);
+    public UserManager updateUserManager(UUID userManagerId, UserManager userManager) {
+        return userManagerRepositoryPort.update(userManagerId, userManager);
     }
 }

@@ -100,10 +100,10 @@ class UserManagerRepositoryAdapterTest {
             when(updatedEntity.toDomainModel()).thenReturn(expected);
 
             clubHelper.when(() -> ClubHelperAdapter.getClubOrThrow(jpaClubRepository, clubId)).thenReturn(clubEntity);
-            assertEquals(expected, adapter.update(null, clubId, userManagerId, userManager));
+            assertEquals(expected, adapter.update(userManagerId, userManager));
 
             tenantHelper.when(() -> TenantHelperAdapter.getTenantOrThrow(jpaTenantRepository, tenantId)).thenReturn(tenantEntity);
-            assertEquals(expected, adapter.update(tenantId, null, userManagerId, userManager));
+            assertEquals(expected, adapter.update(userManagerId, userManager));
         }
     }
 

@@ -56,7 +56,7 @@ class PutUserManagerControllerTest {
             userManager.setUserId(userManagerId);
             userManager.setTenantName("tenantEntityName");
 
-            Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.eq(tenantId), Mockito.isNull(), Mockito.eq(userManagerId),Mockito.any(UserManager.class))).thenReturn(userManager);
+            Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.eq(userManagerId),Mockito.any(UserManager.class))).thenReturn(userManager);
             mockMvc.perform(put("/api/v1/user-managers/" + userManagerId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(new ObjectMapper().writeValueAsString(userManagerDtoIn)))
@@ -71,7 +71,7 @@ class PutUserManagerControllerTest {
                     .andExpect(jsonPath("$.tenantEntityName").value("tenantEntityName"));
 
 
-            Mockito.verify(updateUserManagerUseCase).updateUserManager(Mockito.eq(tenantId), Mockito.isNull(), Mockito.eq(userManagerId),Mockito.any(UserManager.class));
+            Mockito.verify(updateUserManagerUseCase).updateUserManager(Mockito.eq(userManagerId),Mockito.any(UserManager.class));
     }
 
     @Test
@@ -92,7 +92,7 @@ class PutUserManagerControllerTest {
         userManager.setUserId(userManagerId);
         userManager.setClubName("clubEntityName");
 
-        Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.isNull(), Mockito.eq(clubId), Mockito.eq(userManagerId),Mockito.any(UserManager.class))).thenReturn(userManager);
+        Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.eq(userManagerId),Mockito.any(UserManager.class))).thenReturn(userManager);
         mockMvc.perform(put("/api/v1/user-managers/" + userManagerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(userManagerDtoIn)))
@@ -106,7 +106,7 @@ class PutUserManagerControllerTest {
                 .andExpect(jsonPath("$.micronUser").value("asdsa"))
                 .andExpect(jsonPath("$.clubEntityName").value("clubEntityName"));
 
-        Mockito.verify(updateUserManagerUseCase).updateUserManager(Mockito.isNull(), Mockito.eq(clubId), Mockito.eq(userManagerId),Mockito.any(UserManager.class));
+        Mockito.verify(updateUserManagerUseCase).updateUserManager(Mockito.eq(userManagerId),Mockito.any(UserManager.class));
 
     }
 
@@ -145,7 +145,7 @@ class PutUserManagerControllerTest {
                 null,
                 clubId);
 
-        Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.isNull(), Mockito.eq(clubId),Mockito.eq(userManagerId), Mockito.any(UserManager.class)))
+        Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.eq(userManagerId), Mockito.any(UserManager.class)))
                 .thenThrow(new ResourceAlreadyExistsException("Username already exists"));
 
         mockMvc.perform(put("/api/v1/user-managers/"+ userManagerId)
@@ -170,7 +170,7 @@ class PutUserManagerControllerTest {
                 null,
                 clubId);
 
-        Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.isNull(), Mockito.eq(clubId), Mockito.eq(userManagerId), Mockito.any(UserManager.class)))
+        Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.eq(userManagerId), Mockito.any(UserManager.class)))
                 .thenThrow(new ResourceNotFoundException("Club not found"));
 
         mockMvc.perform(put("/api/v1/user-managers/"+ userManagerId)
@@ -195,7 +195,7 @@ class PutUserManagerControllerTest {
                 tenantId,
                 null);
 
-        Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.eq(tenantId), Mockito.isNull(), Mockito.eq(userManagerId),Mockito.any(UserManager.class)))
+        Mockito.when(updateUserManagerUseCase.updateUserManager(Mockito.eq(userManagerId),Mockito.any(UserManager.class)))
                 .thenThrow(new ResourceNotFoundException("Tenant not found"));
 
         mockMvc.perform(put("/api/v1/user-managers/"+ userManagerId)
@@ -222,7 +222,7 @@ class PutUserManagerControllerTest {
 
         Mockito.doThrow(new ParamRequiredException("The user is type 2, the tenant id is required."))
                 .when(updateUserManagerUseCase)
-                .updateUserManager(Mockito.eq(tenantId), Mockito.isNull(), Mockito.eq(userManagerId),Mockito.any(UserManager.class));
+                .updateUserManager(Mockito.eq(userManagerId),Mockito.any(UserManager.class));
 
         mockMvc.perform(put("/api/v1/user-managers/"+ userManagerId)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -248,7 +248,7 @@ class PutUserManagerControllerTest {
 
         Mockito.doThrow(new ParamRequiredException("The user is type 1, the club id is required."))
                 .when(updateUserManagerUseCase)
-                .updateUserManager(Mockito.isNull(), Mockito.eq(clubId), Mockito.eq(userManagerId),Mockito.any(UserManager.class));
+                .updateUserManager(Mockito.eq(userManagerId),Mockito.any(UserManager.class));
 
         mockMvc.perform(put("/api/v1/user-managers/"+ userManagerId)
                         .contentType(MediaType.APPLICATION_JSON)
