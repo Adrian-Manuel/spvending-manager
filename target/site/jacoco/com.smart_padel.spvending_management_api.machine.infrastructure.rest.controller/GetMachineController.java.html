@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetMachineController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller</a> &gt; <span class="el_source">GetMachineController.java</span></div><h1>GetMachineController.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller;
+import com.smart_padel.spvending_management_api.machine.domain.model.Machine;
+import com.smart_padel.spvending_management_api.machine.domain.ports.in.RetrieveMachineUseCase;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachineDtoOutDetail;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachineDtoOutPreview;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachinePagePreviewSwagger;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.mapper.MachineMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.security.GeneralSecurityException;
+import java.util.UUID;
+@RestController
+@RequestMapping(&quot;/api/v1/machines&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;Machine&quot;, description = &quot;Retrieve machine information&quot;)
+public class GetMachineController {
+    @Value(&quot;${app.AESecret_key}&quot;)
+    private String aeSecretKey;
+    private final RetrieveMachineUseCase retrieveMachineUseCase;
+
+    @Operation(
+            summary = &quot;Get all machines with pagination and optional search&quot;,
+            description = &quot;Returns a paginated list of machines. Accessible to admin and user with read authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;Paginated list of machines&quot;,
+                    content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = MachinePagePreviewSwagger.class))
+                    )
+            ),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid pagination parameters&quot;,
+                    content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;, content = @Content)
+    })
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping
+    public ResponseEntity&lt;Page&lt;MachineDtoOutPreview&gt;&gt; getAllMachines(
+            @Parameter(description = &quot;Search string to filter machines by code or other criteria&quot;, example = &quot;Smart&quot;)
+            @RequestParam(required = false) String search,
+            @Parameter(description = &quot;Page number (zero-based)&quot;, example = &quot;0&quot;)
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @Parameter(description = &quot;Page size&quot;, example = &quot;10&quot;)
+            @RequestParam(defaultValue = &quot;10&quot;) int size) {
+<span class="fc" id="L62">        Pageable pageable = PageRequest.of(page, size);</span>
+<span class="fc" id="L63">        Page&lt;MachineDtoOutPreview&gt; machines = retrieveMachineUseCase.getAllMachines(search, pageable).map(MachineMapper::toDtoPreview);</span>
+<span class="fc" id="L64">        return new ResponseEntity&lt;&gt;(machines, HttpStatus.OK);</span>
+    }
+
+    @Operation(
+            summary = &quot;Get machine by ID&quot;,
+            description = &quot;Returns detailed information of a machine by its UUID. Accessible to admin and user with read authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;Machine found&quot;,
+                    content = @Content(schema = @Schema(implementation = MachineDtoOutDetail.class))
+            ),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid UUID format&quot;),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Machine not found&quot;, content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;, content = @Content)
+    })
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping(&quot;/{machineId}&quot;)
+    public ResponseEntity&lt;MachineDtoOutDetail&gt; getMachineById(
+            @Parameter(description = &quot;UUID of the machine&quot;, example = &quot;d290f1ee-6c54-4b01-90e6-d701748f0851&quot;)
+            @PathVariable UUID machineId) throws GeneralSecurityException {
+<span class="fc" id="L86">        Machine machineRequest=retrieveMachineUseCase.getMachineById(machineId);</span>
+<span class="fc" id="L87">        return new ResponseEntity&lt;&gt;(MachineMapper.toDtoDetail(machineRequest,aeSecretKey), HttpStatus.OK);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

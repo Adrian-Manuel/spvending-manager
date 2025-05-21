@@ -1,9 +1,6 @@
 package com.smart_padel.spvending_management_api.security.auth.service;
 import com.smart_padel.spvending_management_api.security.user.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,6 +27,7 @@ public class JwtService {
         if (token == null || token.trim().isEmpty()) {
             throw new IllegalArgumentException("Token cannot be null or empty");
         }
+
         return Jwts.parser()
                 .verifyWith(getSignInKey())
                 .build()

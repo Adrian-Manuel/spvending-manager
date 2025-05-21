@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClubMapper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.club.infrastructure.dto.mapper</a> &gt; <span class="el_source">ClubMapper.java</span></div><h1>ClubMapper.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.club.infrastructure.dto.mapper;
+import com.smart_padel.spvending_management_api.club.domain.model.Club;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoIn;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutDetail;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutPreview;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutSummary;
+public class ClubMapper {
+<span class="fc" id="L8">    ClubMapper() {</span>
+<span class="fc" id="L9">        throw new IllegalStateException(&quot;Util class&quot;);</span>
+    }
+    public static ClubDtoOutPreview toDtoPreview(Club club) {
+<span class="fc" id="L12">        return ClubDtoOutPreview.builder()</span>
+<span class="fc" id="L13">                .clubId( club.getClubId() )</span>
+<span class="fc" id="L14">                .name( club.getName() )</span>
+<span class="fc" id="L15">                .address( club.getAddress() )</span>
+<span class="fc" id="L16">                .phone( club.getPhone() )</span>
+<span class="fc" id="L17">                .tenantEntityName(club.getTenantName())</span>
+<span class="fc" id="L18">                .machinesCount(club.getMachinesCount())</span>
+<span class="fc" id="L19">                .build();</span>
+    }
+    public static ClubDtoOutDetail toDtoDetail(Club club) {
+<span class="fc" id="L22">    return  ClubDtoOutDetail.builder()</span>
+<span class="fc" id="L23">            .clubId(club.getClubId())</span>
+<span class="fc" id="L24">            .name(club.getName())</span>
+<span class="fc" id="L25">            .cif(club.getCif())</span>
+<span class="fc" id="L26">            .address( club.getAddress() )</span>
+<span class="fc" id="L27">            .phone( club.getPhone() )</span>
+<span class="fc" id="L28">            .email( club.getEmail() )</span>
+<span class="fc" id="L29">            .remark( club.getRemark() )</span>
+<span class="fc" id="L30">            .accountingId( club.getAccountingId() )</span>
+<span class="fc" id="L31">            .tenantEntityName(club.getTenantName())</span>
+<span class="fc" id="L32">            .micronId(club.getMicronId())</span>
+<span class="fc" id="L33">            .userManagers(club.getManagers())</span>
+<span class="fc" id="L34">            .build();</span>
+    }
+    public static Club toModel(ClubDtoIn clubDtoIn){
+<span class="fc" id="L37">        return Club.builder()</span>
+<span class="fc" id="L38">                .name(clubDtoIn.getName())</span>
+<span class="fc" id="L39">                .cif(clubDtoIn.getCif())</span>
+<span class="fc" id="L40">                .address(clubDtoIn.getAddress())</span>
+<span class="fc" id="L41">                .phone(clubDtoIn.getPhone())</span>
+<span class="fc" id="L42">                .email(clubDtoIn.getEmail())</span>
+<span class="fc" id="L43">                .remark(clubDtoIn.getRemark())</span>
+<span class="fc" id="L44">                .micronId(clubDtoIn.getMicronId())</span>
+<span class="fc" id="L45">                .accountingId(clubDtoIn.getAccountingId())</span>
+<span class="fc" id="L46">                .build();</span>
+    }
+    public static ClubDtoOutSummary toDtoSummary(Club club){
+<span class="nc" id="L49">        return ClubDtoOutSummary.builder()</span>
+<span class="nc" id="L50">                .name(club.getName())</span>
+<span class="nc" id="L51">                .clubId(club.getClubId())</span>
+<span class="nc" id="L52">                .build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

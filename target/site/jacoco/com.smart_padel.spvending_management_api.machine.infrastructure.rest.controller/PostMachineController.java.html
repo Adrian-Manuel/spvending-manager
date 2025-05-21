@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PostMachineController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller</a> &gt; <span class="el_source">PostMachineController.java</span></div><h1>PostMachineController.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller;
+import com.smart_padel.spvending_management_api.machine.domain.model.Machine;
+import com.smart_padel.spvending_management_api.machine.domain.ports.in.CreateMachineUseCase;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachineDtoIn;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachineDtoOutPreview;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.mapper.MachineMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.security.GeneralSecurityException;
+
+@RestController
+@RequestMapping(&quot;/api/v1/machines&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;Machine&quot;, description = &quot;Create machine&quot;)
+public class PostMachineController {
+    @Value(&quot;${app.AESecret_key}&quot;)
+    private String aeSecretKey;
+    private final CreateMachineUseCase createMachineUseCase;
+
+    @Operation(
+            summary = &quot;Create a new machine&quot;,
+            description = &quot;Creates a new machine and returns its preview information. Requires 'admin:create' authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;201&quot;,
+                    description = &quot;Machine created successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = MachineDtoOutPreview.class))
+            ),
+            @ApiResponse(
+                    responseCode = &quot;400&quot;,
+                    description = &quot;Invalid input data&quot;,
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = &quot;401&quot;,
+                    description = &quot;Unauthorized&quot;,
+                    content = @Content
+            )
+    })
+    @PreAuthorize(&quot;hasAuthority('admin:create')&quot;)
+    @PostMapping
+    public ResponseEntity&lt;MachineDtoOutPreview&gt; createClub (
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;Machine information for creation&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = MachineDtoIn.class))
+            )
+            @RequestBody @Valid MachineDtoIn machineDtoIn) throws GeneralSecurityException {
+<span class="fc" id="L65">        Machine machineRequest= MachineMapper.toModel(machineDtoIn, aeSecretKey);</span>
+<span class="fc" id="L66">        machineRequest=createMachineUseCase.createMachine(machineDtoIn.getClubId(), machineRequest);</span>
+<span class="fc" id="L67">        return new ResponseEntity&lt;&gt;(MachineMapper.toDtoPreview(machineRequest), HttpStatus.CREATED);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PutTenantController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.tenant.infrastructure.rest.controller</a> &gt; <span class="el_source">PutTenantController.java</span></div><h1>PutTenantController.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.tenant.infrastructure.rest.controller;
+import com.smart_padel.spvending_management_api.tenant.domain.model.Tenant;
+import com.smart_padel.spvending_management_api.tenant.domain.ports.in.UpdateTenantUseCase;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoIn;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutDetail;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.mapper.TenantMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import java.util.UUID;
+@RestController
+@RequiredArgsConstructor
+@RequestMapping(&quot;/api/v1/tenants&quot;)
+@Tag(name= &quot;Tenant&quot;, description = &quot;Update tenant information&quot;)
+public class PutTenantController {
+    private final UpdateTenantUseCase updateTenantUseCase;
+
+    @Operation(
+            summary = &quot;Update a tenant&quot;,
+            description = &quot;Updates the information of a tenant by ID. Requires 'admin:update' authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;Tenant updated successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = TenantDtoOutDetail.class))
+            ),
+            @ApiResponse(
+                    responseCode = &quot;400&quot;,
+                    description = &quot;Invalid input data&quot;,
+                    content = @Content
+            ),
+
+            @ApiResponse(
+                    responseCode = &quot;401&quot;,
+                    description = &quot;Unauthorized&quot;,
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = &quot;404&quot;,
+                    description = &quot;Tenant not found&quot;,
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = &quot;409&quot;,
+                    description = &quot;There is already a tenant with that name&quot;,
+                    content = @Content
+            )
+    })
+    @PreAuthorize(&quot;hasAuthority('admin:update')&quot;)
+    @PutMapping(&quot;/{tenantId}&quot;)
+    public ResponseEntity&lt;TenantDtoOutDetail&gt; updateTenant(
+            @Parameter(description = &quot;UUID of the tenant to update&quot;, example = &quot;d290f1ee-6c54-4b01-90e6-d701748f0851&quot;)
+            @PathVariable UUID tenantId,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;Tenant data to update&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = TenantDtoIn.class))
+            )
+            @Valid @RequestBody TenantDtoIn tenantDtoIn){
+<span class="fc" id="L71">        Tenant tenantRequest=TenantMapper.toModel(tenantDtoIn);</span>
+<span class="fc" id="L72">        tenantRequest=updateTenantUseCase.updateTenant(tenantId, tenantRequest);</span>
+<span class="fc" id="L73">        return new ResponseEntity&lt;&gt;(TenantMapper.toDtoDetail(tenantRequest), HttpStatus.OK);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

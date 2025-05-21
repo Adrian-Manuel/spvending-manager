@@ -26,10 +26,10 @@ dependency_check:
   artifacts:
       when: always
       paths:
-        - target/dependency-check-report.html
-        - target/dependency-check-report.xml
+        - target/dependency-check-report/dependency-check-report.html
+        - target/dependency-check-report/dependency-check-report.xml
       reports:
-        dependency_scanning: target/dependency-check-report.xml
+        dependency_scanning: target/dependency-check-report/dependency-check-report.xml
 
 sonarqube:
   #image: sonarsource/sonar-scanner-cli:latest

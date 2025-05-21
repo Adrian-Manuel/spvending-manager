@@ -27,7 +27,7 @@ public class SecurityConfig {
     private final TokenBlacklistService tokenBlacklistService;
 
     public void logout(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) {
-        String accessToken= CookieUtil.getCookieValue(request, "acces_token");
+        String accessToken= CookieUtil.getCookieValue(request, "access_token");
         String refreshToken=CookieUtil.getCookieValue(request, "refresh_token");
 
         if (refreshToken!=null && refreshToken.startsWith("Bearer ")){

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.security.auth.controller</a> &gt; <span class="el_source">AuthController.java</span></div><h1>AuthController.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.security.auth.controller;
+import com.smart_padel.spvending_management_api.security.auth.dto.AuthRequest;
+import com.smart_padel.spvending_management_api.security.auth.dto.RegisterRequest;
+import com.smart_padel.spvending_management_api.security.auth.dto.UserResponse;
+import com.smart_padel.spvending_management_api.security.auth.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.io.IOException;
+@RestController
+@RequestMapping(&quot;/api/v1/auth&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;Authentication&quot;, description = &quot;Endpoints for user registration, authentication, and token refresh&quot;)
+public class AuthController {
+    private final AuthService service;
+
+    @Operation(
+            summary = &quot;Register a new user&quot;,
+            description = &quot;Registers a new user and returns their username and role.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;User registered successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = UserResponse.class))
+            ),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid registration data&quot;, content = @Content),
+    })
+    @PostMapping(&quot;/register&quot;)
+    public ResponseEntity&lt;UserResponse&gt; register(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;Registration information&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = RegisterRequest.class))
+            )
+            @RequestBody @Valid RegisterRequest request) {
+<span class="fc" id="L47">        final UserResponse response = service.register(request);</span>
+<span class="fc" id="L48">        return ResponseEntity.ok(response);</span>
+    }
+
+    @Operation(
+            summary = &quot;Authenticate user (login)&quot;,
+            description = &quot;Authenticates the user and returns their username and role.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;User authenticated successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = UserResponse.class))
+            ),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid authentication data&quot;, content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;, content = @Content)
+    })
+    @PostMapping(&quot;/login&quot;)
+    public ResponseEntity&lt;UserResponse&gt; authenticate(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;Authentication information&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = AuthRequest.class))
+            )
+            @RequestBody @Valid AuthRequest request, HttpServletResponse httpServletResponse) {
+<span class="fc" id="L72">        final UserResponse response = service.authenticate(request, httpServletResponse);</span>
+<span class="fc" id="L73">        return ResponseEntity.ok(response);</span>
+    }
+
+    @Operation(
+            summary = &quot;Refresh token&quot;,
+            description = &quot;Refreshes the authentication token using the current request and response.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;Token refreshed successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = UserResponse.class))
+            ),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;, content = @Content)
+    })
+    @PostMapping(&quot;/refresh-token&quot;)
+    public UserResponse refreshToken(
+            @NotNull HttpServletResponse httpServletResponse,
+            @NotNull HttpServletRequest httpServletRequest) throws IOException {
+<span class="fc" id="L92">        return service.refreshToken(httpServletRequest, httpServletResponse);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

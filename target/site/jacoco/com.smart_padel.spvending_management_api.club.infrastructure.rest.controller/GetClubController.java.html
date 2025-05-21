@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetClubController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.club.infrastructure.rest.controller</a> &gt; <span class="el_source">GetClubController.java</span></div><h1>GetClubController.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.club.infrastructure.rest.controller;
+import com.smart_padel.spvending_management_api.club.domain.model.Club;
+import com.smart_padel.spvending_management_api.club.domain.ports.in.RetrieveClubUseCase;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutDetail;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutPreview;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutSummary;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubPagePreviewSwagger;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.mapper.ClubMapper;
+import com.smart_padel.spvending_management_api.machine.domain.ports.in.RetrieveMachineUseCase;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.MachineDtoOutPreview;
+import com.smart_padel.spvending_management_api.machine.infrastructure.dto.mapper.MachineMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.UUID;
+@RestController
+@RequestMapping(&quot;/api/v1/clubs&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;Club&quot;, description = &quot;Retrieve club information&quot;)
+public class GetClubController {
+    private final RetrieveClubUseCase retrieveClubUseCase;
+    private final RetrieveMachineUseCase retrieveMachineUseCase;
+
+    @Operation(
+            summary = &quot;Get all clubs with pagination and optional search&quot;,
+            description = &quot;Returns a paginated list of clubs. Accesible to admin and user with read authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Clubs retrieved successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = ClubPagePreviewSwagger.class))),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid pagination parameters&quot;,
+                    content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;,
+                    content = @Content),
+    })
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping
+    public ResponseEntity&lt;Page&lt;ClubDtoOutPreview&gt;&gt; getAllClubs(
+            @Parameter(description = &quot;Search string to filter clubs by name or other criteria&quot;, example = &quot;Padel&quot;)
+            @RequestParam(required = false) String search,
+            @Parameter(description = &quot;Page number (zero-based)&quot;, example = &quot;0&quot;)
+            @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @Parameter(description = &quot;Page size&quot;, example = &quot;10&quot;)
+            @RequestParam(defaultValue = &quot;10&quot;) int size) {
+<span class="fc" id="L59">        Pageable pageable = PageRequest.of(page, size);</span>
+<span class="fc" id="L60">        Page&lt;ClubDtoOutPreview&gt; clubs = retrieveClubUseCase.getAllClubs(search, pageable).map(ClubMapper::toDtoPreview);</span>
+<span class="fc" id="L61">        return new ResponseEntity&lt;&gt;(clubs, HttpStatus.OK);</span>
+    }
+
+    @Operation(
+            summary = &quot;Get club by ID&quot;,
+            description = &quot;Returns detailed information of a club by its UUID. Accessible to admin and user with read authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;Club found&quot;,
+                    content = @Content(schema = @Schema(implementation = ClubDtoOutDetail.class))
+            ),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Club not found&quot;, content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;, content = @Content)
+    })
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping(&quot;/{clubId}&quot;)
+    public ResponseEntity&lt;ClubDtoOutDetail&gt; getClubById(
+            @Parameter(description = &quot;UUID of the club&quot;, example = &quot;d290f1ee-6c54-4b01-90e6-d701748f0851&quot;)
+            @PathVariable UUID clubId){
+<span class="fc" id="L82">        Club clubRequest=retrieveClubUseCase.getClubById(clubId);</span>
+<span class="fc" id="L83">        return new ResponseEntity&lt;&gt;(ClubMapper.toDtoDetail(clubRequest), HttpStatus.OK);</span>
+    }
+
+    @Operation(
+            summary = &quot;Get all machines by club ID&quot;,
+            description = &quot;Returns a list of machines associated with a specific club. Accessible to admin and user with read authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;List of machines for the club&quot;,
+                    content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = MachineDtoOutPreview.class))
+                    )
+            ),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Club not found&quot;, content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;, content = @Content)
+    })
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping(&quot;/{clubId}/machines&quot;)
+    public ResponseEntity&lt;List&lt;MachineDtoOutPreview&gt;&gt; getAllMachinesByClub(
+            @Parameter(description = &quot;UUID of the club&quot;, example = &quot;d290f1ee-6c54-4b01-90e6-d701748f0851&quot;)
+            @PathVariable UUID clubId){
+<span class="fc" id="L106">        List&lt;MachineDtoOutPreview&gt; machines= retrieveMachineUseCase.findAllMachinesByClubId(clubId).stream().map(MachineMapper::toDtoPreview).toList();</span>
+<span class="fc" id="L107">        return new ResponseEntity&lt;&gt;(machines, HttpStatus.OK);</span>
+    }
+
+    @Operation(
+            summary = &quot;Get summary of all clubs&quot;,
+            description = &quot;Returns a summary list of all clubs. Accessible to admin with read authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;200&quot;,
+                    description = &quot;Summary list of clubs&quot;,
+                    content = @Content(
+                            array = @ArraySchema(schema = @Schema(implementation = ClubDtoOutSummary.class))
+                    )
+            ),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;, content = @Content)
+    })
+    @PreAuthorize(&quot;hasAuthority('admin:read')&quot;)
+    @GetMapping(&quot;/all-summary&quot;)
+    public ResponseEntity&lt;List&lt;ClubDtoOutSummary&gt;&gt; getClubsSummary(){
+<span class="fc" id="L127">        List&lt;ClubDtoOutSummary&gt; tenantsSummary=retrieveClubUseCase.getAllClubsSummary().stream().map(ClubMapper::toDtoSummary).toList();</span>
+<span class="fc" id="L128">        return new ResponseEntity&lt;&gt;(tenantsSummary, HttpStatus.OK);</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

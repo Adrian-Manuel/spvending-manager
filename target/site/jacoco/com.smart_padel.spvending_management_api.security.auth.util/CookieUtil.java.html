@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CookieUtil.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.security.auth.util</a> &gt; <span class="el_source">CookieUtil.java</span></div><h1>CookieUtil.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.security.auth.util;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+public class CookieUtil {
+<span class="fc" id="L6">    CookieUtil() {</span>
+<span class="fc" id="L7">        throw new IllegalStateException(&quot;Utility class&quot;);</span>
+    }
+    public static Cookie createCookie(String name, String value, int maxAge, boolean httpOnly, boolean secure, String path) {
+<span class="fc" id="L10">        Cookie cookie = new Cookie(name, value);</span>
+<span class="fc" id="L11">        cookie.setHttpOnly(httpOnly);</span>
+<span class="fc" id="L12">        cookie.setSecure(secure);</span>
+<span class="fc" id="L13">        cookie.setPath(path);</span>
+<span class="fc" id="L14">        cookie.setMaxAge(maxAge); //segundos</span>
+<span class="fc" id="L15">        return cookie;</span>
+    }
+    public static String getCookieValue(HttpServletRequest request, String name) {
+<span class="fc bfc" id="L18" title="All 2 branches covered.">        if (request.getCookies() == null) {</span>
+<span class="fc" id="L19">            return null;</span>
+        }
+<span class="fc" id="L21">        return Arrays.stream(request.getCookies())</span>
+<span class="fc" id="L22">                .filter(cookie -&gt; name.equals(cookie.getName()))</span>
+<span class="fc" id="L23">                .map(Cookie::getValue)</span>
+<span class="fc" id="L24">                .findFirst()</span>
+<span class="fc" id="L25">                .orElse(null);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

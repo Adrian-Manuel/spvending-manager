@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GetTenantController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.tenant.infrastructure.rest.controller</a> &gt; <span class="el_source">GetTenantController.java</span></div><h1>GetTenantController.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.tenant.infrastructure.rest.controller;
+import com.smart_padel.spvending_management_api.club.domain.ports.in.RetrieveClubUseCase;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutPreview;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubPagePreviewSwagger;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.mapper.ClubMapper;
+import com.smart_padel.spvending_management_api.tenant.domain.model.Tenant;
+import com.smart_padel.spvending_management_api.tenant.domain.ports.in.RetrieveTenantUseCase;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutDetail;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutPreview;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantDtoOutSummary;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.TenantPagePreviewSwagger;
+import com.smart_padel.spvending_management_api.tenant.infrastructure.dto.mapper.TenantMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.UUID;
+@RestController
+@RequestMapping(&quot;/api/v1/tenants&quot;)
+@RequiredArgsConstructor
+@Tag(name= &quot;Tenant&quot;, description = &quot;Retrieve tenant information&quot;)
+public class GetTenantController {
+    private final RetrieveClubUseCase retrieveClubUseCase;
+    private final RetrieveTenantUseCase retrieveTenantUseCase;
+
+    @Operation(
+            summary = &quot;Get all tenants&quot;,
+            description = &quot;Returns a paginated list of all tenants. Requires 'admin:read' or 'user:read' authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Tenants retrieved successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = TenantPagePreviewSwagger.class))),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid pagination parameters&quot;,
+                    content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;,
+                    content = @Content),
+    })
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping
+    public ResponseEntity &lt;Page&lt;TenantDtoOutPreview&gt;&gt; getAllTenants(
+            @Parameter(description = &quot;Text search filter for tenant name or attributes&quot;, example = &quot;Acme&quot;) @RequestParam(required = false) String search,
+            @Parameter(description = &quot;Requested page number (0-based)&quot;, example = &quot;0&quot;) @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @Parameter(description = &quot;Number of items per page&quot;, example = &quot;10&quot;) @RequestParam(defaultValue = &quot;10&quot;) int size) {
+<span class="pc bpc" id="L57" title="1 of 4 branches missed.">        if (size&lt;1 || page&lt;0){</span>
+<span class="fc" id="L58">            return new ResponseEntity&lt;&gt;(HttpStatus.BAD_REQUEST);</span>
+        }
+
+<span class="fc" id="L61">        Pageable pageable = PageRequest.of(page, size);</span>
+
+<span class="fc bfc" id="L63" title="All 2 branches covered.">        Page&lt;TenantDtoOutPreview&gt; tenants = (search != null)</span>
+<span class="fc" id="L64">                ? retrieveTenantUseCase.getAllTenants(search, pageable).map(TenantMapper::toDtoPreview)</span>
+<span class="fc" id="L65">                : retrieveTenantUseCase.getAllTenants(pageable).map(TenantMapper::toDtoPreview);</span>
+<span class="fc" id="L66">        return new ResponseEntity&lt;&gt;(tenants, HttpStatus.OK);</span>
+    }
+
+    @Operation(
+            summary = &quot;Get tenant details by ID&quot;,
+            description = &quot;Returns detailed information about a tenant by its unique identifier. Requires 'admin:read' or 'user:read' authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Tenant details retrieved successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = TenantDtoOutDetail.class))),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Tenant not found&quot;,
+                    content = @Content),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid Tenant ID&quot;,
+                    content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;,
+                    content = @Content),
+    })
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping(&quot;/{tenantId}&quot;)
+    public ResponseEntity&lt;TenantDtoOutDetail&gt; getTenantById(
+            @Parameter(description = &quot;Tenant UUID&quot;, required = true) @PathVariable UUID tenantId){
+<span class="fc" id="L87">        Tenant tenantRequest=retrieveTenantUseCase.getTenantById(tenantId);</span>
+<span class="fc" id="L88">        return new ResponseEntity&lt;&gt;(TenantMapper.toDtoDetail(tenantRequest), HttpStatus.OK);</span>
+    }
+
+
+    @Operation(
+            summary = &quot;Get all clubs for a tenant&quot;,
+            description = &quot;Returns a paginated list of clubs associated with the specified tenant. Requires 'admin:read' or 'user:read' authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Clubs of a tenant retrieved successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = ClubPagePreviewSwagger.class))),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Tenant not found&quot;,
+                    content = @Content),
+            @ApiResponse(responseCode = &quot;400&quot;, description = &quot;Invalid Tenant ID or pagination parameters&quot;,
+                    content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;,
+                    content = @Content),
+    })
+    @PreAuthorize(&quot;hasAnyAuthority('admin:read', 'user:read')&quot;)
+    @GetMapping(&quot;/{tenantId}/clubs&quot;)
+    public ResponseEntity&lt;Page&lt;ClubDtoOutPreview&gt;&gt; getAllClubsByTenantId(
+            @Parameter(description = &quot;Text search filter for club name or attributes&quot;, example = &quot;Padel Club&quot;) @RequestParam(required = false) String search,
+            @Parameter(description = &quot;Requested page number (0-based)&quot;, example = &quot;0&quot;) @RequestParam(defaultValue = &quot;0&quot;) int page,
+            @Parameter(description = &quot;Number of items per page&quot;, example = &quot;10&quot;) @RequestParam(defaultValue = &quot;10&quot;)int size,
+            @Parameter(description = &quot;Tenant UUID&quot;, required = true) @PathVariable UUID tenantId){
+<span class="fc" id="L113">        Pageable pageable=PageRequest.of(page, size);</span>
+<span class="fc" id="L114">        Page&lt;ClubDtoOutPreview&gt; clubs = retrieveClubUseCase.getAllClubsByTenantId(search, tenantId,pageable).map(ClubMapper::toDtoPreview);</span>
+<span class="fc" id="L115">        return new ResponseEntity&lt;&gt;(clubs, HttpStatus.OK);</span>
+    }
+
+    @Operation(
+            summary = &quot;Get summary of all tenants&quot;,
+            description = &quot;Returns a summary list of all tenants in the system. Requires 'admin:read' authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = &quot;200&quot;, description = &quot;Tenant summary list retrieved successfully&quot;,
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation = TenantDtoOutSummary.class)))),
+            @ApiResponse(responseCode = &quot;404&quot;, description = &quot;Tenants not found&quot;,
+                    content = @Content),
+            @ApiResponse(responseCode = &quot;401&quot;, description = &quot;Unauthorized&quot;,
+                    content = @Content),
+    })
+    @PreAuthorize(&quot;hasAuthority('admin:read')&quot;)
+    @GetMapping(&quot;/all-summary&quot;)
+    public ResponseEntity&lt;List&lt;TenantDtoOutSummary&gt;&gt; getTenantsSummary(){
+<span class="fc" id="L133">        List&lt;TenantDtoOutSummary&gt; tenantsSummary=retrieveTenantUseCase.getAllTenantsSummary().stream().map(TenantMapper::toDtoSummary).toList();</span>
+<span class="fc" id="L134">        return new ResponseEntity&lt;&gt;(tenantsSummary, HttpStatus.OK);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

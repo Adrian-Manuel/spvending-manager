@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MachineEntity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.machine.infrastructure.persistence.entity</a> &gt; <span class="el_source">MachineEntity.java</span></div><h1>MachineEntity.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.machine.infrastructure.persistence.entity;
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.smart_padel.spvending_management_api.club.infrastructure.persistance.entity.ClubEntity;
+import com.smart_padel.spvending_management_api.machine.domain.model.Machine;
+import com.smart_padel.spvending_management_api.shared.utils.Filtrable;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@Table(name = &quot;machines&quot;)
+public class MachineEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID machineId;
+
+    @Filtrable
+    @Column(name = &quot;code&quot;, nullable = false, unique = true)
+    private String code;
+
+    @Column(name = &quot;micronId&quot;)
+    private String micronId;
+
+    @Filtrable
+    @Column(name = &quot;smartFridgeId&quot;,unique = true, nullable = false)
+    private String smartFridgeId;
+
+    @Column(name = &quot;smartFridgPassword&quot;, nullable = false)
+    private String smartFridgePassword;
+
+    @Filtrable
+    @Column(name = &quot;terminalId&quot;,unique = true, nullable = false)
+    @Schema(description = &quot;Unique terminal ID used for payment or control systems&quot;, example = &quot;14&quot;)
+    private String terminalId;
+
+    @Filtrable
+    @Column(name = &quot;toaSerialNumber&quot;, nullable = false, unique = true)
+    @Schema(description = &quot;Serial number assigned by TOA (provider or manufacturer)&quot;, example = &quot;14455&quot;)
+    private String toaSerialNumber;
+
+    @Column(name = &quot;rustdeskId&quot;,unique = true, nullable = false)
+    @Schema(description = &quot;ID used for remote control via RustDesk&quot;, example = &quot;76&quot;)
+    private String rustdeskId;
+
+    @Column(name = &quot;rustdeskPass&quot;, nullable = false)
+    @Schema(description = &quot;Password used for remote access through RustDesk&quot;, example = &quot;Padelprix2025&quot;)
+    private String rustdeskPass;
+
+    @Filtrable(name = &quot;club.name&quot;)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;clubId&quot;, nullable = false, referencedColumnName = &quot;clubId&quot;)
+    @Schema(description = &quot;The club where this machine is installed or managed&quot;, implementation = ClubEntity.class)
+    private ClubEntity club;
+
+    public static MachineEntity fromDomainModel(Machine machine){
+<span class="fc" id="L64">        return MachineEntity.builder()</span>
+<span class="fc" id="L65">                .machineId(machine.getMachineId())</span>
+<span class="fc" id="L66">                .code(machine.getCode())</span>
+<span class="fc" id="L67">                .smartFridgeId(machine.getSmartFridgeId())</span>
+<span class="fc" id="L68">                .smartFridgePassword(machine.getSmartFridgePassword())</span>
+<span class="fc" id="L69">                .terminalId(machine.getTerminalId())</span>
+<span class="fc" id="L70">                .toaSerialNumber(machine.getToaSerialNumber())</span>
+<span class="fc" id="L71">                .rustdeskId(machine.getRustdeskId())</span>
+<span class="fc" id="L72">                .rustdeskPass(machine.getRustdeskPass())</span>
+<span class="fc" id="L73">                .micronId(machine.getMicronId())</span>
+<span class="fc" id="L74">                .build();</span>
+    }
+    public Machine toDomainModel(){
+<span class="fc" id="L77">        return  Machine.builder()</span>
+<span class="fc" id="L78">                .machineId(machineId)</span>
+<span class="fc" id="L79">                .code(code)</span>
+<span class="fc" id="L80">                .smartFridgeId(smartFridgeId)</span>
+<span class="fc" id="L81">                .smartFridgePassword(smartFridgePassword)</span>
+<span class="fc" id="L82">                .terminalId(terminalId)</span>
+<span class="fc" id="L83">                .toaSerialNumber(toaSerialNumber)</span>
+<span class="fc" id="L84">                .rustdeskId(rustdeskId)</span>
+<span class="fc" id="L85">                .rustdeskPass(rustdeskPass)</span>
+<span class="fc" id="L86">                .clubName(club.getName())</span>
+<span class="fc" id="L87">                .micronId(micronId)</span>
+<span class="fc" id="L88">                .build();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

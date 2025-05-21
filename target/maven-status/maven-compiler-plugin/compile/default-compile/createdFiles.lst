@@ -9,9 +9,11 @@ com\smart_padel\spvending_management_api\tenant\application\usecases\RetrieveTen
 com\smart_padel\spvending_management_api\club\infrastructure\persistance\entity\ClubEntity.class
 com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubDtoOutDetail$ClubDtoOutDetailBuilder.class
 com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserManagerDtoIn$UserManagerDtoInBuilder.class
+com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubPagePreviewSwagger$PageInfo.class
 com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachineDtoIn.class
 com\smart_padel\spvending_management_api\user_manager\application\usecases\RetrieveUserManagerUseCaseImpl.class
 com\smart_padel\spvending_management_api\tenant\domain\ports\out\TenantRepositoryPort.class
+com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubPagePreviewSwagger.class
 com\smart_padel\spvending_management_api\shared\utils\SpecificationUtils.class
 com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantDtoOutSummary.class
 com\smart_padel\spvending_management_api\machine\infrastructure\dto\mapper\MachineMapper.class
@@ -22,6 +24,7 @@ com\smart_padel\spvending_management_api\security\user\User.class
 com\smart_padel\spvending_management_api\user_manager\domain\model\UserManager.class
 com\smart_padel\spvending_management_api\security\auth\dto\UserResponse.class
 com\smart_padel\spvending_management_api\tenant\domain\ports\in\RetrieveTenantUseCase.class
+com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserManagerPreviewSwagger.class
 com\smart_padel\spvending_management_api\security\config\SecurityConfig.class
 com\smart_padel\spvending_management_api\user_manager\infrastructure\persistence\adapters\UserManagerRepositoryAdapter.class
 com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantDtoIn.class
@@ -32,11 +35,13 @@ com\smart_padel\spvending_management_api\user_manager\infrastructure\persistence
 com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubDtoOutSummary$ClubDtoOutSummaryBuilder.class
 com\smart_padel\spvending_management_api\security\user\Role.class
 com\smart_padel\spvending_management_api\tenant\infrastructure\rest\controller\DeleteTenantController.class
+com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachinePagePreviewSwagger.class
 com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachineDtoOutPreview$MachineDtoOutPreviewBuilder.class
 com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachineDtoOutPreview.class
 com\smart_padel\spvending_management_api\user_manager\application\usecases\CreateUserManagerUseCaseImpl.class
 com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantDtoOutPreview$TenantDtoOutPreviewBuilder.class
 com\smart_padel\spvending_management_api\club\infrastructure\rest\controller\PutClubController.class
+com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantPagePreviewSwagger$PageInfo.class
 com\smart_padel\spvending_management_api\shared\exceptions\ResourceAlreadyExistsException.class
 com\smart_padel\spvending_management_api\user_manager\infrastructure\utils\UserManagerHelperAdapter.class
 com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserManagerDtoOutPreview$UserManagerDtoOutPreviewBuilder.class
@@ -68,6 +73,7 @@ com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserMan
 com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubDtoOutPreview$ClubDtoOutPreviewBuilder.class
 com\smart_padel\spvending_management_api\club\infrastructure\persistance\repository\JpaClubRepository.class
 com\smart_padel\spvending_management_api\club\infrastructure\persistance\adapters\ClubRepositoryAdapter.class
+com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachinePagePreviewSwagger$PageInfo.class
 com\smart_padel\spvending_management_api\machine\infrastructure\utils\MachineSpecification.class
 com\smart_padel\spvending_management_api\tenant\domain\ports\in\DeleteTenantUseCase.class
 com\smart_padel\spvending_management_api\club\domain\model\Club.class
@@ -78,6 +84,7 @@ com\smart_padel\spvending_management_api\club\infrastructure\rest\controller\Pos
 com\smart_padel\spvending_management_api\shared\exceptions\NotResourcesFoundException.class
 com\smart_padel\spvending_management_api\security\auth\service\TokenBlacklistService.class
 com\smart_padel\spvending_management_api\security\auth\dto\RegisterRequest.class
+com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantPagePreviewSwagger.class
 com\smart_padel\spvending_management_api\user_manager\infrastructure\rest\controller\GetUserManagerController.class
 com\smart_padel\spvending_management_api\machine\domain\ports\in\DeleteMachineUseCase.class
 com\smart_padel\spvending_management_api\club\application\usecases\CreateClubUseCaseImpl.class
@@ -127,6 +134,7 @@ com\smart_padel\spvending_management_api\tenant\application\usecases\CreateTenan
 com\smart_padel\spvending_management_api\tenant\infrastructure\utils\TenantSpecification.class
 com\smart_padel\spvending_management_api\machine\infrastructure\rest\controller\PostMachineController.class
 com\smart_padel\spvending_management_api\machine\infrastructure\persistence\entity\MachineEntity$MachineEntityBuilder.class
+com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserManagerPreviewSwagger$PageInfo.class
 com\smart_padel\spvending_management_api\user_manager\infrastructure\utils\UserManagerSpecification.class
 com\smart_padel\spvending_management_api\club\infrastructure\rest\controller\GetClubController.class
 com\smart_padel\spvending_management_api\club\infrastructure\dto\mapper\ClubMapper.class

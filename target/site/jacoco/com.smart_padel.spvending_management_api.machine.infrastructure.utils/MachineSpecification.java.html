@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MachineSpecification.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.machine.infrastructure.utils</a> &gt; <span class="el_source">MachineSpecification.java</span></div><h1>MachineSpecification.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.machine.infrastructure.utils;
+import com.smart_padel.spvending_management_api.machine.infrastructure.persistence.entity.MachineEntity;
+import com.smart_padel.spvending_management_api.shared.utils.SpecificationUtils;
+import org.springframework.data.jpa.domain.Specification;
+import java.util.UUID;
+public class MachineSpecification {
+<span class="fc" id="L7">    private MachineSpecification() {</span>
+<span class="fc" id="L8">        throw new IllegalStateException(&quot;Specification class&quot;);</span>
+    }
+    public static Specification&lt;MachineEntity&gt; withFilter(String filter) {
+<span class="pc bpc" id="L11" title="1 of 4 branches missed.">        if (filter == null || filter.isEmpty()) {</span>
+<span class="pc" id="L12">            return (root, query, criteriaBuilder) -&gt; criteriaBuilder.conjunction();</span>
+        }
+<span class="fc" id="L14">        return SpecificationUtils.buildFilterSpec(MachineEntity.class, filter);</span>
+    }
+    public static Specification&lt;MachineEntity&gt; belongsToClub(UUID clubId) {
+<span class="fc bfc" id="L17" title="All 2 branches covered.">        if (clubId == null) {</span>
+<span class="fc" id="L18">            throw new IllegalArgumentException(&quot;clubId must not be null&quot;);</span>
+        }
+<span class="pc" id="L20">        return (root, query, criteriaBuilder) -&gt; criteriaBuilder.equal(root.get(&quot;club&quot;).get(&quot;clubId&quot;), clubId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

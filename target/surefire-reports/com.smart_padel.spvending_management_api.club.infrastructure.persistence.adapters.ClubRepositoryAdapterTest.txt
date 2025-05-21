@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.smart_padel.spvending_management_api.club.infrastructure.persistence.adapters.ClubRepositoryAdapterTest
 -------------------------------------------------------------------------------
-Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.430 s -- in com.smart_padel.spvending_management_api.club.infrastructure.persistence.adapters.ClubRepositoryAdapterTest
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.490 s -- in com.smart_padel.spvending_management_api.club.infrastructure.persistence.adapters.ClubRepositoryAdapterTest

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller.DeleteMachineControllerTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.447 s -- in com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller.DeleteMachineControllerTest
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.471 s -- in com.smart_padel.spvending_management_api.machine.infrastructure.rest.controller.DeleteMachineControllerTest

@@ -26,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     public boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
         final String requestURI=request.getRequestURI();
-        return requestURI.startsWith("/api/v1/auth/")
+        return requestURI.equals("/api/v1/auth/login")
+                || requestURI.equals("/api/v1/auth/register")
                 || requestURI.equals("/swagger-ui.html")
                 || requestURI.startsWith("/swagger-ui/")
                 || requestURI.equals("/v3/api-docs")

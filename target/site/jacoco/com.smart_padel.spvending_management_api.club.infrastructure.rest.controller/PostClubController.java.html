@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PostClubController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.club.infrastructure.rest.controller</a> &gt; <span class="el_source">PostClubController.java</span></div><h1>PostClubController.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.club.infrastructure.rest.controller;
+import com.smart_padel.spvending_management_api.club.domain.model.Club;
+import com.smart_padel.spvending_management_api.club.domain.ports.in.CreateClubUseCase;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoIn;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.ClubDtoOutPreview;
+import com.smart_padel.spvending_management_api.club.infrastructure.dto.mapper.ClubMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+@RestController
+@RequestMapping(&quot;/api/v1/clubs&quot;)
+@RequiredArgsConstructor
+@Tag(name = &quot;Club&quot;, description = &quot;Create a new club&quot;)
+public class PostClubController {
+   private final CreateClubUseCase createClubUseCase;
+
+    @Operation(
+            summary = &quot;Create a new club&quot;,
+            description = &quot;Creates a new club and returns its preview information. Requires 'admin:create' authority.&quot;
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = &quot;201&quot;,
+                    description = &quot;Club created successfully&quot;,
+                    content = @Content(schema = @Schema(implementation = ClubDtoOutPreview.class))
+            ),
+            @ApiResponse(
+                    responseCode = &quot;400&quot;,
+                    description = &quot;Invalid input data&quot;,
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = &quot;401&quot;,
+                    description = &quot;Unauthorized&quot;,
+                    content = @Content
+            )
+    })
+    @PreAuthorize(&quot;hasAuthority('admin:create')&quot;)
+    @PostMapping
+    public ResponseEntity&lt;ClubDtoOutPreview&gt; createClub (
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = &quot;Club information for creation&quot;,
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = ClubDtoIn.class))
+            )
+            @RequestBody @Valid ClubDtoIn clubDtoIn){
+<span class="fc" id="L56">        Club clubRequest= ClubMapper.toModel(clubDtoIn);</span>
+<span class="fc" id="L57">        clubRequest=createClubUseCase.createClub(clubDtoIn.getTenantId(), clubRequest);</span>
+<span class="fc" id="L58">        return new ResponseEntity&lt;&gt;(ClubMapper.toDtoPreview(clubRequest), HttpStatus.CREATED);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

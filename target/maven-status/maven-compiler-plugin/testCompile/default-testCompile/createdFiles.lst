@@ -34,7 +34,6 @@ com\smart_padel\spvending_management_api\club\infrastructure\rest\controller\Del
 com\smart_padel\spvending_management_api\security\auth\controller\AuthControllerTest.class
 com\smart_padel\spvending_management_api\tenant\infrastructure\utils\TenantSpecificationTest.class
 com\smart_padel\spvending_management_api\club\infrastructure\rest\controller\PutClubControllerTest.class
-com\smart_padel\spvending_management_api\SPVendingManagementApplicationTest.class
 com\smart_padel\spvending_management_api\user_manager\infrastructure\rest\controller\GetUserManagerControllerTest.class
 com\smart_padel\spvending_management_api\shared\GlobalExceptionHandlerTest$1.class
 com\smart_padel\spvending_management_api\machine\application\usecases\RetrieveMachineUseCaseImplTest.class

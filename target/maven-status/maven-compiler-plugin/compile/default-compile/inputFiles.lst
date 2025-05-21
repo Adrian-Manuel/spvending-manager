@@ -12,6 +12,7 @@ D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_m
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubDtoOutDetail.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubDtoOutPreview.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubDtoOutSummary.java
+D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\club\infrastructure\dto\ClubPagePreviewSwagger.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\club\infrastructure\dto\mapper\ClubMapper.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\club\infrastructure\persistance\adapters\ClubRepositoryAdapter.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\club\infrastructure\persistance\entity\ClubEntity.java
@@ -36,6 +37,7 @@ D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_m
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachineDtoIn.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachineDtoOutDetail.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachineDtoOutPreview.java
+D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\machine\infrastructure\dto\MachinePagePreviewSwagger.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\machine\infrastructure\dto\mapper\MachineMapper.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\machine\infrastructure\persistence\adapters\MachineRepositoryAdapter.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\machine\infrastructure\persistence\entity\MachineEntity.java
@@ -89,6 +91,7 @@ D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_m
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantDtoOutDetail.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantDtoOutPreview.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantDtoOutSummary.java
+D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\tenant\infrastructure\dto\TenantPagePreviewSwagger.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\tenant\infrastructure\persistence\adapters\TenantRepositoryAdapter.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\tenant\infrastructure\persistence\entity\TenantEntity.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\tenant\infrastructure\persistence\repository\JpaTenantRepository.java
@@ -112,6 +115,7 @@ D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_m
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserManagerDtoIn.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserManagerDtoOutDetail.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserManagerDtoOutPreview.java
+D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\user_manager\infrastructure\dto\UserManagerPreviewSwagger.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\user_manager\infrastructure\persistence\adapters\UserManagerRepositoryAdapter.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\user_manager\infrastructure\persistence\entity\UserManagerEntity.java
 D:\TRABAJO\Practicar\spvending-manager\src\main\java\com\smart_padel\spvending_management_api\user_manager\infrastructure\persistence\repository\JpaUserManagerRepository.java

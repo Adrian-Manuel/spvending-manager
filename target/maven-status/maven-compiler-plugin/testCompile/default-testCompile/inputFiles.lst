@@ -34,7 +34,6 @@ D:\TRABAJO\Practicar\spvending-manager\src\test\java\com\smart_padel\spvending_m
 D:\TRABAJO\Practicar\spvending-manager\src\test\java\com\smart_padel\spvending_management_api\shared\utils\PersistenceUtilsTest.java
 D:\TRABAJO\Practicar\spvending-manager\src\test\java\com\smart_padel\spvending_management_api\shared\utils\RegexUtilsTest.java
 D:\TRABAJO\Practicar\spvending-manager\src\test\java\com\smart_padel\spvending_management_api\shared\utils\SpecificationUtilsTest.java
-D:\TRABAJO\Practicar\spvending-manager\src\test\java\com\smart_padel\spvending_management_api\SPVendingManagementApplicationTest.java
 D:\TRABAJO\Practicar\spvending-manager\src\test\java\com\smart_padel\spvending_management_api\tenant\application\usecases\CreateTenantUseCaseImplTest.java
 D:\TRABAJO\Practicar\spvending-manager\src\test\java\com\smart_padel\spvending_management_api\tenant\application\usecases\DeleteTenantUseCaseImplTest.java
 D:\TRABAJO\Practicar\spvending-manager\src\test\java\com\smart_padel\spvending_management_api\tenant\application\usecases\RetrieveTenantUseCaseImplTest.java
