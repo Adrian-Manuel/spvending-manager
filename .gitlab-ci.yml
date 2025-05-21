@@ -7,11 +7,29 @@ variables:
   IMAGE_NAME: "$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
   GITLAB_ADVANCED_SAST_ENABLED: "true"
 stages:
+  - dependency_check
   - test
   - sonarqube
   - build
   - deploy_staging
   - deploy_production
+
+dependency_check:
+  stage: dependency_check
+  image: maven:3.9.6-eclipse-temurin-22
+  script:
+      - mvn org.owasp:dependency-check-maven:check
+      - |
+          if grep -q "<severity>Critical</severity>" target/dependency-check-report.xml; then
+            echo "❌ Vulnerabilidades críticas detectadas"; exit 1;
+          fi
+  artifacts:
+      when: always
+      paths:
+        - target/dependency-check-report.html
+        - target/dependency-check-report.xml
+      reports:
+        dependency_scanning: target/dependency-check-report.xml
 
 sonarqube:
   #image: sonarsource/sonar-scanner-cli:latest
