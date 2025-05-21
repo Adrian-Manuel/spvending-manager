@@ -35,6 +35,8 @@ public class UserManagerMapper {
                 .userType(userManager.getUserType())
                 .clubEntityName(userManager.getClubName())
                 .tenantEntityName(userManager.getTenantName())
+                .tenantEntityId(userManager.getTenantId())
+                .clubEntityId(userManager.getClubId())
                 .build();
     }
 
