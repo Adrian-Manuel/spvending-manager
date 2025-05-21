@@ -1,6 +1,6 @@
 @echo off
-set TAG=deploy-staging-v1.0.0
-set MENSAJE="despliegue para pruebas en staging"
+set TAG=v1.0.0
+set MENSAJE="prueba sast"
 set REMOTE=localgit
 echo Eliminando tag local %TAG%
 git tag -d %TAG%
