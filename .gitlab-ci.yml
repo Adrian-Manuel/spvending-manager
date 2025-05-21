@@ -13,9 +13,6 @@ stages:
   - deploy_staging
   - deploy_production
 
-include:
-  - template: Jobs/SAST.gitlab-ci.yml
-
 sonarqube:
   #image: sonarsource/sonar-scanner-cli:latest
   image: maven:3.9-eclipse-temurin-22
