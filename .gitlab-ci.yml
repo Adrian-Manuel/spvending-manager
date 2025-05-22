@@ -20,7 +20,7 @@ dependency_check:
   script:
       - mvn org.owasp:dependency-check-maven:check
       - |
-          if grep -q "<severity>Critical</severity>" target/dependency-check-report.xml; then
+          if grep -q "<severity>Critical</severity>" target/dependency-check-report/dependency-check-report.xml; then
             echo "❌ Vulnerabilidades críticas detectadas"; exit 1;
           fi
   artifacts:
