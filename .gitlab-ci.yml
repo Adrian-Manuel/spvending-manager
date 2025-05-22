@@ -7,8 +7,8 @@ variables:
   IMAGE_NAME: "$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
   GITLAB_ADVANCED_SAST_ENABLED: "true"
 stages:
-  - dependency_check
   - test
+  - dependency_check
   - sonarqube
   - build
   - deploy_staging
