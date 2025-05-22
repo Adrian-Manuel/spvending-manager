@@ -13,13 +13,6 @@ stages:
   - build
   - deploy_staging
   - deploy_production
-test-artifacts:
-  stage: test
-  script:
-    - echo "Hola Mundo" > hola.txt
-  artifacts:
-    paths:
-      - hola.txt
 dependency_check:
   stage: dependency_check
   image: maven:3.9.6-eclipse-temurin-22
