@@ -127,6 +127,7 @@ deploy_app_staging:
 
 deploy_app_production:
   stage: deploy_production
+  image: mcr.microsoft.com/azure-cli:latest
   tags:
     - deploy
   services: []
@@ -135,6 +136,8 @@ deploy_app_production:
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
     - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
+    - az account set --subscription $AZURE_SUBSCRIPTION_ID
   script:
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then
@@ -142,10 +145,11 @@ deploy_app_production:
         if git merge-base --is-ancestor origin/main "$CI_COMMIT_TAG"; then
           export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
           echo "=== DESPLEGANDO VERSIÓN ==="
-          docker pull "$IMAGE_NAME_BASE:$DEPLOY_TAG"
-          docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
-          docker-compose -f docker-compose-production.deploy.yml up -d 
-          echo "=== CONTENEDORES EN EJECUCIÓN ==="
+          az vm run-command invoke --command-id RunShellScript --name <SPVendingAPI> --resource-group SPVendingAPI_group --scripts "
+            docker pull $IMAGE_NAME_BASE:$DEPLOY_TAG
+            docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
+            docker-compose -f docker-compose-production.deploy.yml up -d
+          "
           docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
         else
           echo "El tag NO proviene de main. Saltando despliegue."
