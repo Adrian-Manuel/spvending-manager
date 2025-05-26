@@ -5,7 +5,6 @@ variables:
   DOCKER_HOST: unix:///var/run/docker.sock
   IMAGE_NAME_BASE: "$CI_REGISTRY/adrian-manuel/spvending-managment"
   IMAGE_NAME: "$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
-  GITLAB_ADVANCED_SAST_ENABLED: "true"
 stages:
   - test
   - build
@@ -90,7 +89,7 @@ build_image:
   rules:
     - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
       when: always
-  needs: ["sonarqube"]
+  needs: ["test"]
 
 deploy_app_staging:
   stage: deploy_staging
