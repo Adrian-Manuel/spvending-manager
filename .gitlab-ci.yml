@@ -69,7 +69,7 @@ build_image:
   tags:
     - build
   before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "http://localhost:5050"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then

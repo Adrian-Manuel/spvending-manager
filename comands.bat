@@ -1,5 +1,5 @@
 @echo off
-set TAG=deploy-production-v1.0.0
+set TAG=v1.0.0
 set MENSAJE="prueba sast"
 set REMOTE=localgit
 echo Eliminando tag local %TAG%
