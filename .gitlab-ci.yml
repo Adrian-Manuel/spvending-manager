@@ -151,9 +151,7 @@ deploy_app_production:
         docker pull \$IMAGE_NAME
         docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
         docker-compose -f docker-compose-production.deploy.yml up -d
-        docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
-        EOF
-        )
+        docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"EOF)
         
         # Reemplaza las variables en el script para enviarlo ya con valores reales
         echo "$SCRIPT_REMOTE" | envsubst | az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "@-"
