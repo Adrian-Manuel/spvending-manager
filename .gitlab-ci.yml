@@ -140,8 +140,9 @@ deploy_app_production:
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
       # Configurar SSH
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - echo -e "Host *\n\tStrictHostKeyChecking no\n" > ~/.ssh/config
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H SPVendingAPI.cloudapp.azure.com >> ~/.ssh/known_hosts
 
   script:
     - |
