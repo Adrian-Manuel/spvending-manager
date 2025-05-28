@@ -132,7 +132,7 @@ deploy_app_production:
     COMPOSE_PROJECT_NAME: "spvending-managment-production"
     DOCKER_HOST: "unix:///var/run/docker.sock"
   before_script:
-    #- echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
     - az account set --subscription $AZURE_SUBSCRIPTION_ID
   script:
