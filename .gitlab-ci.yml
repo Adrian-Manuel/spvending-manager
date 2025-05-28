@@ -143,6 +143,11 @@ deploy_app_production:
           export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
           echo "=== DESPLEGANDO VERSIÓN ==="
           az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "
+            mkdir -p /app
+            cat > /app/docker-compose-production.deploy.yml << 'EOF'
+            $(cat docker-compose-production.deploy.yml)
+            EOF
+            cd /app
             echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
             docker pull $IMAGE_NAME_BASE:$DEPLOY_TAG
             docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
