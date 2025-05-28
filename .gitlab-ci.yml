@@ -131,34 +131,45 @@ deploy_app_production:
   variables:
     COMPOSE_PROJECT_NAME: "spvending-managment-production"
     DOCKER_HOST: "unix:///var/run/docker.sock"
+
   before_script:
     - apt-get update
-    - apt-get install -y curl docker.io python3-pip
+    - apt-get install -y curl docker.io python3-pip gettext-base
     - pip3 install azure-cli
-    - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
-    - az account set --subscription $AZURE_SUBSCRIPTION_ID
+    - az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
+    - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+
   script:
     - |
-      if [ -n "$CI_COMMIT_TAG" ]; then
-        export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
-        export IMAGE_NAME="$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
-        export COMPOSE_B64=$(base64 -w 0 docker-compose-production.deploy.yml)
-        echo "=== DESPLEGANDO VERSIÓN ==="
-        SCRIPT_REMOTE=$(cat <<EOF
-        mkdir -p /app && cd /app
-        echo \$COMPOSE_B64 | base64 -d > docker-compose-production.deploy.yml
-        echo \$CI_REGISTRY_PASSWORD | docker login -u \$CI_REGISTRY_USER --password-stdin \$CI_REGISTRY
-        docker pull \$IMAGE_NAME
-        docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
-        docker-compose -f docker-compose-production.deploy.yml up -d
-        docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"EOF)
-        
-        # Reemplaza las variables en el script para enviarlo ya con valores reales
-        echo "$SCRIPT_REMOTE" | envsubst | az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "@-"
-        else
-        echo "No es un tag. Saltando despliegue."
+      if [[ "$CI_COMMIT_TAG" =~ ^deploy-production-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+        echo "=== Iniciando despliegue para $CI_COMMIT_TAG ==="
+        DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
+        IMAGE_NAME="$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
+
+        # Codificar docker-compose como base64 (sin saltos de línea)
+        COMPOSE_B64=$(base64 docker-compose-production.deploy.yml | tr -d '\n')
+
+        # Crear script remoto
+        cat <<EOF > remote-script.sh
+    #!/bin/bash
+      mkdir -p /app && cd /app
+      echo "$COMPOSE_B64" | base64 -d > docker-compose-production.deploy.yml
+      echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+      docker pull "$IMAGE_NAME"
+      docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
+      docker-compose -f docker-compose-production.deploy.yml up -d
+      docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+      EOF
+      
+      echo "=== Ejecutando en VM ==="
+      az vm run-command invoke \
+      --command-id RunShellScript \
+      --name SPVendingAPI \
+      --resource-group SPVendingAPI_group \
+      --scripts "@remote-script.sh"
+      else
+      echo "No es un tag de despliegue. Saltando..."
       fi
-  after_script:
-    - docker logout $CI_REGISTRY
+
   rules:
     - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
