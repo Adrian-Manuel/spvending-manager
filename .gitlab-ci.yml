@@ -142,7 +142,7 @@ deploy_app_production:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H spvending.uksouth.cloudapp.azure.com >> ~/.ssh/known_hosts
+    - ssh-keyscan -H 172.187.216.149 >> ~/.ssh/known_hosts
 
   script:
     - |
@@ -158,11 +158,11 @@ deploy_app_production:
         ssh Adrian-Manuel@spvending.uksouth.cloudapp.azure.com "
           set -e
           cd /home/Adrian-Manuel
-          echo '$CI_REGISTRY_PASSWORD' | docker login -u '$CI_REGISTRY_USER' --password-stdin '$CI_REGISTRY'
-          docker pull '$IMAGE_NAME'
+          echo \"$CI_REGISTRY_PASSWORD\" | docker login -u \"$CI_REGISTRY_USER\" --password-stdin \"$CI_REGISTRY\"
+          docker pull \"$IMAGE_NAME\"
           docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
           docker-compose -f docker-compose-production.deploy.yml up -d
-          docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'
+          docker ps --format \"table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}\"
         "     
         else
         echo "No es un tag de despliegue. Saltando..."
