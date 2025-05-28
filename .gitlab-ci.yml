@@ -142,7 +142,7 @@ deploy_app_production:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - ssh-keyscan -H SPVendingAPI.cloudapp.azure.com >> ~/.ssh/known_hosts
+    - ssh-keyscan -H spvending.uksouth.cloudapp.azure.com >> ~/.ssh/known_hosts
 
   script:
     - |
