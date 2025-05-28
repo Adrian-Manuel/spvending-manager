@@ -152,17 +152,18 @@ deploy_app_production:
         IMAGE_NAME="$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
 
         echo "=== Copiando docker-compose a la VM ==="
-        scp docker-compose-production.deploy.yml ubuntu@<IP_VM>:/home/ubuntu/
+        scp docker-compose-production.deploy.yml Adrian-Manuel@172.187.216.149:/home/Adrian-Manuel/
 
         echo "=== Ejecutando despliegue en VM ==="
-        ssh Adrian-Manuel@172.187.216.149 <<EOF
+        ssh Adrian-Manuel@172.187.216.149 "
           set -e
-          cd /home/ubuntu
-          echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-          docker pull "$IMAGE_NAME"
+          cd /home/Adrian-Manuel
+          echo '$CI_REGISTRY_PASSWORD' | docker login -u '$CI_REGISTRY_USER' --password-stdin '$CI_REGISTRY'
+          docker pull '$IMAGE_NAME'
           docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
           docker-compose -f docker-compose-production.deploy.yml up -d
-          docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"EOF      
+          docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'
+        "     
         else
         echo "No es un tag de despliegue. Saltando..."
       fi
