@@ -146,7 +146,7 @@ deploy_app_production:
           echo "=== DESPLEGANDO VERSIÓN ==="
           az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "
             mkdir -p /app && cd /app
-            echo '$COMPOSE_B64' | base64 -d > docker-compose-production.deploy.yml
+            echo '$COMPOSE_CONTENT' | base64 -d > docker-compose-production.deploy.yml
             echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
             docker pull $IMAGE_NAME_BASE:$DEPLOY_TAG
             docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
