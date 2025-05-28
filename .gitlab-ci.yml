@@ -143,8 +143,52 @@ deploy_app_production:
           export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
           echo "=== DESPLEGANDO VERSIÓN ==="
           az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "
-            mkdir -p /app
-            cat > /app/docker-compose-production.deploy.yml << 'EOF'
+            mkdir -p /app && cd /app
+            sudo rm docker-compose-production.deploy.yml
+            tee docker-compose-production.deploy.yml > /dev/null << 'COMPOSE_EOF'
+            version: '3.9'
+            services:
+              spvending-api-image-production:
+                image: registry.smartpadelautomation.com/smart-vending/spvending-managment:$DEPLOY_TAG
+                container_name: spvending-api-production-container
+                ports:
+                  - '8082:8080'
+                networks:
+                  - spring-network-production
+                depends_on:
+                  - postgres-production
+                  - redis-production
+                environment:
+                  - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-production:5432/tenants_managment_production
+                  - SPRING_DATASOURCE_USERNAME=postgres
+                  - SPRING_DATASOURCE_PASSWORD=abc123.
+                  - SPRING_REDIS_HOST=redis-production
+              redis-production:
+                image: redis
+                container_name: redis_cache_production
+                ports:
+                  - '6381:6379'
+                networks:
+                  - spring-network-production
+              postgres-production:
+                image: postgres
+                container_name: postgres_database_production
+                environment:
+                  POSTGRES_PASSWORD: abc123.
+                  POSTGRES_DB: tenants_managment_production
+                  POSTGRES_USER: postgres
+                ports:
+                  - '5434:5432'
+                networks:
+                  - spring-network-production
+                volumes:
+                  - postgres-volume-production:/var/lib/postgresql/data
+            networks:
+              spring-network-production:
+                driver: bridge
+            volumes:
+              postgres-volume-production:
+              COMPOSE_EOF
             $(cat docker-compose-production.deploy.yml)
             EOF
             cd /app
