@@ -134,10 +134,15 @@ deploy_app_production:
 
   before_script:
     - apt-get update
-    - apt-get install -y curl docker.io python3-pip gettext-base
+    - apt-get install -y curl docker.io python3-pip gettext-base openssh-client
     - pip3 install azure-cli
     - az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
+      # Configurar SSH
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - ssh-keyscan -H SPVendingAPI.cloudapp.azure.com >> ~/.ssh/known_hosts
 
   script:
     - |
@@ -146,27 +151,18 @@ deploy_app_production:
         DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
         IMAGE_NAME="$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
 
-        # Codificar docker-compose como base64 (sin saltos de línea)
-        COMPOSE_B64=$(base64 docker-compose-production.deploy.yml | tr -d '\n')
+        echo "=== Copiando docker-compose a la VM ==="
+        scp docker-compose-production.deploy.yml ubuntu@<IP_VM>:/home/ubuntu/
 
-        # Crear script remoto
-        cat <<EOF > remote-script.sh
-        #!/bin/bash
-        mkdir -p /app && cd /app
-        echo "$COMPOSE_B64" | base64 -d > docker-compose-production.deploy.yml
-        echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-        docker pull "$IMAGE_NAME"
-        docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
-        docker-compose -f docker-compose-production.deploy.yml up -d
-        docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
-        EOF
-        
-        echo "=== Ejecutando en VM ==="
-        az vm run-command invoke \
-        --command-id RunShellScript \
-        --name SPVendingAPI \
-        --resource-group SPVendingAPI_group \
-        --scripts "@remote-script.sh"
+        echo "=== Ejecutando despliegue en VM ==="
+        ssh Adrian-Manuel@172.187.216.149 <<EOF
+          set -e
+          cd /home/ubuntu
+          echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+          docker pull "$IMAGE_NAME"
+          docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
+          docker-compose -f docker-compose-production.deploy.yml up -d
+          docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"EOF      
         else
         echo "No es un tag de despliegue. Saltando..."
       fi
