@@ -156,7 +156,6 @@ deploy_app_production:
             docker pull $IMAGE_NAME_BASE:$DEPLOY_TAG
             docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
             docker-compose -f docker-compose-production.deploy.yml up -d
-            docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
             "
       else
         echo "No es un tag. Saltando despliegue."
