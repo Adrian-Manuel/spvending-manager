@@ -146,7 +146,6 @@ deploy_app_production:
           echo "=== DESPLEGANDO VERSIÓN ==="
           az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "
             mkdir -p /app && cd /app
-            sudo rm docker-compose-production.deploy.yml
             cat > /app/docker-compose-production.deploy.yml << 'COMPOSE_EOF'
             $COMPOSE_CONTENT
             COMPOSE_EOF
