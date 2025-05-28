@@ -140,9 +140,9 @@ deploy_app_production:
   script:
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then
-          export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
+          DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
           # Leer el contenido del archivo
-          COMPOSE_CONTENT=$(base64 -w 0 docker-compose-production.deploy.yml)
+          COMPOSE_BASE64=$(base64 -w 0 docker-compose-production.deploy.yml)
           echo "=== DESPLEGANDO VERSIÓN ==="
       
           az vm run-command invoke \
