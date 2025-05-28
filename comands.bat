@@ -20,6 +20,9 @@ git tag %TAG%
 echo Pushing a la rama DEV
 git push %REMOTE% DEV
 
+echo Pushing tag remoto %TAG%
+git push %REMOTE% %TAG%
+
 echo Listo. Se ha creado y subido la versión %TAG%.
 pause
 
