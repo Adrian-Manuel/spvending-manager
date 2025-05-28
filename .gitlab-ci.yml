@@ -5,6 +5,7 @@ variables:
   DOCKER_HOST: unix:///var/run/docker.sock
   IMAGE_NAME_BASE: "$CI_REGISTRY/adrian-manuel/spvending-managment"
   IMAGE_NAME: "$IMAGE_NAME_BASE:$CI_COMMIT_TAG"
+  DOCKER_AUTH_CONFIG: '{"auths":{"registry.smartpadelautomation.com":{"username":"$REGISTRY_USER","password":"$REGISTRY_PASSWORD"}}}'
 stages:
   - test
   - build
@@ -68,8 +69,6 @@ build_image:
   stage: build
   tags:
     - build
-  before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
   script:
     - |
       if [ -n "$CI_COMMIT_TAG" ]; then
@@ -84,10 +83,7 @@ build_image:
           else
             echo "No es un tag. Saltando build."
       fi
-  
 
-  after_script:
-    - docker logout $CI_REGISTRY
   rules:
     - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
       when: always
