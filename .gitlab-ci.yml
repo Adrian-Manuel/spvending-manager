@@ -142,18 +142,16 @@ deploy_app_production:
       if [ -n "$CI_COMMIT_TAG" ]; then
           export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
           # Leer el contenido del archivo
-          COMPOSE_CONTENT=$(cat docker-compose-production.deploy.yml)
+          COMPOSE_CONTENT=$(base64 -w 0 docker-compose-production.deploy.yml)
           echo "=== DESPLEGANDO VERSIÓN ==="
           az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "
             mkdir -p /app && cd /app
-            cat > /app/docker-compose-production.deploy.yml << "COMPOSE_EOF"
-            $COMPOSE_CONTENT
-            COMPOSE_EOF
-            cd /app
+            echo '$COMPOSE_B64' | base64 -d > docker-compose-production.deploy.yml
             echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
             docker pull $IMAGE_NAME_BASE:$DEPLOY_TAG
             docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
             docker-compose -f docker-compose-production.deploy.yml up -d
+            docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
           "
       else
         echo "No es un tag. Saltando despliegue."
