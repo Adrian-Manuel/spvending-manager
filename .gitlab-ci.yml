@@ -139,9 +139,10 @@ deploy_app_production:
     - az login --service-principal -u "$AZURE_CLIENT_ID" -p "$AZURE_CLIENT_SECRET" --tenant "$AZURE_TENANT_ID"
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
       # Configurar SSH
+    - eval $(ssh-agent -s)
+    - ssh-add "$SSH_PRIVATE_KEY"
     - mkdir -p ~/.ssh
-    - printf "%s" "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
-    - chmod 400 ~/.ssh/id_rsa
+    - chmod 700 ~/.ssh
     - ssh-keyscan -H 172.187.216.149 >> ~/.ssh/known_hosts
 
   script:
