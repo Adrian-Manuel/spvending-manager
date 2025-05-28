@@ -155,7 +155,7 @@ deploy_app_production:
         scp docker-compose-production.deploy.yml Adrian-Manuel@172.187.216.149:/home/Adrian-Manuel/
 
         echo "=== Ejecutando despliegue en VM ==="
-        ssh Adrian-Manuel@172.187.216.149 "
+        ssh Adrian-Manuel@spvending.uksouth.cloudapp.azure.com "
           set -e
           cd /home/Adrian-Manuel
           echo '$CI_REGISTRY_PASSWORD' | docker login -u '$CI_REGISTRY_USER' --password-stdin '$CI_REGISTRY'
