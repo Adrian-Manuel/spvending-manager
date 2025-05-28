@@ -140,8 +140,8 @@ deploy_app_production:
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
       # Configurar SSH
     - mkdir -p ~/.ssh
-    - printf "%s" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
+    - printf "%s" "$SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/id_rsa
+    - chmod 400 ~/.ssh/id_rsa
     - ssh-keyscan -H 172.187.216.149 >> ~/.ssh/known_hosts
 
   script:
