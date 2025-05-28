@@ -140,7 +140,7 @@ deploy_app_production:
     - az account set --subscription "$AZURE_SUBSCRIPTION_ID"
       # Configurar SSH
     - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+    - printf "%s" "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - ssh-keyscan -H 172.187.216.149 >> ~/.ssh/known_hosts
 
@@ -155,7 +155,7 @@ deploy_app_production:
         scp docker-compose-production.deploy.yml Adrian-Manuel@172.187.216.149:/home/Adrian-Manuel/
 
         echo "=== Ejecutando despliegue en VM ==="
-        ssh Adrian-Manuel@spvending.uksouth.cloudapp.azure.com "
+        ssh Adrian-Manuel@172.187.216.149 "
           set -e
           cd /home/Adrian-Manuel
           echo \"$CI_REGISTRY_PASSWORD\" | docker login -u \"$CI_REGISTRY_USER\" --password-stdin \"$CI_REGISTRY\"
