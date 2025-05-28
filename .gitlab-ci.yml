@@ -135,7 +135,6 @@ deploy_app_production:
     - apt-get update
     - apt-get install -y curl docker.io python3-pip
     - pip3 install azure-cli
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
     - az login --service-principal -u $AZURE_CLIENT_ID -p $AZURE_CLIENT_SECRET --tenant $AZURE_TENANT_ID
     - az account set --subscription $AZURE_SUBSCRIPTION_ID
   script:
@@ -144,6 +143,7 @@ deploy_app_production:
           export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
           echo "=== DESPLEGANDO VERSIÓN ==="
           az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "
+            echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
             docker pull $IMAGE_NAME_BASE:$DEPLOY_TAG
             docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
             docker-compose -f docker-compose-production.deploy.yml up -d
