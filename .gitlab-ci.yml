@@ -151,24 +151,24 @@ deploy_app_production:
 
         # Crear script remoto
         cat <<EOF > remote-script.sh
-    #!/bin/bash
-      mkdir -p /app && cd /app
-      echo "$COMPOSE_B64" | base64 -d > docker-compose-production.deploy.yml
-      echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
-      docker pull "$IMAGE_NAME"
-      docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
-      docker-compose -f docker-compose-production.deploy.yml up -d
-      docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
-      EOF
-      
-      echo "=== Ejecutando en VM ==="
-      az vm run-command invoke \
-      --command-id RunShellScript \
-      --name SPVendingAPI \
-      --resource-group SPVendingAPI_group \
-      --scripts "@remote-script.sh"
-      else
-      echo "No es un tag de despliegue. Saltando..."
+        #!/bin/bash
+        mkdir -p /app && cd /app
+        echo "$COMPOSE_B64" | base64 -d > docker-compose-production.deploy.yml
+        echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+        docker pull "$IMAGE_NAME"
+        docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
+        docker-compose -f docker-compose-production.deploy.yml up -d
+        docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+        EOF
+        
+        echo "=== Ejecutando en VM ==="
+        az vm run-command invoke \
+        --command-id RunShellScript \
+        --name SPVendingAPI \
+        --resource-group SPVendingAPI_group \
+        --scripts "@remote-script.sh"
+        else
+        echo "No es un tag de despliegue. Saltando..."
       fi
 
   rules:
