@@ -144,8 +144,20 @@ deploy_app_production:
         export IMAGE_NAME="$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
         export COMPOSE_B64=$(base64 -w 0 docker-compose-production.deploy.yml)
         echo "=== DESPLEGANDO VERSIÓN ==="
-        az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "mkdir -p /app && cd /app && echo $COMPOSE_B64 | base64 -d > docker-compose-production.deploy.yml && echo $CI_REGISTRY_PASSWORD | docker login -u $CI_REGISTRY_USER --password-stdin $CI_REGISTRY && docker pull $IMAGE_NAME && docker-compose -f docker-compose-production.deploy.yml down --remove-orphans && docker-compose -f docker-compose-production.deploy.yml up -d && docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}'"
-      else
+        SCRIPT_REMOTE=$(cat <<EOF
+        mkdir -p /app && cd /app
+        echo \$COMPOSE_B64 | base64 -d > docker-compose-production.deploy.yml
+        echo \$CI_REGISTRY_PASSWORD | docker login -u \$CI_REGISTRY_USER --password-stdin \$CI_REGISTRY
+        docker pull \$IMAGE_NAME
+        docker-compose -f docker-compose-production.deploy.yml down --remove-orphans
+        docker-compose -f docker-compose-production.deploy.yml up -d
+        docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+        EOF
+        )
+        
+        # Reemplaza las variables en el script para enviarlo ya con valores reales
+        echo "$SCRIPT_REMOTE" | envsubst | az vm run-command invoke --command-id RunShellScript --name SPVendingAPI --resource-group SPVendingAPI_group --scripts "@-"
+        else
         echo "No es un tag. Saltando despliegue."
       fi
   after_script:
