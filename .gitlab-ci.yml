@@ -149,7 +149,7 @@ deploy_app_production:
     - |
       if [[ "$CI_COMMIT_TAG" =~ ^deploy-production-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
         echo "=== Iniciando despliegue para $CI_COMMIT_TAG ==="
-        DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
+        export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
         IMAGE_NAME="$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
 
         echo "=== Preparando despliegue ==="
