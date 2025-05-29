@@ -1,7 +1,7 @@
 version: "3.9"
 services:
   spvending-api-image-production:
-    image: registry.smartpadelautomation.com/adrian-manuel/spvending-managment:${DEPLOY_TAG}
+    image: registry.smartpadelautomation.com/smart-vending/spvending-managment:${DEPLOY_TAG}
     container_name: spvending-api-production-container
     ports:
       - "8082:8080"
