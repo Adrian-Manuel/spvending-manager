@@ -137,7 +137,7 @@ deploy_app_production:
     DOCKER_HOST: "unix:///var/run/docker.sock"
 
   before_script:
-    - # Verificar que estamos en la máquina correcta
+    # Verificar que estamos en la máquina correcta
     - echo "=== Verificando entorno de despliegue ==="
     - whoami
     - pwd
