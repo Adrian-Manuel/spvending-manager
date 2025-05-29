@@ -133,7 +133,6 @@ deploy_app_production:
   services: []
   variables:
     COMPOSE_PROJECT_NAME: "spvending-managment-production"
-    DOCKER_HOST: "unix:///var/run/docker.sock"
 
   before_script:
     # Verificar que estamos en la máquina correcta
@@ -155,7 +154,7 @@ deploy_app_production:
         echo "=== Preparando despliegue ==="
         # Crear directorio de trabajo si no existe
         mkdir -p ~/spvending/api
-        cd ~/deployment/api
+        cd ~/spvending/api
       
         echo "=== Copiar docker-compose desde el repositorio ==="
         cp $CI_PROJECT_DIR/docker-compose-production.deploy.yml ./
