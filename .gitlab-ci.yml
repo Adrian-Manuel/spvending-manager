@@ -133,7 +133,6 @@ deploy_app_production:
   services: []
   variables:
     COMPOSE_PROJECT_NAME: "spvending-managment-production"
-    DOCKER_HOST: "unix:///var/run/docker.sock"
 
   before_script:
     # Verificar que estamos en la máquina correcta
