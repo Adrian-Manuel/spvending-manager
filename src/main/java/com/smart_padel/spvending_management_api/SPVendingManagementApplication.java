@@ -15,7 +15,7 @@ public class SPVendingManagementApplication {
 		SpringApplication.run(SPVendingManagementApplication.class, args != null ? args : new String[]{});
 	}
 
-	@Value("${allowed.origin:http://localhost:80}")
+	@Value("${app.cors.allowed-origins:http://localhost:80}")
 	String allowedOrigin;
 	@Bean
 	public WebMvcConfigurer corsConfigurer() {
