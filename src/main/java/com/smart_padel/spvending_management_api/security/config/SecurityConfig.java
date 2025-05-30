@@ -68,13 +68,12 @@ public class SecurityConfig {
         ;
         return http.build();
     }
-    @Value("${app.cors.allowed-origins}")
-    String allowedOrigin;
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(allowedOrigin));
+        configuration.setAllowedOrigins(List.of("http://172.28.0.4:80"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
