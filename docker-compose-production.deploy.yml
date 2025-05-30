@@ -6,7 +6,9 @@ services:
     ports:
       - "8082:8080"
     networks:
-      - spring-network-production
+      spring-network-production:
+        ipv4_address: 172.28.0.10
+
     depends_on:
       - postgres-production
       - redis-production
@@ -40,6 +42,8 @@ services:
 networks:
   spring-network-production:
     driver: bridge
-
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
 volumes:
   postgres-volume-production:
