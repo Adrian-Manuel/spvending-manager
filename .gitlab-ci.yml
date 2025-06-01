@@ -67,6 +67,22 @@ sonarqube:
   rules:
     - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
       when: always
+
+dast:
+  tags:
+    - test
+  stage: test
+  image: curlimages/curl:latest
+  variables:
+    DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
+  script:
+    - echo "=== Iniciando análisis DAST con BeagleSecurity ==="
+    - |
+        curl --request POST \
+        --url https://api.beaglesecurity.com/v1/applications/$DAST_APPLICATION_TOKEN/start-test \
+        --header "Authorization: Bearer $DAST_ACCESS_TOKEN"
+
+
 build_image:
   stage: build
   tags:
@@ -188,3 +204,4 @@ deploy_app_production:
 
   rules:
     - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
+
