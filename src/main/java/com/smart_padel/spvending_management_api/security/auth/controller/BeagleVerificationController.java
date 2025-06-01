@@ -7,8 +7,8 @@ import java.util.Map;
 @RestController
 public class BeagleVerificationController {
 
-    @GetMapping("/_b2uhdu2wd2rv2b8qtoup8mv3ooyqj8lm")
+    @GetMapping("/_e3asta1yvhxfbheen12qw246pt70uuha")
     public Map<String, String> verifyBeagleDomain() {
-        return Map.of("signature", "_tefcw9cvnit990sdvge65bcyeegejfz5");
+        return Map.of("signature", "_pf1y54ppaqc872nvw736bofoqlxkraf4");
     }
 }
