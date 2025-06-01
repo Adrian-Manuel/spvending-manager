@@ -69,6 +69,8 @@ sonarqube:
       when: always
 
 dast:
+  tags:
+    - test
   stage: test
   image: owasp/zap2docker-stable
   variables:
