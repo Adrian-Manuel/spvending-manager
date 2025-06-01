@@ -152,7 +152,7 @@ deploy_app_production:
         docker-compose -f docker-compose-production.deploy.yml down --remove-orphans || true
         
         echo "=== Iniciando despliegue para $CI_COMMIT_TAG ===" 
-        DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
+        export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
         IMAGE_NAME="$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
       
         echo "=== Descargando imagen $IMAGE_NAME ==="
