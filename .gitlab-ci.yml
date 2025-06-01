@@ -72,7 +72,7 @@ dast:
   tags:
     - test
   stage: test
-  image: owasp/zap2docker-stable
+  image: ghcr.io/zaproxy/zaproxy:stable
   variables:
     DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
   script:
