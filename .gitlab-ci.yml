@@ -72,12 +72,12 @@ dast:
   tags:
     - test
   stage: test
-  image: ghcr.io/zaproxy/zaproxy:stable
+  image: owasp/zap2docker-stable
   variables:
     DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
   script:
     - echo "=== Iniciando DAST con OWASP ZAP ==="
-    - zap-baseline.py -t "$DAST_WEBSITE" -r zap-report.html
+    - zap-full-scan.py -t $DAST_WEBSITE -r zap_report.html
   artifacts:
     paths:
       - zap-report.html
