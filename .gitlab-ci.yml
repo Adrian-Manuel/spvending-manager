@@ -77,7 +77,7 @@ dast:
     DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
   script:
     - echo "=== Iniciando DAST con OWASP ZAP ==="
-    - zap-baseline.py -t "$DAST_WEBSITE" -g gen.conf -r zap-report.html
+    - zap-baseline.py -t "$DAST_WEBSITE" -g /zap/wrk/gen.conf -r /zap/wrk/zap-report.html
   artifacts:
     paths:
       - zap-report.html
