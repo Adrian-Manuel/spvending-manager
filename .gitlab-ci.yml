@@ -165,11 +165,12 @@ deploy_app_production:
         echo "=== Limpiando imágenes no utilizadas ==="
         docker image prune -af
         echo "=== Despliegue completado exitosamente ==="
-      
+        exit 0
       else
         echo "No es un tag de despliegue válido. Saltando..."
         echo "Tag recibido: $CI_COMMIT_TAG"
         echo "Formato esperado: deploy-production-v[X.Y.Z]"
+        exit 0
       fi
   after_script:
       - docker logout $CI_REGISTRY
