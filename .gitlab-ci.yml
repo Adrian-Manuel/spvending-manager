@@ -77,7 +77,10 @@ dast:
     DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
   script:
     - echo "=== Iniciando análisis DAST con BeagleSecurity ==="
-      - >curl --request POST --url https://api.beaglesecurity.com/v1/applications/$APPLICATION_TOKEN/start-test --header "Authorization: Bearer $ACCESS_TOKEN"
+    - |
+        curl --request POST \
+        --url https://api.beaglesecurity.com/v1/applications/$APPLICATION_TOKEN/start-test \
+        --header "Authorization: Bearer $ACCESS_TOKEN"
 
 
 build_image:
