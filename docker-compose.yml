@@ -9,7 +9,8 @@ services:
     ports:
       - "8080:8080"
     networks:
-      - spring-network
+      spring-network:
+        ipv4_address: 172.28.0.10
     depends_on:
       - postgres
       - redis
@@ -17,7 +18,7 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_database:5432/tenants_managment
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=abc123.
-      - SPRING_REDIS_HOST=redis_cache
+      - SPRING_REDIS_HOST=redis
   redis:
     image: redis
     container_name: redis_cache
@@ -42,6 +43,9 @@ services:
 networks:
   spring-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
 volumes:
   postgres-volume:
 
