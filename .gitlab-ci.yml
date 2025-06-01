@@ -151,19 +151,19 @@ deploy_app_production:
         cp $CI_PROJECT_DIR/docker-compose-production.deploy.yml ./
 
         echo "=== Descargando imagen $IMAGE_NAME ==="
-        sudo docker pull "$IMAGE_NAME"
+        docker pull "$IMAGE_NAME"
       
         echo "=== Parando contenedores existentes ==="
-        sudo docker-compose -f docker-compose-production.deploy.yml down --remove-orphans || true
+        docker-compose -f docker-compose-production.deploy.yml down --remove-orphans || true
       
         echo "=== Iniciando nuevos contenedores ==="
-        sudo docker-compose -f docker-compose-production.deploy.yml up -d
+        docker-compose -f docker-compose-production.deploy.yml up -d
       
         echo "=== Verificando estado de contenedores ==="
-        sudo docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
+        docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
       
         echo "=== Limpiando imágenes no utilizadas ==="
-        sudo docker image prune -af
+        docker image prune -af
         echo "=== Despliegue completado exitosamente ==="
       
       else
@@ -176,7 +176,7 @@ deploy_app_production:
       - |
         if [ "$CI_JOB_STATUS" != "success" ]; then
           echo "=== Logs de contenedores para debug ==="
-          sudo docker-compose -f ~/deployment/docker-compose-production.deploy.yml logs --tail=50 || true
+          docker-compose -f ~/deployment/docker-compose-production.deploy.yml logs --tail=50 || true
         fi
 
   rules:
