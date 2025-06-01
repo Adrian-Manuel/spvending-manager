@@ -67,6 +67,19 @@ sonarqube:
   rules:
     - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
       when: always
+
+dast:
+  stage: test
+  image: owasp/zap2docker-stable
+  variables:
+    DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
+  script:
+    - echo "=== Iniciando DAST con OWASP ZAP ==="
+    - zap-baseline.py -t "$DAST_WEBSITE" -g gen.conf -r zap-report.html || true
+  artifacts:
+    paths:
+      - zap-report.html
+    when: always
 build_image:
   stage: build
   tags:
@@ -188,3 +201,4 @@ deploy_app_production:
 
   rules:
     - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
+
