@@ -72,15 +72,15 @@ dast:
   tags:
     - test
   stage: test
-  image: owasp/zap2docker-stable
+  image: kali-tools/web
   variables:
     DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
   script:
     - echo "=== Iniciando DAST con OWASP ZAP ==="
-    - zap-full-scan.py -t $DAST_WEBSITE -r zap_report.html
+    - nikto -host $DAST_WEBSITE -output nikto_report.txt
   artifacts:
     paths:
-      - zap-report.html
+      - nikto_report.txt
     when: always
 
 build_image:
