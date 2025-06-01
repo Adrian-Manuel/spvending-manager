@@ -150,11 +150,11 @@ deploy_app_production:
         echo "=== Copiar docker-compose desde el repositorio ==="
         cp $CI_PROJECT_DIR/docker-compose-production.deploy.yml ./
 
-        echo "=== Descargando imagen $IMAGE_NAME ==="
-        docker pull "$IMAGE_NAME"
-      
         echo "=== Parando contenedores existentes ==="
         docker-compose -f docker-compose-production.deploy.yml down --remove-orphans || true
+      
+        echo "=== Descargando imagen $IMAGE_NAME ==="
+        docker pull "$IMAGE_NAME"
       
         echo "=== Iniciando nuevos contenedores ==="
         docker-compose -f docker-compose-production.deploy.yml up -d
