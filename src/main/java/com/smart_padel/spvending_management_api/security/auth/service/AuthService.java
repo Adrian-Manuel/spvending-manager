@@ -51,8 +51,8 @@ public class AuthService {
         final User user= jpaUserRepository.findByUsername(request.getUsername()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         final String accessToken = jwtService.generateToken(user);
         final String refreshToken = jwtService.generateRefreshToken(user);
-        Cookie accessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,"/");
-        Cookie refreshTokenCookie=CookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,60*60*24,true,true, "/");
+        Cookie accessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,false,"/");
+        Cookie refreshTokenCookie=CookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,60*60*24,true,false, "/");
         response.addCookie(accessTokenCookie);
         response.addCookie(refreshTokenCookie);
         return new UserResponse(user.getUsername(), user.getRole());
@@ -78,7 +78,7 @@ public class AuthService {
             return null;
         }
         final  String accessToken= jwtService.generateRefreshToken(user);
-        Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,"/");
+        Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,false,"/");
         response.addCookie(newAccessTokenCookie);
         return new UserResponse(user.getUsername(), user.getRole());
     }
