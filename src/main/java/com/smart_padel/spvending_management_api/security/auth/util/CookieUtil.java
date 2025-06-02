@@ -7,7 +7,6 @@ public class CookieUtil {
         throw new IllegalStateException("Utility class");
     }
     public static String createCookie(String name, String value, int maxAge, boolean httpOnly, boolean secure, String path, String sameSite) {
-        //Cookie cookie = new Cookie(name, value);
         StringBuilder cookie = new StringBuilder();
         cookie.append(name).append("=").append(value).append("; ");
         cookie.append("Max-Age=").append(maxAge).append("; ");
