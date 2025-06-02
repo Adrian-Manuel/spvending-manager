@@ -12,6 +12,7 @@ stages:
   - build
   - deploy_staging
   - deploy_production
+  - dast
 dependency_check:
   stage: test
   tags:
@@ -191,3 +192,20 @@ deploy_app_production:
   rules:
     - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
 
+dast_scan:
+  stage: dast
+  tags:
+    - dast
+  script:
+    - apt-get update && apt-get install -y owasp-zap
+    - zap.sh -cmd -port 8080 -host 0.0.0.0 -daemon
+    - echo "=== Iniciando análisis DAST ==="
+    - zap-baseline.py -t $DAST_WEBSITE -r zap_report.html
+  artifacts:
+    paths:
+      - zap_report.html
+    reports:
+      dast: zap_report.html
+  rules:
+    - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
+      when: always
