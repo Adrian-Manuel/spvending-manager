@@ -11,13 +11,13 @@ class CookieUtilTest {
 
     @Test
     void createCookie_createsCookieWithCorrectAttributes() {
-        Cookie cookie = CookieUtil.createCookie("testName", "testValue", 3600, true, true, "/testPath");
-        assertThat(cookie.getName()).isEqualTo("testName");
-        assertThat(cookie.getValue()).isEqualTo("testValue");
-        assertThat(cookie.getMaxAge()).isEqualTo(3600);
-        assertThat(cookie.isHttpOnly()).isTrue();
-        assertThat(cookie.getSecure()).isTrue();
-        assertThat(cookie.getPath()).isEqualTo("/testPath");
+        String cookie = CookieUtil.createCookie("testName", "testValue", 3600, true, true, "/testPath", "None");
+        assertThat(cookie).contains("testName=testValue");
+        assertThat(cookie).contains("Max-Age=3600");
+        assertThat(cookie).contains("HttpOnly");
+        assertThat(cookie).contains("Secure");
+        assertThat(cookie).contains("Path=/testPath");
+        assertThat(cookie).contains("SameSite=None");
     }
 
     @Test

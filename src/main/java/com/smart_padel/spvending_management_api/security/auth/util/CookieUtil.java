@@ -6,13 +6,16 @@ public class CookieUtil {
     CookieUtil() {
         throw new IllegalStateException("Utility class");
     }
-    public static Cookie createCookie(String name, String value, int maxAge, boolean httpOnly, boolean secure, String path) {
-        Cookie cookie = new Cookie(name, value);
-        cookie.setHttpOnly(httpOnly);
-        cookie.setSecure(secure);
-        cookie.setPath(path);
-        cookie.setMaxAge(maxAge); //segundos
-        return cookie;
+    public static String createCookie(String name, String value, int maxAge, boolean httpOnly, boolean secure, String path, String sameSite) {
+        //Cookie cookie = new Cookie(name, value);
+        StringBuilder cookie = new StringBuilder();
+        cookie.append(name).append("=").append(value).append("; ");
+        cookie.append("Max-Age=").append(maxAge).append("; ");
+        cookie.append("Path=").append(path).append("; ");
+        if (secure) cookie.append("Secure; ");
+        if (httpOnly) cookie.append("HttpOnly; ");
+        if (sameSite != null && !sameSite.isBlank()) cookie.append("SameSite=").append(sameSite).append("; ");
+        return cookie.toString();
     }
     public static String getCookieValue(HttpServletRequest request, String name) {
         if (request.getCookies() == null) {

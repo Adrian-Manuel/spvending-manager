@@ -1,6 +1,5 @@
 @echo off
-set TAG=v1.0.0
-set MENSAJE="prueba CI/CD"
+set MENSAJE="Se modifico la clase utilcookie para agregar soporte de samesite"
 set REMOTE=localgit
 set BRANCH=DEV
 
