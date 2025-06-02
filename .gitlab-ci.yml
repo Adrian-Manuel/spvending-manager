@@ -72,16 +72,15 @@ dast:
   tags:
     - test
   stage: test
-  image: curlimages/curl:latest
+  image: beagle-security/beagle-gitlab-pipeline
   variables:
     DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
   script:
-    - echo "=== Iniciando análisis DAST con BeagleSecurity ==="
-    - |
-        curl --request POST \
-        --url https://api.beaglesecurity.com/v1/applications/$DAST_APPLICATION_TOKEN/start-test \
-        --header "Authorization: Bearer $DAST_ACCESS_TOKEN"
-
+      triger-test
+  after_script:
+    - docler logout
 
 build_image:
   stage: build

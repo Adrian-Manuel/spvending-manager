@@ -32,8 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 || requestURI.startsWith("/swagger-ui/")
                 || requestURI.equals("/v3/api-docs")
                 || requestURI.startsWith("/v3/api-docs/")
-                || requestURI.equals("/v3/api-docs.yaml")
-                || requestURI.equals("/_pf1y54ppaqc872nvw736bofoqlxkraf4");
+                || requestURI.equals("/v3/api-docs.yaml");
     }
     @Override
     public void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
