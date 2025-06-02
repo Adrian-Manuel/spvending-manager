@@ -194,7 +194,7 @@ deploy_app_production:
 
 dast_scan:
   stage: dast
-  image: owasp/zap2docker-stable:latest
+  image: owasp/zap2docker-stable
   script:
     - zap.sh -cmd -port 8082 -host 0.0.0.0 -daemon
     - echo "=== Iniciando análisis DAST ==="
