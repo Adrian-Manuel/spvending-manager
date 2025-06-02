@@ -196,7 +196,7 @@ dast_scan:
   stage: dast
   image: ghcr.io/zaproxy/zaproxy:stable
   script:
-    - zap.sh -daemon -host 0.0.0.0 -port 8090 -config api.disablekey=true
+    - zap.sh -daemon -host 0.0.0.0 -port 443 -config api.disablekey=true
     - echo "=== Iniciando análisis DAST ==="
     - mkdir /zap/wrk
     - cd /zap/wrk
