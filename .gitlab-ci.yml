@@ -1,195 +1,184 @@
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
+# Secret Detection customization: https://docs.gitlab.com/user/application_security/secret_detection/pipeline/configure
+# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
+# Container Scanning customization: https://docs.gitlab.com/ee/user/application_security/container_scanning/#customizing-the-container-scanning-settings
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 image: docker:latest
 include:
-  - template: DAST.gitlab-ci.yml
+- template: DAST.gitlab-ci.yml
+- template: Auto-DevOps.gitlab-ci.yml
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_HOST: unix:///var/run/docker.sock
   IMAGE_NAME_BASE: "$CI_REGISTRY/smart-vending/spvending-managment"
   IMAGE_NAME: "$CI_REGISTRY_IMAGE:$CI_COMMIT_TAG"
-  DAST_WEBSITE: "https://spvending.uksouth.cloudapp.azure.com"
-  GIT_DEPTH: "0"
+  DAST_WEBSITE: https://spvending.uksouth.cloudapp.azure.com
+  GIT_DEPTH: '0'
 stages:
-  - test
-  - build
-  - deploy_staging
-  - deploy_production
-  - dast
+- test
+- build
+- deploy_staging
+- deploy_production
+- dast
+- deploy
+- review
+- staging
+- canary
+- production
+- incremental rollout 10%
+- incremental rollout 25%
+- incremental rollout 50%
+- incremental rollout 100%
+- performance
+- cleanup
 dependency_check:
   stage: test
   tags:
-    - test
+  - test
   image: maven:3.9.6-eclipse-temurin-22
   script:
-      - mvn org.owasp:dependency-check-maven:check
-      - |
-          if grep -q "<severity>Critical</severity>" target/dependency-check-report/dependency-check-report.xml; then
-            echo "❌ Vulnerabilidades críticas detectadas"; exit 1;
-          fi
+  - mvn org.owasp:dependency-check-maven:check
+  - |
+    if grep -q "<severity>Critical</severity>" target/dependency-check-report/dependency-check-report.xml; then
+      echo "❌ Vulnerabilidades críticas detectadas"; exit 1;
+    fi
   artifacts:
-      when: always
-      paths:
-        - target/dependency-check-report/dependency-check-report.html
-        - target/dependency-check-report/dependency-check-report.xml
-      reports:
-        dependency_scanning: target/dependency-check-report/dependency-check-report.xml
+    when: always
+    paths:
+    - target/dependency-check-report/dependency-check-report.html
+    - target/dependency-check-report/dependency-check-report.xml
+    reports:
+      dependency_scanning: target/dependency-check-report/dependency-check-report.xml
   rules:
-    - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
-      when: always
+  - if: "$CI_COMMIT_TAG=~ /^v\\d+\\.\\d+\\.\\d+$/"
+    when: always
 sonarqube:
   image: maven:3.9-eclipse-temurin-22
   stage: test
   tags:
-    - sonar
+  - sonar
   variables:
     SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
   cache:
     key: "${CI_JOB_NAME}"
     paths:
-      - .sonar/cache
+    - ".sonar/cache"
   script:
-    - |
-      if [ -n "$CI_COMMIT_TAG" ]; then
-              git fetch origin main
-              if git branch -r --contains "$CI_COMMIT_TAG" | grep -q "origin/main"; then
-                echo "Iniciando análisis con SonarQube..."
-                mvn clean verify
-                apt-get update && apt-get install -y wget unzip
-                wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
-                unzip sonar-scanner-cli-5.0.1.3006-linux.zip
-                mv sonar-scanner-5.0.1.3006-linux sonar-scanner
-                export PATH=$PATH:$(pwd)/sonar-scanner/bin
-                echo "El tag proviene de main. Ejecutando análisis..."
-                sonar-scanner -X -Dsonar.projectVersion=${CI_COMMIT_TAG} -Dsonar.token=$SONAR_TOKEN
-              else
-                echo "El tag NO proviene de main. Saltando análisis."
-              fi
+  - |
+    if [ -n "$CI_COMMIT_TAG" ]; then
+            git fetch origin main
+            if git branch -r --contains "$CI_COMMIT_TAG" | grep -q "origin/main"; then
+              echo "Iniciando análisis con SonarQube..."
+              mvn clean verify
+              apt-get update && apt-get install -y wget unzip
+              wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+              unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+              mv sonar-scanner-5.0.1.3006-linux sonar-scanner
+              export PATH=$PATH:$(pwd)/sonar-scanner/bin
+              echo "El tag proviene de main. Ejecutando análisis..."
+              sonar-scanner -X -Dsonar.projectVersion=${CI_COMMIT_TAG} -Dsonar.token=$SONAR_TOKEN
             else
-              echo "No es un tag. Saltando análisis."
-      fi
-
+              echo "El tag NO proviene de main. Saltando análisis."
+            fi
+          else
+            echo "No es un tag. Saltando análisis."
+    fi
   rules:
-    - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
-      when: always
-
+  - if: "$CI_COMMIT_TAG=~ /^v\\d+\\.\\d+\\.\\d+$/"
+    when: always
 build_image:
   stage: build
   tags:
-    - build
+  - build
   before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
+    "$CI_REGISTRY"
   script:
-    - |
-      if [ -n "$CI_COMMIT_TAG" ]; then
-        git fetch origin main
-        if git branch -r --contains "$CI_COMMIT_SHA" | grep -q "origin/main"; then
-                  docker build -t "$IMAGE_NAME" .
-                  docker push "$IMAGE_NAME"
-          else
-              echo "El tag NO proviene de main. Saltando build."
-        fi
-          else
-            echo "No es un tag. Saltando build."
+  - |
+    if [ -n "$CI_COMMIT_TAG" ]; then
+      git fetch origin main
+      if git branch -r --contains "$CI_COMMIT_SHA" | grep -q "origin/main"; then
+                docker build -t "$IMAGE_NAME" .
+                docker push "$IMAGE_NAME"
+        else
+            echo "El tag NO proviene de main. Saltando build."
       fi
-
+        else
+          echo "No es un tag. Saltando build."
+    fi
   rules:
-    - if: $CI_COMMIT_TAG=~ /^v\d+\.\d+\.\d+$/
-      when: always
-
+  - if: "$CI_COMMIT_TAG=~ /^v\\d+\\.\\d+\\.\\d+$/"
+    when: always
 deploy_app_staging:
   stage: deploy_staging
   tags:
-    - deploy
+  - deploy
   services: []
   variables:
-    COMPOSE_PROJECT_NAME: "spvending-managment-staging"
-    DOCKER_HOST: "unix:///var/run/docker.sock"
+    COMPOSE_PROJECT_NAME: spvending-managment-staging
+    DOCKER_HOST: unix:///var/run/docker.sock
   before_script:
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
+    "$CI_REGISTRY"
   script:
-    - |
-      if [ -n "$CI_COMMIT_TAG" ]; then
-        git fetch origin main
-        if git branch -r --contains "$CI_COMMIT_TAG" | grep -q "origin/main"; then
-          export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-staging-}"
-          echo "=== DESPLEGANDO VERSIÓN ==="
-          docker pull "$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
-          docker-compose -f docker-compose-staging.deploy.yml down --remove-orphans
-          docker-compose -f docker-compose-staging.deploy.yml up -d 
-          echo "=== CONTENEDORES EN EJECUCIÓN ==="
-          docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
-        else
-          echo "El tag NO proviene de main. Saltando build."
-        fi
-      else
-        echo "No es un tag. Saltando build."
-      fi
+  - "if [ -n \"$CI_COMMIT_TAG\" ]; then\n  git fetch origin main\n  if git branch
+    -r --contains \"$CI_COMMIT_TAG\" | grep -q \"origin/main\"; then\n    export DEPLOY_TAG=\"${CI_COMMIT_TAG#deploy-staging-}\"\n
+    \   echo \"=== DESPLEGANDO VERSIÓN ===\"\n    docker pull \"$CI_REGISTRY_IMAGE:$DEPLOY_TAG\"\n
+    \   docker-compose -f docker-compose-staging.deploy.yml down --remove-orphans\n
+    \   docker-compose -f docker-compose-staging.deploy.yml up -d \n    echo \"===
+    CONTENEDORES EN EJECUCIÓN ===\"\n    docker ps --format \"table {{.ID}}\\t{{.Names}}\\t{{.Status}}\\t{{.Ports}}\"\n
+    \ else\n    echo \"El tag NO proviene de main. Saltando build.\"\n  fi\nelse\n
+    \ echo \"No es un tag. Saltando build.\"\nfi\n"
   after_script:
-    - docker logout $CI_REGISTRY
+  - docker logout $CI_REGISTRY
   rules:
-    - if: $CI_COMMIT_TAG=~ /^deploy-staging-v\d+\.\d+\.\d+$/
-
+  - if: "$CI_COMMIT_TAG=~ /^deploy-staging-v\\d+\\.\\d+\\.\\d+$/"
 deploy_app_production:
   stage: deploy_production
   tags:
-    - azure
+  - azure
   services: []
   variables:
-    COMPOSE_PROJECT_NAME: "spvending-managment-production"
-    DOCKER_HOST: "unix:///var/run/docker.sock"
+    COMPOSE_PROJECT_NAME: spvending-managment-production
+    DOCKER_HOST: unix:///var/run/docker.sock
   before_script:
-    - echo "=== Autenticando con GitLab Registry ==="
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+  - echo "=== Autenticando con GitLab Registry ==="
+  - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
+    "$CI_REGISTRY"
   script:
-    - |
-      if [[ "$CI_COMMIT_TAG" =~ ^deploy-production-v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-        git fetch origin main
-        if git branch -r --contains "$CI_COMMIT_SHA" | grep -q "origin/main"; then
-          echo "=== Preparando despliegue ==="
-          # Crear directorio de trabajo si no existe
-          mkdir -p ~/spvending/api
-          cd ~/spvending/api
-        
-          echo "=== Copiar docker-compose desde el repositorio ==="
-          cp $CI_PROJECT_DIR/docker-compose-production.deploy.yml ./
-  
-          echo "=== Parando contenedores existentes ==="
-          docker-compose -f docker-compose-production.deploy.yml down --remove-orphans || true
-          
-          echo "=== Iniciando despliegue para $CI_COMMIT_TAG ===" 
-          export DEPLOY_TAG="${CI_COMMIT_TAG#deploy-production-}"
-          IMAGE_NAME="$CI_REGISTRY_IMAGE:$DEPLOY_TAG"
-        
-          echo "=== Descargando imagen $IMAGE_NAME ==="
-          docker pull "$IMAGE_NAME"
-        
-          echo "=== Iniciando nuevos contenedores ==="
-          docker-compose -f docker-compose-production.deploy.yml up -d
-        
-          echo "=== Verificando estado de contenedores ==="
-          docker ps --format "table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}}"
-        
-          echo "=== Limpiando imágenes no utilizadas ==="
-          docker image prune -af
-          echo "=== Despliegue completado exitosamente ==="
-          exit 0
-        else
-          echo "El tag NO proviene de main. Saltando despliegue."
-          exit 0
-        fi
-      else
-        echo "No es un tag de despliegue válido. Saltando..."
-        echo "Tag recibido: $CI_COMMIT_TAG"
-        echo "Formato esperado: deploy-production-v[X.Y.Z]"
-        exit 0
-      fi
+  - "if [[ \"$CI_COMMIT_TAG\" =~ ^deploy-production-v[0-9]+\\.[0-9]+\\.[0-9]+$ ]];
+    then\n  git fetch origin main\n  if git branch -r --contains \"$CI_COMMIT_SHA\"
+    | grep -q \"origin/main\"; then\n    echo \"=== Preparando despliegue ===\"\n
+    \   # Crear directorio de trabajo si no existe\n    mkdir -p ~/spvending/api\n
+    \   cd ~/spvending/api\n  \n    echo \"=== Copiar docker-compose desde el repositorio
+    ===\"\n    cp $CI_PROJECT_DIR/docker-compose-production.deploy.yml ./\n\n    echo
+    \"=== Parando contenedores existentes ===\"\n    docker-compose -f docker-compose-production.deploy.yml
+    down --remove-orphans || true\n    \n    echo \"=== Iniciando despliegue para
+    $CI_COMMIT_TAG ===\" \n    export DEPLOY_TAG=\"${CI_COMMIT_TAG#deploy-production-}\"\n
+    \   IMAGE_NAME=\"$CI_REGISTRY_IMAGE:$DEPLOY_TAG\"\n  \n    echo \"=== Descargando
+    imagen $IMAGE_NAME ===\"\n    docker pull \"$IMAGE_NAME\"\n  \n    echo \"===
+    Iniciando nuevos contenedores ===\"\n    docker-compose -f docker-compose-production.deploy.yml
+    up -d\n  \n    echo \"=== Verificando estado de contenedores ===\"\n    docker
+    ps --format \"table {{.ID}}\\t{{.Names}}\\t{{.Status}}\\t{{.Ports}}\"\n  \n    echo
+    \"=== Limpiando imágenes no utilizadas ===\"\n    docker image prune -af\n    echo
+    \"=== Despliegue completado exitosamente ===\"\n    exit 0\n  else\n    echo \"El
+    tag NO proviene de main. Saltando despliegue.\"\n    exit 0\n  fi\nelse\n  echo
+    \"No es un tag de despliegue válido. Saltando...\"\n  echo \"Tag recibido: $CI_COMMIT_TAG\"\n
+    \ echo \"Formato esperado: deploy-production-v[X.Y.Z]\"\n  exit 0\nfi\n"
   after_script:
-      - docker logout $CI_REGISTRY
-      - |
-        if [ "$CI_JOB_STATUS" != "success" ]; then
-          echo "=== Logs de contenedores para debug ==="
-          docker-compose -f ~/deployment/docker-compose-production.deploy.yml logs --tail=50 || true
-        fi
-
+  - docker logout $CI_REGISTRY
+  - |
+    if [ "$CI_JOB_STATUS" != "success" ]; then
+      echo "=== Logs de contenedores para debug ==="
+      docker-compose -f ~/deployment/docker-compose-production.deploy.yml logs --tail=50 || true
+    fi
   rules:
-    - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
-
+  - if: "$CI_COMMIT_TAG=~ /^deploy-production-v\\d+\\.\\d+\\.\\d+$/"
+dast:
+  stage: dast
+  rules:
+  - if: "$CI_COMMIT_TAG=~ /^deploy-production-v\\d+\\.\\d+\\.\\d+$/"
+sast:
+  stage: test
