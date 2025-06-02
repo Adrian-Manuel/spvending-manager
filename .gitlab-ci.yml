@@ -16,8 +16,8 @@ variables:
   DAST_WEBSITE: https://spvending.uksouth.cloudapp.azure.com
   GIT_DEPTH: '0'
 stages:
-- test
 - build
+- test
 - deploy_staging
 - deploy_production
 - dast
