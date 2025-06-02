@@ -11,6 +11,7 @@ stages:
   - build
   - deploy_staging
   - deploy_production
+  - dast
 dependency_check:
   stage: test
   tags:
@@ -71,7 +72,7 @@ sonarqube:
 dast:
   tags:
     - test
-  stage: test
+  stage: dast
   image: beagle-security/beagle-gitlab-pipeline
   variables:
     DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
