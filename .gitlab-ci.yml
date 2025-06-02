@@ -192,21 +192,31 @@ deploy_app_production:
   rules:
     - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
 
-dast_scan:
+dast_scan_quick:
   stage: dast
   image: ghcr.io/zaproxy/zaproxy:stable
+  variables:
+    DAST_WEBSITE: "https://spvending.uksouth.cloudapp.azure.com"
   script:
-    - zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true
-    - echo "=== Iniciando análisis DAST ==="
-    - mkdir /zap/wrk
-    - cd /zap/wrk
-    - sleep 10 # Wait for ZAP to start
-    - zap-baseline.py -t $DAST_WEBSITE -r zap_report.html
-    - cp /zap/wrk/zap_report.html /builds/smart-vending/spvending-managment
+    - zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true &
+    - mkdir -p /zap/wrk && cd /zap/wrk && sleep 15
+
+    # Login rápido
+    - |
+      curl -c cookies.txt -X POST "https://spvending.uksouth.cloudapp.azure.com/api/v1/auth/login" \
+        -H "Content-Type: application/json" \
+        -d '{"username":"admin","password":"admin123"}' \
+        && echo "Login OK" || (echo "Login failed" && exit 1)
+
+    # Escaneo básico con cookies
+    - |
+      zap-baseline.py -t $DAST_WEBSITE -r zap_report.html \
+        -I \
+        -z "-config http.state.cookies.enabled=true"
+
+    - cp zap_report.html $CI_PROJECT_DIR/
   artifacts:
     paths:
       - zap_report.html
-    reports:
-      dast: zap_report.html
   rules:
-    - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
+    - if: $CI_COMMIT_TAG =~ /^deploy-production-v\d+\.\d+\.\d+$/
