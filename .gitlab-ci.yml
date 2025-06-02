@@ -205,7 +205,7 @@ dast_scan_quick:
     - |
       curl -c cookies.txt -X POST "https://spvending.uksouth.cloudapp.azure.com/api/v1/auth/login" \
         -H "Content-Type: application/json" \
-        -d '{"username":"admin","password":"admin123"}' \
+        -d '{"username":"admin","password":"admin123."}' \
         && echo "Login OK" || (echo "Login failed" && exit 1)
 
     # Escaneo básico con cookies
