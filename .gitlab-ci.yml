@@ -194,9 +194,9 @@ deploy_app_production:
 
 dast_scan:
   stage: dast
+  image: owasp/zap2docker-stable:latest
   script:
-    - apt-get update && apt-get install -y owasp-zap
-    - zap.sh -cmd -port 8080 -host 0.0.0.0 -daemon
+    - zap.sh -cmd -port 8082 -host 0.0.0.0 -daemon
     - echo "=== Iniciando análisis DAST ==="
     - sleep 10 # Wait for ZAP to start
     - zap-baseline.py -t $DAST_WEBSITE -r zap_report.html
