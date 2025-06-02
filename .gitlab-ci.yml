@@ -196,26 +196,29 @@ dast_scan:
   stage: dast
   image: ghcr.io/zaproxy/zaproxy:stable
   script:
-    - zap.sh -daemon -host 0.0.0.0 -port 443 -config api.disablekey=true
-    - echo "=== Iniciando análisis DAST ==="
-    - mkdir /zap/wrk
-    - cd /zap/wrk
-    - sleep 10 # Wait for ZAP to start
+    - echo "=== Iniciando ZAP en modo daemon ==="
+    - zap.sh -daemon -host 0.0.0.0 -port 10000 -config api.disablekey=true &
+    - echo "Esperando a que ZAP esté listo..."
+    - for i in {1..30}; do curl -s http://localhost:10000 > /dev/null && break || sleep 2; done
+
     - echo "=== Autenticándose y obteniendo cookie ==="
     - |
       COOKIE=$(curl -s -i -X POST https://spvending.uksouth.cloudapp.azure.com/api/v1/auth/login \
-      H "Content-Type: application/json" \
-      d '{"username":"admin","password":"admin123"}' | grep -i 'Set-Cookie:' | head -n1 | cut -d':' -f2- | tr -d '\r\n')
-      echo "Cookie capturada: $COOKIE"
+        -H "Content-Type: application/json" \
+        -d '{"username":"admin","password":"admin123"}' \
+        | grep -i Set-Cookie | head -1 | cut -d' ' -f2 | tr -d '\r\n')
+    - echo "Usando cookie: $COOKIE"
 
-      echo "=== Ejecutando escaneo completo con cookie ==="
+    - echo "=== Ejecutando escaneo ZAP ==="
+    - mkdir -p /zap/wrk
+    - cd /zap/wrk
     - |
-        zap-full-scan.py \
-          t https://spvending.uksouth.cloudapp.azure.com \
-          r zap_report.html \
-          z "-config replacer.full_list(0).description=sessioncookie -config replacer.full_list(0).enabled=true -config replacer.full_list(0).matchtype=REQ_HEADER -config replacer.full_list(0).matchstr=Cookie -config replacer.full_list(0).replacement=$COOKIE"
+      zap-full-scan.py \
+        -t https://spvending.uksouth.cloudapp.azure.com \
+        -r zap_report.html \
+        -z "-config replacer.full_list(0).description=sessioncookie -config replacer.full_list(0).enabled=true -config replacer.full_list(0).matchtype=REQ_HEADER -config replacer.full_list(0).matchstr=Cookie -config replacer.full_list(0).replacement=$COOKIE"
 
-    - cp /zap/wrl/zap_report.html /builds/smart-vending/spvending-managment
+    - cp zap_report.html $CI_PROJECT_DIR/
   artifacts:
     paths:
       - zap_report.html
