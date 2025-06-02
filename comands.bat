@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="Se modifico la clase utilcookie para agregar soporte de samesite"
+set MENSAJE="prueba CICD"
 set REMOTE=localgit
 set BRANCH=DEV
 
