@@ -75,9 +75,12 @@ dast:
   image: beagle-security/beagle-gitlab-pipeline
   variables:
     DAST_WEBSITE: "http://172.187.216.149:8082/" # Cambia esto a tu URL
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin
   script:
       triger-test
-
+  after_script:
+    - docler logout
 
 build_image:
   stage: build
