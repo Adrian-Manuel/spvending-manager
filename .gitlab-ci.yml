@@ -194,8 +194,6 @@ deploy_app_production:
 
 dast_scan:
   stage: dast
-  tags:
-    - dast
   script:
     - apt-get update && apt-get install -y owasp-zap
     - zap.sh -cmd -port 8080 -host 0.0.0.0 -daemon
