@@ -201,17 +201,20 @@ dast_scan:
     - mkdir /zap/wrk
     - cd /zap/wrk
     - sleep 10 # Wait for ZAP to start
+    - echo "=== Autenticándose y obteniendo cookie ==="
     - |
       COOKIE=$(curl -s -i -X POST https://spvending.uksouth.cloudapp.azure.com/api/v1/auth/login \
-        -H "Content-Type: application/json" \
-        -d '{"username":"admin","password":"admin123"}' | grep -i Set-Cookie | cut -d' ' -f2 | tr -d '\r\n')
-      - echo "Usando cookie: $COOKIE"
-      - |
-      zap-full-scan.py \
-        -t "$DAST_WEBSITE" \
-        -r zap_report.html \
-        -z "-config replacer.full_list(0).description=sessioncookie -config replacer.full_list(0).enabled=true -config replacer.full_list(0).matchtype=REQ_HEADER -config replacer.full_list(0).matchstr=Cookie -config replacer.full_list(0).replacement=$COOKIE"
-    - zap-baseline.py -t "$DAST_WEBSITE" -r zap_report.html
+      H "Content-Type: application/json" \
+      d '{"username":"admin","password":"admin123"}' | grep -i 'Set-Cookie:' | head -n1 | cut -d':' -f2- | tr -d '\r\n')
+      echo "Cookie capturada: $COOKIE"
+
+      echo "=== Ejecutando escaneo completo con cookie ==="
+    - |
+        zap-full-scan.py \
+          t https://spvending.uksouth.cloudapp.azure.com \
+          r zap_report.html \
+          z "-config replacer.full_list(0).description=sessioncookie -config replacer.full_list(0).enabled=true -config replacer.full_list(0).matchtype=REQ_HEADER -config replacer.full_list(0).matchstr=Cookie -config replacer.full_list(0).replacement=$COOKIE"
+
     - cp /zap/wrl/zap_report.html /builds/smart-vending/spvending-managment
   artifacts:
     paths:
