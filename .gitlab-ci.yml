@@ -198,8 +198,9 @@ dast_scan:
   script:
     - zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true
     - echo "=== Iniciando análisis DAST ==="
+    - cd /zap/wrk
     - sleep 10 # Wait for ZAP to start
-    - zap-baseline.py -t $DAST_WEBSITE -r zap_report.html -o .
+    - zap-baseline.py -t $DAST_WEBSITE -r zap_report.html
   artifacts:
     paths:
       - zap_report.html
