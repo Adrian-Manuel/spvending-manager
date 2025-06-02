@@ -197,6 +197,10 @@ dast_scan:
   image: ghcr.io/zaproxy/zaproxy:stable
   script:
     - zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true
+    - echo "=== Iniciando análisis DAST ==="
+    - mkdir /zap/wrk
+    - cd /zap/wrk
+    - sleep 10 # Wait for ZAP to start
     - zap-baseline.py -t $DAST_WEBSITE -r zap_report.html
   artifacts:
     paths:
