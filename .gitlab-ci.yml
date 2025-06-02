@@ -202,6 +202,7 @@ dast_scan:
     - cd /zap/wrk
     - sleep 10 # Wait for ZAP to start
     - zap-baseline.py -t $DAST_WEBSITE -r zap_report.html
+    - cp /zap/wrl/zap_report.html /builds/smart-vending/spvending-managment
   artifacts:
     paths:
       - zap_report.html
