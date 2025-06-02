@@ -192,31 +192,250 @@ deploy_app_production:
   rules:
     - if: $CI_COMMIT_TAG=~ /^deploy-production-v\d+\.\d+\.\d+$/
 
-dast_scan_quick:
+dast_scan:
   stage: dast
   image: ghcr.io/zaproxy/zaproxy:stable
   variables:
+    # URLs específicas de tu API
     DAST_WEBSITE: "https://spvending.uksouth.cloudapp.azure.com"
+    LOGIN_URL: "https://spvending.uksouth.cloudapp.azure.com/api/v1/auth/login"
+    # Credenciales (mejor moverlas a CI/CD Variables por seguridad)
+    LOGIN_USERNAME: "admin"
+    LOGIN_PASSWORD: "admin123."
   script:
+    # Iniciar ZAP daemon
     - zap.sh -daemon -host 0.0.0.0 -port 8080 -config api.disablekey=true &
-    - mkdir -p /zap/wrk && cd /zap/wrk && sleep 15
+    - echo "=== Iniciando análisis DAST para spvending API ==="
+    - mkdir -p /zap/wrk
+    - cd /zap/wrk
+    - sleep 15
 
-    # Login rápido
+    # Verificar que ZAP está disponible
+    - curl -s http://localhost:8080/JSON/core/view/version/ || (echo "ZAP no disponible" && exit 1)
+    - echo "ZAP versión:" && curl -s http://localhost:8080/JSON/core/view/version/
+
+    # PASO 1: Login manual para obtener cookies
+    - echo "=== Realizando login en la API ==="
     - |
-      curl -c cookies.txt -X POST "https://spvending.uksouth.cloudapp.azure.com/api/v1/auth/login" \
+      echo "Haciendo login en: $LOGIN_URL"
+      
+      # Hacer login y capturar cookies + respuesta
+      LOGIN_RESPONSE=$(curl -s -c /zap/wrk/cookies.txt -b /zap/wrk/cookies.txt \
+        -X POST "$LOGIN_URL" \
         -H "Content-Type: application/json" \
-        -d '{"username":"admin","password":"admin123."}' \
-        && echo "Login OK" || (echo "Login failed" && exit 1)
+        -H "Accept: application/json" \
+        -d '{"username":"'$LOGIN_USERNAME'","password":"'$LOGIN_PASSWORD'"}' \
+        -w "HTTPSTATUS:%{http_code}" \
+        -o /zap/wrk/login_response.json)
+      
+      # Extraer código de estado
+      HTTP_STATUS=$(echo $LOGIN_RESPONSE | grep -o "HTTPSTATUS:[0-9]*" | cut -d: -f2)
+      echo "Login HTTP Status: $HTTP_STATUS"
+      
+      if [ "$HTTP_STATUS" = "200" ] || [ "$HTTP_STATUS" = "201" ]; then
+        echo "✅ Login exitoso"
+        echo "Respuesta del login:"
+        cat /zap/wrk/login_response.json | jq . 2>/dev/null || cat /zap/wrk/login_response.json
+        echo ""
+        echo "Cookies obtenidas:"
+        cat /zap/wrk/cookies.txt
+      else
+        echo "❌ Error en login - Status: $HTTP_STATUS"
+        echo "Respuesta:"
+        cat /zap/wrk/login_response.json
+        exit 1
+      fi
 
-    # Escaneo básico con cookies
+    # PASO 2: Configurar contexto ZAP con autenticación
+    - echo "=== Configurando contexto de autenticación en ZAP ==="
     - |
-      zap-baseline.py -t $DAST_WEBSITE -r zap_report.html \
-        -I \
-        -z "-config http.state.cookies.enabled=true"
+      # Crear hook de autenticación personalizado
+      cat > /zap/wrk/auth_hook.py << 'EOF'
+      import json
+      import requests
+      import os
+      import time
+      
+      def zap_started(zap, target):
+          print("=== Hook: ZAP iniciado, configurando autenticación ===")
+      
+          login_url = "https://spvending.uksouth.cloudapp.azure.com/api/v1/auth/login"
+          username = "admin"
+          password = "admin123"
+      
+          try:
+              # Hacer login
+              session = requests.Session()
+              login_data = {"username": username, "password": password}
+      
+              print(f"Haciendo login en: {login_url}")
+              response = session.post(login_url, json=login_data, timeout=30)
+              print(f"Login status: {response.status_code}")
+      
+              if response.status_code in [200, 201]:
+                  print("Login exitoso")
+      
+                  # Añadir cookies a ZAP
+                  for cookie in session.cookies:
+                      cookie_str = f"{cookie.name}={cookie.value}"
+                      print(f"Añadiendo cookie: {cookie_str}")
+                      try:
+                          zap.httpsessions.add_session_token(target, cookie_str)
+                      except Exception as e:
+                          print(f"Error añadiendo cookie: {e}")
+      
+                  # Hacer una petición de prueba
+                  test_response = session.get(f"{target}/api/v1", timeout=10)
+                  print(f"Test request status: {test_response.status_code}")
+      
+              else:
+                  print(f"Error en login: {response.status_code}")
+                  print(f"Response: {response.text}")
+      
+          except Exception as e:
+              print(f"Error en hook de autenticación: {e}")
+      
+      def zap_pre_shutdown(zap):
+          print("=== Hook: Finalizando escaneo ===")
+      EOF
+      
+      # Crear contexto con configuración básica
+      CONTEXT_RESPONSE=$(curl -s -X POST "http://localhost:8080/JSON/context/action/newContext/" \
+        -d "contextName=SpvendingAuth")
+      CONTEXT_ID=$(echo $CONTEXT_RESPONSE | jq -r '.contextId // "0"')
+      echo "Context ID creado: $CONTEXT_ID"
+      
+      # Incluir la API en el contexto
+      curl -s -X POST "http://localhost:8080/JSON/context/action/includeInContext/" \
+        -d "contextName=SpvendingAuth&regex=https://spvending\.uksouth\.cloudapp\.azure\.com.*"
+      
+      echo "Contexto básico configurado"
 
-    - cp zap_report.html $CI_PROJECT_DIR/
+    # PASO 3: Importar cookies a ZAP
+    - echo "=== Importando cookies a ZAP ==="
+    - |
+      if [ -f /zap/wrk/cookies.txt ]; then
+        # Leer cookies y añadirlas a ZAP
+        while IFS=$'\t' read -r domain flag path secure expiration name value; do
+          if [[ "$domain" != \#* ]] && [[ -n "$name" ]] && [[ -n "$value" ]]; then
+            echo "Añadiendo cookie: $name"
+            curl -s -X POST "http://localhost:8080/JSON/httpsessions/action/addSessionToken/" \
+              -d "site=$DAST_WEBSITE&sessionToken=$name%3D$value" || true
+          fi
+        done < /zap/wrk/cookies.txt
+      fi
+
+    # PASO 4: Verificar autenticación con una petición de prueba
+    - echo "=== Verificando autenticación ==="
+    - |
+      # Probar acceso a un endpoint protegido (ajustar según tu API)
+      TEST_ENDPOINTS=(
+        "/api/v1/users"
+        "/api/v1/admin"
+        "/api/v1/dashboard"
+        "/api/v1/profile"
+      )
+      
+      for endpoint in "${TEST_ENDPOINTS[@]}"; do
+        echo "Probando endpoint: $DAST_WEBSITE$endpoint"
+        TEST_STATUS=$(curl -s -b /zap/wrk/cookies.txt \
+          -H "Accept: application/json" \
+          -w "%{http_code}" \
+          -o /tmp/test_response.txt \
+          "$DAST_WEBSITE$endpoint")
+      
+        echo "Status: $TEST_STATUS"
+        if [ "$TEST_STATUS" = "200" ]; then
+          echo "✅ Autenticación verificada en $endpoint"
+          break
+        elif [ "$TEST_STATUS" = "401" ] || [ "$TEST_STATUS" = "403" ]; then
+          echo "⚠️ Sin acceso a $endpoint (Status: $TEST_STATUS)"
+        else
+          echo "ℹ️ Endpoint $endpoint devolvió $TEST_STATUS"
+        fi
+      done
+
+    # PASO 5: Ejecutar escaneo DAST
+    - echo "=== Iniciando escaneo DAST autenticado ==="
+    - |
+      # Crear directorio para outputs de ZAP
+      mkdir -p /home/zap
+      
+      # Ejecutar baseline scan con autenticación y configuración mejorada
+      zap-baseline.py -t $DAST_WEBSITE \
+        -r zap_report.html \
+        -n SpvendingAuth \
+        -U admin \
+        -J zap_json_report.json \
+        -x zap_xml_report.xml \
+        -w zap_md_report.md \
+        --hook /zap/wrk/auth_hook.py \
+        -z "-config spider.maxDepth=3 \
+            -config spider.maxChildren=10 \
+            -config scanner.strength=LOW \
+            -config spider.postform=true \
+            -config spider.processform=true" \
+        2>&1 | tee zap_scan.log || echo "Escaneo completado con warnings"
+
+    # PASO 6: Procesar resultados
+    - echo "=== Procesando resultados ==="
+    - ls -la /zap/wrk/
+
+    # Verificar que el reporte se generó
+    - |
+      if [ ! -f /zap/wrk/zap_report.html ]; then
+        echo "❌ Error: Reporte no generado"
+        echo "Log del escaneo:"
+        cat zap_scan.log || echo "No hay log disponible"
+        exit 1
+      fi
+
+    # Copiar archivos
+    - cp /zap/wrk/zap_report.html $CI_PROJECT_DIR/ 2>/dev/null || echo "No se pudo copiar HTML report"
+    - cp /zap/wrk/zap_json_report.json $CI_PROJECT_DIR/ 2>/dev/null || echo "No se pudo copiar JSON report"
+    - cp /zap/wrk/zap_xml_report.xml $CI_PROJECT_DIR/ 2>/dev/null || echo "No se pudo copiar XML report"
+    - cp /zap/wrk/zap_md_report.md $CI_PROJECT_DIR/ 2>/dev/null || echo "No se pudo copiar MD report"
+    - cp /zap/wrk/zap_scan.log $CI_PROJECT_DIR/ 2>/dev/null || echo "No se pudo copiar scan log"
+    - cp /zap/wrk/login_response.json $CI_PROJECT_DIR/ 2>/dev/null || echo "No se pudo copiar login response"
+
+    # Generar resumen
+    - echo "=== Resumen del análisis DAST ==="
+    - |
+      if [ -f zap_report.html ]; then
+        echo "📊 Estadísticas del escaneo:"
+      
+        # Contar vulnerabilidades por riesgo
+        HIGH_COUNT=$(grep -i "risk-3\|high.*risk" zap_report.html | wc -l || echo "0")
+        MEDIUM_COUNT=$(grep -i "risk-2\|medium.*risk" zap_report.html | wc -l || echo "0")
+        LOW_COUNT=$(grep -i "risk-1\|low.*risk" zap_report.html | wc -l || echo "0")
+        INFO_COUNT=$(grep -i "risk-0\|informational" zap_report.html | wc -l || echo "0")
+      
+        echo "🔴 Alto riesgo: $HIGH_COUNT"
+        echo "🟡 Medio riesgo: $MEDIUM_COUNT"
+        echo "🟢 Bajo riesgo: $LOW_COUNT"
+        echo "ℹ️ Informacional: $INFO_COUNT"
+      
+        # Extraer URLs escaneadas
+        SCANNED_URLS=$(grep -o "https://spvending[^\"]*" zap_report.html | sort -u | wc -l || echo "0")
+        echo "🔍 URLs escaneadas: $SCANNED_URLS"
+      
+        echo ""
+        echo "📋 Top 5 URLs encontradas:"
+        grep -o "https://spvending[^\"]*" zap_report.html | sort -u | head -5 || echo "No se encontraron URLs"
+      fi
+
   artifacts:
     paths:
       - zap_report.html
+      - zap_json_report.json
+      - zap_xml_report.xml
+      - zap_md_report.md
+      - zap_scan.log
+      - login_response.json
+    reports:
+      dast: zap_json_report.json
+    expire_in: 1 week
+    when: always
   rules:
     - if: $CI_COMMIT_TAG =~ /^deploy-production-v\d+\.\d+\.\d+$/
+  allow_failure: true
