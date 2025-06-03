@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="prueba CICD"
+set MENSAJE="arreglo de error: pedia autorizacion para el endpoint de refreshToken"
 set REMOTE=localgit
 set BRANCH=DEV
 

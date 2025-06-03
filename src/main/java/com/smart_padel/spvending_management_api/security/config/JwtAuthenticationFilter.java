@@ -28,7 +28,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String requestURI=request.getRequestURI();
         return requestURI.equals("/api/v1/auth/login")
                 || requestURI.equals("/api/v1/auth/register")
-                || requestURI.equals("/api/v1/auth/refresh")
+                || requestURI.equals("/api/v1/auth/refresh-token")
                 || requestURI.equals("/swagger-ui.html")
                 || requestURI.startsWith("/swagger-ui/")
                 || requestURI.equals("/v3/api-docs")
