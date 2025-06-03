@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="boorado del stage de dast"
+set MENSAJE="prueba CICD"
 set REMOTE=localgit
 set BRANCH=DEV
 
