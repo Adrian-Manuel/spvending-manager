@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="arreglo de error: pedia autorizacion para el endpoint de refreshToken"
+set MENSAJE="boorado del stage de dast"
 set REMOTE=localgit
 set BRANCH=DEV
 
