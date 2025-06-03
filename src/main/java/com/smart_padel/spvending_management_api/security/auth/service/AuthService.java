@@ -27,7 +27,6 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
     private static final String REFRESH_TOKEN_COOKIE_NAME="refresh_token";
     private static final String ACCESS_TOKEN_COOKIE_NAME="access_token";
-    private static final String HEADER_NAME = "Set-Cookie";
     @Transactional
     public UserResponse register(final RegisterRequest request){
         if (jpaUserRepository.findByUsername(request.getUsername()).isPresent()){
@@ -52,10 +51,10 @@ public class AuthService {
         final User user= jpaUserRepository.findByUsername(request.getUsername()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
         final String accessToken = jwtService.generateToken(user);
         final String refreshToken = jwtService.generateRefreshToken(user);
-        String accessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,false,"/", "None");
-        String refreshTokenCookie=CookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,60*60*24,true,false, "/", "None");
-        response.addHeader(HEADER_NAME, accessTokenCookie);
-        response.addHeader(HEADER_NAME, refreshTokenCookie);
+        Cookie accessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,false,"/", "Lax");
+        Cookie refreshTokenCookie=CookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,60*60*24,true,false, "/", "Lax");
+        response.addCookie(accessTokenCookie);
+        response.addCookie(refreshTokenCookie);
         return new UserResponse(user.getUsername(), user.getRole());
     }
     public UserResponse refreshToken(@NotNull final HttpServletRequest request, @NotNull final HttpServletResponse response) throws IOException {
@@ -78,9 +77,9 @@ public class AuthService {
             response.getWriter().write("Invalid refresh token: Token validation failed.");
             return null;
         }
-        final  String accessToken= jwtService.generateRefreshToken(user);
-        String newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,false,"/", "None");
-        response.addHeader(HEADER_NAME, newAccessTokenCookie);
+        final  String accessToken= jwtService.generateToken(user);
+        Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,false,"/", "Lax");
+        response.addCookie(newAccessTokenCookie);
         return new UserResponse(user.getUsername(), user.getRole());
     }
 

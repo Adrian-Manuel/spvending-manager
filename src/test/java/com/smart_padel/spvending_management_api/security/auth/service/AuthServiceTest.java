@@ -65,8 +65,14 @@ class AuthServiceTest {
         UserResponse userResponse = authService.authenticate(request, response);
         assertThat(userResponse.name()).isEqualTo("testUser");
         assertThat(userResponse.role()).isEqualTo(Role.USER);
-        verify(response).addHeader(eq("Set-Cookie"), contains("access_token=accessToken"));
-        verify(response).addHeader(eq("Set-Cookie"), contains("refresh_token=refreshToken"));
+        verify(response).addCookie(argThat(cookie ->
+                "access_token".equals(cookie.getName()) &&
+                        "accessToken".equals(cookie.getValue())
+        ));
+        verify(response).addCookie(argThat(cookie ->
+                "refresh_token".equals(cookie.getName()) &&
+                        "refreshToken".equals(cookie.getValue())
+        ));
     }
 
     @Test
@@ -79,11 +85,14 @@ class AuthServiceTest {
         when(jwtService.extractUsername("validRefreshToken")).thenReturn("testUser");
         when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
         when(jwtService.isTokenValid("validRefreshToken", user)).thenReturn(true);
-        when(jwtService.generateRefreshToken(user)).thenReturn("newAccessToken");
+        when(jwtService.generateToken(user)).thenReturn("newAccessToken");
         UserResponse userResponse = authService.refreshToken(request, response);
         assertThat(userResponse.name()).isEqualTo("testUser");
         assertThat(userResponse.role()).isEqualTo(Role.USER);
-        verify(response).addHeader(eq("Set-Cookie"), contains("access_token=newAccessToken"));
+        verify(response).addCookie(argThat(cookie ->
+                "access_token".equals(cookie.getName()) &&
+                        "newAccessToken".equals(cookie.getValue())
+        ));
     }
 
     @Test
@@ -172,12 +181,15 @@ class AuthServiceTest {
         when(jwtService.extractUsername("validRefreshToken")).thenReturn("testUser");
         when(userRepository.findByUsername("testUser")).thenReturn(Optional.of(user));
         when(jwtService.isTokenValid("validRefreshToken", user)).thenReturn(true);
-        when(jwtService.generateRefreshToken(user)).thenReturn("newAccessToken");
+        when(jwtService.generateToken(user)).thenReturn("newAccessToken");
 
         UserResponse userResponse = authService.refreshToken(request, response);
 
         assertThat(userResponse.name()).isEqualTo("testUser");
         assertThat(userResponse.role()).isEqualTo(Role.USER);
-        verify(response).addHeader(eq("Set-Cookie"), contains("access_token=newAccessToken"));
+        verify(response).addCookie(argThat(cookie ->
+                "access_token".equals(cookie.getName()) &&
+                        "newAccessToken".equals(cookie.getValue())
+        ));
     }
 }
