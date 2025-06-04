@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="se modifico el dockerfile para que no subiera todo el codigo fuente a la imagen y por tanto ocupara menos espacio"
+set MENSAJE="se modifico el ci para que elimine la imagen antes de hacer pull a la del registro"
 set REMOTE=localgit
 set BRANCH=DEV
 
