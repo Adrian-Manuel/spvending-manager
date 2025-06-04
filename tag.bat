@@ -1,5 +1,5 @@
 @echo off
-set TAG=deploy-production-v1.0.1
+set TAG=deploy-production-v1.0.0
 set REMOTE=localgit
 
 echo Eliminando tag local %TAG%
