@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="prueba CICD"
+set MENSAJE="despliegue en producción"
 set REMOTE=localgit
 set BRANCH=DEV
 
