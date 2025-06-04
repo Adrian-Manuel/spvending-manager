@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Tenants_Mangment</a> &gt; <a href="index.source.html" class="el_package">com.smart_padel.spvending_management_api.security.auth.service</a> &gt; <span class="el_source">JwtService.java</span></div><h1>JwtService.java</h1><pre class="source lang-java linenums">package com.smart_padel.spvending_management_api.security.auth.service;
 import com.smart_padel.spvending_management_api.security.user.User;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 @Service
-<span class="fc" id="L18">public class JwtService {</span>
+<span class="fc" id="L15">public class JwtService {</span>
     @Value(&quot;${application.security.jwt.secret-key}&quot;)
     private String secretKey;
     @Value(&quot;${application.security.jwt.expiration}&quot;)
@@ -23,71 +20,72 @@ import java.util.Map;
     @Value(&quot;${application.security.jwt.refresh-token.expiration}&quot;)
     private long refreshExpiration;
     private SecretKey getSignInKey() {
-<span class="fc" id="L26">        final byte[] keyBytes = Decoders.BASE64.decode(secretKey);</span>
-<span class="fc" id="L27">        return Keys.hmacShaKeyFor(keyBytes);</span>
+<span class="fc" id="L23">        final byte[] keyBytes = Decoders.BASE64.decode(secretKey);</span>
+<span class="fc" id="L24">        return Keys.hmacShaKeyFor(keyBytes);</span>
     }
     public String extractUsername(String token){
-<span class="pc bpc" id="L30" title="1 of 4 branches missed.">        if (token == null || token.trim().isEmpty()) {</span>
-<span class="fc" id="L31">            throw new IllegalArgumentException(&quot;Token cannot be null or empty&quot;);</span>
+<span class="pc bpc" id="L27" title="1 of 4 branches missed.">        if (token == null || token.trim().isEmpty()) {</span>
+<span class="fc" id="L28">            throw new IllegalArgumentException(&quot;Token cannot be null or empty&quot;);</span>
         }
-<span class="fc" id="L33">        return Jwts.parser()</span>
-<span class="fc" id="L34">                .verifyWith(getSignInKey())</span>
-<span class="fc" id="L35">                .build()</span>
-<span class="fc" id="L36">                .parseSignedClaims(token)</span>
-<span class="fc" id="L37">                .getPayload()</span>
-<span class="fc" id="L38">                .getSubject();</span>
+
+<span class="fc" id="L31">        return Jwts.parser()</span>
+<span class="fc" id="L32">                .verifyWith(getSignInKey())</span>
+<span class="fc" id="L33">                .build()</span>
+<span class="fc" id="L34">                .parseSignedClaims(token)</span>
+<span class="fc" id="L35">                .getPayload()</span>
+<span class="fc" id="L36">                .getSubject();</span>
     }
     private String buildToken(final User user, final Long expiration){
-<span class="fc" id="L41">        List&lt;String&gt; roles=user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();</span>
-<span class="fc" id="L42">        return Jwts</span>
-<span class="fc" id="L43">                .builder()</span>
-<span class="fc" id="L44">                .claims(Map.of(&quot;name&quot;, user.getUsername(), &quot;role&quot;, roles))</span>
-<span class="fc" id="L45">                .subject(user.getUsername())</span>
-<span class="fc" id="L46">                .issuedAt(new Date(System.currentTimeMillis()))</span>
-<span class="fc" id="L47">                .expiration(new Date(System.currentTimeMillis()+expiration))</span>
-<span class="fc" id="L48">                .signWith(getSignInKey())</span>
-<span class="fc" id="L49">                .compact();</span>
+<span class="fc" id="L39">        List&lt;String&gt; roles=user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();</span>
+<span class="fc" id="L40">        return Jwts</span>
+<span class="fc" id="L41">                .builder()</span>
+<span class="fc" id="L42">                .claims(Map.of(&quot;name&quot;, user.getUsername(), &quot;role&quot;, roles))</span>
+<span class="fc" id="L43">                .subject(user.getUsername())</span>
+<span class="fc" id="L44">                .issuedAt(new Date(System.currentTimeMillis()))</span>
+<span class="fc" id="L45">                .expiration(new Date(System.currentTimeMillis()+expiration))</span>
+<span class="fc" id="L46">                .signWith(getSignInKey())</span>
+<span class="fc" id="L47">                .compact();</span>
     }
     public String generateToken(final User user){
-<span class="fc" id="L52">        return buildToken(user, jwtExpiration);</span>
+<span class="fc" id="L50">        return buildToken(user, jwtExpiration);</span>
     }
     public String generateRefreshToken(final User user){
-<span class="fc" id="L55">        return buildToken(user, refreshExpiration);</span>
+<span class="fc" id="L53">        return buildToken(user, refreshExpiration);</span>
     }
     Date extractExpiration(String token){
-<span class="fc" id="L58">        return Jwts.parser()</span>
-<span class="fc" id="L59">                .verifyWith(getSignInKey())</span>
-<span class="fc" id="L60">                .build()</span>
-<span class="fc" id="L61">                .parseSignedClaims(token)</span>
-<span class="fc" id="L62">                .getPayload()</span>
-<span class="fc" id="L63">                .getExpiration();</span>
+<span class="fc" id="L56">        return Jwts.parser()</span>
+<span class="fc" id="L57">                .verifyWith(getSignInKey())</span>
+<span class="fc" id="L58">                .build()</span>
+<span class="fc" id="L59">                .parseSignedClaims(token)</span>
+<span class="fc" id="L60">                .getPayload()</span>
+<span class="fc" id="L61">                .getExpiration();</span>
     }
     boolean isTokenExpired(String token) {
         try {
-<span class="fc" id="L67">            return extractExpiration(token).before(new Date());</span>
-<span class="fc" id="L68">        } catch (ExpiredJwtException _) {</span>
-<span class="fc" id="L69">            return true;</span>
+<span class="fc" id="L65">            return extractExpiration(token).before(new Date());</span>
+<span class="fc" id="L66">        } catch (ExpiredJwtException _) {</span>
+<span class="fc" id="L67">            return true;</span>
         }
     }
     public Boolean isTokenValid(String token, UserDetails user){
         try {
-<span class="pc bpc" id="L74" title="1 of 4 branches missed.">            if (token == null || token.trim().isEmpty()) {</span>
-<span class="fc" id="L75">                return false;</span>
+<span class="pc bpc" id="L72" title="1 of 4 branches missed.">            if (token == null || token.trim().isEmpty()) {</span>
+<span class="fc" id="L73">                return false;</span>
             }
-<span class="fc" id="L77">            final String username = extractUsername(token);</span>
-<span class="pc bpc" id="L78" title="1 of 4 branches missed.">            return (username.equals(user.getUsername())) &amp;&amp; !isTokenExpired(token);</span>
-<span class="fc" id="L79">        } catch (JwtException _) {</span>
-<span class="fc" id="L80">            return false;</span>
+<span class="fc" id="L75">            final String username = extractUsername(token);</span>
+<span class="pc bpc" id="L76" title="1 of 4 branches missed.">            return (username.equals(user.getUsername())) &amp;&amp; !isTokenExpired(token);</span>
+<span class="fc" id="L77">        } catch (JwtException _) {</span>
+<span class="fc" id="L78">            return false;</span>
         }
     }
     public long getJwtExpiration(String token){
-<span class="fc" id="L84">        Claims claims=Jwts.parser()</span>
-<span class="fc" id="L85">                .verifyWith(getSignInKey())</span>
-<span class="fc" id="L86">                .build()</span>
-<span class="fc" id="L87">                .parseSignedClaims(token)</span>
-<span class="fc" id="L88">                .getPayload();</span>
-<span class="fc" id="L89">        Date expiration=claims.getExpiration();</span>
-<span class="fc" id="L90">        return expiration.getTime() - System.currentTimeMillis();</span>
+<span class="fc" id="L82">        Claims claims=Jwts.parser()</span>
+<span class="fc" id="L83">                .verifyWith(getSignInKey())</span>
+<span class="fc" id="L84">                .build()</span>
+<span class="fc" id="L85">                .parseSignedClaims(token)</span>
+<span class="fc" id="L86">                .getPayload();</span>
+<span class="fc" id="L87">        Date expiration=claims.getExpiration();</span>
+<span class="fc" id="L88">        return expiration.getTime() - System.currentTimeMillis();</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

@@ -23,9 +23,9 @@ Tenants_Mangment,com.smart_padel.spvending_management_api.shared.exceptions,NotR
 Tenants_Mangment,com.smart_padel.spvending_management_api.shared.exceptions,EncryptionException,0,5,0,0,0,2,0,1,0,1
 Tenants_Mangment,com.smart_padel.spvending_management_api.shared.exceptions,TokenNotFoundException,0,4,0,0,0,2,0,1,0,1
 Tenants_Mangment,com.smart_padel.spvending_management_api.shared.exceptions,ResourceAlreadyExistsException,0,4,0,0,0,2,0,1,0,1
-Tenants_Mangment,com.smart_padel.spvending_management_api.security.config,SecurityConfig,123,0,8,0,24,0,10,0,6,0
+Tenants_Mangment,com.smart_padel.spvending_management_api.security.config,SecurityConfig,170,0,8,0,33,0,12,0,8,0
 Tenants_Mangment,com.smart_padel.spvending_management_api.security.config,AppConfig,37,0,0,0,7,0,6,0,6,0
-Tenants_Mangment,com.smart_padel.spvending_management_api.security.config,JwtAuthenticationFilter,15,110,11,17,0,25,11,5,0,2
+Tenants_Mangment,com.smart_padel.spvending_management_api.security.config,JwtAuthenticationFilter,15,118,13,19,0,27,13,5,0,2
 Tenants_Mangment,com.smart_padel.spvending_management_api.user_manager.infrastructure.dto.mapper,UserManagerMapper,7,92,0,0,2,31,1,3,1,3
 Tenants_Mangment,com.smart_padel.spvending_management_api.user_manager.infrastructure.utils,UserManagerHelperAdapter,0,89,0,24,0,21,0,16,0,4
 Tenants_Mangment,com.smart_padel.spvending_management_api.user_manager.infrastructure.utils,UserManagerSpecification,0,11,0,0,0,3,0,2,0,2
@@ -50,9 +50,9 @@ Tenants_Mangment,com.smart_padel.spvending_management_api.shared.utils,AESGCMEnc
 Tenants_Mangment,com.smart_padel.spvending_management_api.shared.utils,RegexUtils,0,7,0,0,0,2,0,1,0,1
 Tenants_Mangment,com.smart_padel.spvending_management_api.shared.utils,PersistenceUtils,0,33,0,4,0,8,0,5,0,3
 Tenants_Mangment,com.smart_padel.spvending_management_api.security.auth.service,TokenBlacklistService,0,29,0,2,0,6,0,3,0,2
-Tenants_Mangment,com.smart_padel.spvending_management_api.security.auth.service,AuthService,5,187,2,8,1,39,2,7,0,4
+Tenants_Mangment,com.smart_padel.spvending_management_api.security.auth.service,AuthService,5,190,2,8,1,39,2,7,0,4
 Tenants_Mangment,com.smart_padel.spvending_management_api.security.auth.service,JwtService,0,155,3,9,0,44,3,13,0,10
-Tenants_Mangment,com.smart_padel.spvending_management_api.security.auth.util,CookieUtil,0,50,0,2,0,15,0,5,0,4
+Tenants_Mangment,com.smart_padel.spvending_management_api.security.auth.util,CookieUtil,0,54,0,2,0,16,0,5,0,4
 Tenants_Mangment,com.smart_padel.spvending_management_api.shared,GlobalExceptionHandler,0,219,0,0,0,46,0,17,0,17
 Tenants_Mangment,com.smart_padel.spvending_management_api.tenant.infrastructure.utils,TenantSpecification,0,11,0,0,0,3,0,2,0,2
 Tenants_Mangment,com.smart_padel.spvending_management_api.tenant.infrastructure.utils,TenantHelperAdapter,0,41,0,4,0,10,0,7,0,5

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.smart_padel.spvending_management_api.club.infrastructure.rest.controller.PostClubControllerTest
 -------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.803 s -- in com.smart_padel.spvending_management_api.club.infrastructure.rest.controller.PostClubControllerTest
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.678 s -- in com.smart_padel.spvending_management_api.club.infrastructure.rest.controller.PostClubControllerTest

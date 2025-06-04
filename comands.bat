@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="despliegue en producción"
+set MENSAJE="se modifico el dockerfile para que no subiera todo el codigo fuente a la imagen y por tanto ocupara menos espacio"
 set REMOTE=localgit
 set BRANCH=DEV
 

@@ -26,34 +26,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     public boolean shouldNotFilter(HttpServletRequest request) throws ServletException{
 <span class="fc" id="L28">        final String requestURI=request.getRequestURI();</span>
-<span class="fc bfc" id="L29" title="All 2 branches covered.">        return requestURI.startsWith(&quot;/api/v1/auth/&quot;)</span>
-<span class="pc bpc" id="L30" title="1 of 2 branches missed.">                || requestURI.equals(&quot;/swagger-ui.html&quot;)</span>
-<span class="pc bpc" id="L31" title="1 of 2 branches missed.">                || requestURI.startsWith(&quot;/swagger-ui/&quot;)</span>
-<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                || requestURI.equals(&quot;/v3/api-docs&quot;)</span>
-<span class="pc bpc" id="L33" title="1 of 2 branches missed.">                || requestURI.startsWith(&quot;/v3/api-docs/&quot;)</span>
-<span class="pc bpc" id="L34" title="1 of 2 branches missed.">                || requestURI.equals(&quot;/v3/api-docs.yaml&quot;);</span>
+<span class="fc bfc" id="L29" title="All 2 branches covered.">        return requestURI.equals(&quot;/api/v1/auth/login&quot;)</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">                || requestURI.equals(&quot;/api/v1/auth/register&quot;)</span>
+<span class="pc bpc" id="L31" title="1 of 2 branches missed.">                || requestURI.equals(&quot;/api/v1/auth/refresh-token&quot;)</span>
+<span class="pc bpc" id="L32" title="1 of 2 branches missed.">                || requestURI.equals(&quot;/swagger-ui.html&quot;)</span>
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">                || requestURI.startsWith(&quot;/swagger-ui/&quot;)</span>
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">                || requestURI.equals(&quot;/v3/api-docs&quot;)</span>
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">                || requestURI.startsWith(&quot;/v3/api-docs/&quot;)</span>
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">                || requestURI.equals(&quot;/v3/api-docs.yaml&quot;);</span>
     }
     @Override
-<span class="pc bpc" id="L37" title="3 of 6 branches missed.">    public void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {</span>
-<span class="fc" id="L38">        String  jwtAccess= CookieUtil.getCookieValue(request, ACCESS_TOKEN_COOKIE_NAME);</span>
-<span class="pc bpc" id="L39" title="1 of 4 branches missed.">        if (jwtAccess == null || jwtAccess.trim().isEmpty()) {</span>
-<span class="fc" id="L40">                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
-<span class="fc" id="L41">                response.getWriter().write(&quot;Authentication required: Access token cookie missing or empty.&quot;);</span>
-<span class="fc" id="L42">                return;</span>
+<span class="pc bpc" id="L39" title="3 of 6 branches missed.">    public void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {</span>
+<span class="fc" id="L40">        String  jwtAccess= CookieUtil.getCookieValue(request, ACCESS_TOKEN_COOKIE_NAME);</span>
+<span class="pc bpc" id="L41" title="1 of 4 branches missed.">        if (jwtAccess == null || jwtAccess.trim().isEmpty()) {</span>
+<span class="fc" id="L42">                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
+<span class="fc" id="L43">                response.getWriter().write(&quot;Authentication required: Access token cookie missing or empty.&quot;);</span>
+<span class="fc" id="L44">                return;</span>
         }
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        if (tokenBlacklistService.isBlacklisted(jwtAccess)) {</span>
-<span class="fc" id="L45">            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
-<span class="fc" id="L46">            response.getWriter().write(&quot;invalid token&quot;);</span>
-<span class="fc" id="L47">            return;</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        if (tokenBlacklistService.isBlacklisted(jwtAccess)) {</span>
+<span class="fc" id="L47">            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);</span>
+<span class="fc" id="L48">            response.getWriter().write(&quot;invalid token&quot;);</span>
+<span class="fc" id="L49">            return;</span>
         }
-<span class="fc" id="L49">        final String username = jwtService.extractUsername(jwtAccess);</span>
-<span class="fc" id="L50">        final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);</span>
-<span class="pc bpc" id="L51" title="2 of 4 branches missed.">        if (userDetails!=null &amp;&amp; jwtService.isTokenValid(jwtAccess, userDetails)) {</span>
-<span class="fc" id="L52">            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());</span>
-<span class="fc" id="L53">            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
-<span class="fc" id="L54">            SecurityContextHolder.getContext().setAuthentication(authToken);</span>
+<span class="fc" id="L51">        final String username = jwtService.extractUsername(jwtAccess);</span>
+<span class="fc" id="L52">        final UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);</span>
+<span class="pc bpc" id="L53" title="2 of 4 branches missed.">        if (userDetails!=null &amp;&amp; jwtService.isTokenValid(jwtAccess, userDetails)) {</span>
+<span class="fc" id="L54">            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());</span>
+<span class="fc" id="L55">            authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));</span>
+<span class="fc" id="L56">            SecurityContextHolder.getContext().setAuthentication(authToken);</span>
         }
-<span class="fc" id="L56">        filterChain.doFilter(request, response);</span>
-<span class="fc" id="L57">    }</span>
+<span class="fc" id="L58">        filterChain.doFilter(request, response);</span>
+<span class="fc" id="L59">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.12.202403310830</span></div></body></html>

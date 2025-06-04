@@ -51,8 +51,8 @@ public class AuthService {
 <span class="fc" id="L51">        final User user= jpaUserRepository.findByUsername(request.getUsername()).orElseThrow(()-&gt; new UsernameNotFoundException(&quot;User not found&quot;));</span>
 <span class="fc" id="L52">        final String accessToken = jwtService.generateToken(user);</span>
 <span class="fc" id="L53">        final String refreshToken = jwtService.generateRefreshToken(user);</span>
-<span class="fc" id="L54">        Cookie accessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,&quot;/&quot;);</span>
-<span class="fc" id="L55">        Cookie refreshTokenCookie=CookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,60*60*24,true,true, &quot;/&quot;);</span>
+<span class="fc" id="L54">        Cookie accessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,false,&quot;/&quot;, &quot;Lax&quot;);</span>
+<span class="fc" id="L55">        Cookie refreshTokenCookie=CookieUtil.createCookie(REFRESH_TOKEN_COOKIE_NAME,refreshToken,60*60*24,true,false, &quot;/&quot;, &quot;Lax&quot;);</span>
 <span class="fc" id="L56">        response.addCookie(accessTokenCookie);</span>
 <span class="fc" id="L57">        response.addCookie(refreshTokenCookie);</span>
 <span class="fc" id="L58">        return new UserResponse(user.getUsername(), user.getRole());</span>
@@ -77,8 +77,8 @@ public class AuthService {
 <span class="fc" id="L77">            response.getWriter().write(&quot;Invalid refresh token: Token validation failed.&quot;);</span>
 <span class="fc" id="L78">            return null;</span>
         }
-<span class="fc" id="L80">        final  String accessToken= jwtService.generateRefreshToken(user);</span>
-<span class="fc" id="L81">        Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,true,&quot;/&quot;);</span>
+<span class="fc" id="L80">        final  String accessToken= jwtService.generateToken(user);</span>
+<span class="fc" id="L81">        Cookie newAccessTokenCookie=CookieUtil.createCookie(ACCESS_TOKEN_COOKIE_NAME,accessToken,60 * 15,true,false,&quot;/&quot;, &quot;Lax&quot;);</span>
 <span class="fc" id="L82">        response.addCookie(newAccessTokenCookie);</span>
 <span class="fc" id="L83">        return new UserResponse(user.getUsername(), user.getRole());</span>
     }
