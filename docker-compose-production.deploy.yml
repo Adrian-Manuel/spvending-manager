@@ -1,4 +1,3 @@
-version: "3.9"
 services:
   spvending-api-image-production:
     image: registry.smartpadelautomation.com/smart-vending/spvending-managment:${DEPLOY_TAG}

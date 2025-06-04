@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="se modifico el ci para que elimine la imagen antes de hacer pull a la del registro"
+set MENSAJE="prueba CICD"
 set REMOTE=localgit
 set BRANCH=DEV
 
