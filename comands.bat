@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="prueba CICD"
+set MENSAJE="se agrego el campo tenantId en la respuesta de getClubById"
 set REMOTE=localgit
 set BRANCH=DEV
 

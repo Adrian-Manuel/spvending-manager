@@ -21,6 +21,7 @@ public class Club {
     private String accountingId;
     private String micronId;
     private String tenantName;
+    private UUID tenantId;
     private int machinesCount;
     private List<String> managers;
 }

@@ -69,6 +69,7 @@ class ClubRepositoryAdapterTest {
                 .micronId("asda123232544sdfsd")
                 .accountingId("ACC-123")
                 .tenantName("Test Tenant")
+                .tenantId(tenantId)
                 .machinesCount(0)
                 .managers(Collections.emptyList())
                 .build();
@@ -138,6 +139,7 @@ class ClubRepositoryAdapterTest {
     void save_NewClub_ReturnsSavedClub() {
         when(jpaTenantRepository.findById(tenantId)).thenReturn(Optional.of(tenantEntity));
         when(jpaClubRepository.save(any(ClubEntity.class))).thenReturn(clubEntity);
+
         Club savedClub = clubRepositoryAdapter.save(tenantId, club);
         assertEquals(club, savedClub);
         verify(jpaTenantRepository, times(1)).findById(tenantId);

@@ -41,8 +41,14 @@ public class ClubDtoOutDetail {
     @Schema(description = "Micron ID associated with this club", example = "82160004")
     private String micronId;
 
-    @Schema(description = "Name of the tenant to whom this club belongs", example = "PadelPrix")
+    @Schema(description = "ID of the tenant to whom this club belongs", example = "PadelPrix")
     private String tenantEntityName;
+
+    @Schema(
+            description = "Tenant entity associated with this club",
+            implementation = TenantEntity.class
+    )
+    private UUID tenantId;
 
     @Schema(
             description = "Names of the user managers associated with this club, if any",

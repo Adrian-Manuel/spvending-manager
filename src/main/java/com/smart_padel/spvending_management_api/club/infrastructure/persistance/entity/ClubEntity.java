@@ -89,6 +89,7 @@ public class ClubEntity {
                 .remark(remark)
                 .accountingId(accountingId)
                 .tenantName(tenantEntity.getName())
+                .tenantId(tenantEntity.getTenantId())
                 .machinesCount(machineEntities !=null ? machineEntities.size() : 0)
                 .managers(userManagerEntities!=null ? userManagerEntities.stream().map(UserManagerEntity::getUserName).toList(): Collections.emptyList())
                 .build();

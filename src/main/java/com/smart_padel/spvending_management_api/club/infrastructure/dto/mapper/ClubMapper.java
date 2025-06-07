@@ -30,6 +30,7 @@ public class ClubMapper {
             .accountingId( club.getAccountingId() )
             .tenantEntityName(club.getTenantName())
             .micronId(club.getMicronId())
+            .tenantId(club.getTenantId())
             .userManagers(club.getManagers())
             .build();
     }
