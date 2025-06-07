@@ -19,4 +19,5 @@ public class Machine {
     private String rustdeskId;
     private String rustdeskPass;
     private String clubName;
+    private UUID clubId;
 }

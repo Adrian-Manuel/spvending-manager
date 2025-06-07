@@ -84,6 +84,7 @@ public class MachineEntity {
                 .rustdeskId(rustdeskId)
                 .rustdeskPass(rustdeskPass)
                 .clubName(club.getName())
+                .clubId(club.getClubId())
                 .micronId(micronId)
                 .build();
     }

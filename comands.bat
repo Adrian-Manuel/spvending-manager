@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="se arreglo el bug de dependencia circular en el servicio de usuarios"
+set MENSAJE="se agrego clubId como nuevo campo en la respuesta del endpoint getMachineById"
 set REMOTE=localgit
 set BRANCH=DEV
 

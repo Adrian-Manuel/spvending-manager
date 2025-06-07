@@ -43,4 +43,7 @@ public class MachineDtoOutDetail {
 
     @Schema(description = "Name of the club where this machine is installed or managed", example = "PadelPrix Ourense")
     private String clubName;
+
+    @Schema(description = "ID of the club where this machine is installed or managed", example = "12313432-54ab-4cde-1234-567812345678")
+    private UUID clubId;
 }

@@ -27,6 +27,7 @@ public class MachineMapper {
                 .code(machine.getCode())
                 .micronId(machine.getMicronId())
                 .clubName(machine.getClubName())
+                .clubId(machine.getClubId())
                 .smartFridgeId(machine.getSmartFridgeId())
                 .terminalId(machine.getTerminalId())
                 .toaSerialNumber(machine.getToaSerialNumber())
