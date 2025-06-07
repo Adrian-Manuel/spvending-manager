@@ -1,5 +1,5 @@
 @echo off
-set MENSAJE="se agrego el campo tenantId en la respuesta de getClubById"
+set MENSAJE="se arreglo el bug de dependencia circular en el servicio de usuarios"
 set REMOTE=localgit
 set BRANCH=DEV
 

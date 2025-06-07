@@ -42,7 +42,7 @@ public class UserManagerEntity {
     private TenantEntity tenantEntity;
 
     @Filtrable(name = "clubEntity.name")
-    @ManyToOne (cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne (fetch = FetchType.LAZY)
     @JoinColumn(name = "clubId", referencedColumnName = "clubId", nullable = true)
     private ClubEntity clubEntity;
 
