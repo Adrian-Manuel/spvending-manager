@@ -46,7 +46,7 @@ public class ClubDtoOutDetail {
 
     @Schema(
             description = "Tenant entity associated with this club",
-            implementation = TenantEntity.class
+            example = "12313432-54ab-4cde-1234-567812345678"
     )
     private UUID tenantId;
 
