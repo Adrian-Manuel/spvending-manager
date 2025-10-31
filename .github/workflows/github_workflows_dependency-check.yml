@@ -46,8 +46,6 @@ jobs:
             dependency-check-cache-${{ runner.os }}-v${{ env.DC_VERSION }}-
 
       - name: Run Dependency-Check (Docker)
-        # Se usa la imagen oficial de owasp/dependency-check para evitar depender de una action externa.
-        # Si tu org bloquea Docker en runners hospedados, cambia a "CLI download" block abajo.
         run: |
           echo "Running OWASP Dependency-Check via Docker image..."
           docker run --rm \
@@ -58,7 +56,9 @@ jobs:
             --project "${{ github.repository }}" \
             --scan /src \
             --out /report \
-            --format SARIF,HTML,XML \
+            --format SARIF \
+            --format HTML \
+            --format XML \
             --enableExperimental \
             --failOnCVSS 7
 
