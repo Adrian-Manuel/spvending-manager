@@ -10,13 +10,15 @@ permissions:
   contents: read
   security-events: write
 
+env:
+  REPORT_DIR: dependency-check-report
+  SARIF_FILE: dependency-check.sarif
+  DC_VERSION: 8.4.0  # ajusta si quieres otra versión
+
 jobs:
   dependency-check:
-    name: Dependency check (OWASP)
+    name: Dependency-Check (OWASP) - Docker fallback
     runs-on: ubuntu-latest
-    env:
-      REPORT_DIR: dependency-check-report
-      SARIF_FILE: dependency-check.sarif
 
     steps:
       - name: Checkout repository
@@ -24,56 +26,78 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up Java (required by dependency-check)
+      - name: Set up Java (required for CLI mode & some dependencies)
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
+      - name: Create report dir
+        run: mkdir -p ${{ env.REPORT_DIR }}
 
       - name: Cache dependency-check data (NVD/CPE caches)
         uses: actions/cache@v4
         id: dc-cache
         with:
           path: ~/.local/share/dependency-check
-          key: dependency-check-cache-${{ runner.os }}-v1
+          # cambia la key si actualizas DC_VERSION para forzar recache
+          key: dependency-check-cache-${{ runner.os }}-v${{ env.DC_VERSION }}-${{ hashFiles('**/pom.xml','**/package-lock.json','**/yarn.lock') }}
           restore-keys: |
-            dependency-check-cache-${{ runner.os }}-v1
+            dependency-check-cache-${{ runner.os }}-v${{ env.DC_VERSION }}-
 
-      - name: Run OWASP Dependency-Check
-        # usa la action oficial de OWASP (esta action ejecuta el generador de reports)
-        uses: owasp/dependency-check-action@v6
-        with:
-          scan: '.'                       # ruta a escanear (repositorio raíz)
-          format: 'SARIF,HTML,XML'        # generamos SARIF (para GitHub code scanning) y HTML/XML (artefactos)
-          project: '${{ github.repository }}'
-          out: '${{ env.REPORT_DIR }}'
-          # Ajustes recomendados:
-          # - fail build si encontramos CVSS >= 7.0 (puedes ajustar)
-          # - enableExperimental es opcional
-          additional_arguments: '--failOnCVSS 7 --enableExperimental'
+      - name: Run Dependency-Check (Docker)
+        # Se usa la imagen oficial de owasp/dependency-check para evitar depender de una action externa.
+        # Si tu org bloquea Docker en runners hospedados, cambia a "CLI download" block abajo.
+        run: |
+          echo "Running OWASP Dependency-Check via Docker image..."
+          docker run --rm \
+            -v "${{ github.workspace }}:/src:ro" \
+            -v "${{ github.workspace }}/${{ env.REPORT_DIR }}:/report" \
+            -v ~/.local/share/dependency-check:/root/.local/share/dependency-check \
+            owasp/dependency-check:${{ env.DC_VERSION }} \
+            --project "${{ github.repository }}" \
+            --scan /src \
+            --out /report \
+            --format SARIF,HTML,XML \
+            --enableExperimental \
+            --failOnCVSS 7
+
+      # -- ALTERNATIVA: Si prefieres no usar Docker, descomenta el bloque siguiente y comenta el bloque Docker anterior.
+      # - name: Run Dependency-Check (CLI download)
+      #   run: |
+      #     set -e
+      #     DC_DIR=${{ runner.temp }}/dependency-check
+      #     mkdir -p "$DC_DIR"
+      #     DC_ZIP="$DC_DIR/dependency-check-${{ env.DC_VERSION }}-release.zip"
+      #     curl -sSL -o "$DC_ZIP" "https://github.com/jeremylong/DependencyCheck/releases/download/v${{ env.DC_VERSION }}/dependency-check-${{ env.DC_VERSION }}-release.zip"
+      #     unzip -q "$DC_ZIP" -d "$DC_DIR"
+      #     CLI="$DC_DIR/dependency-check/bin/dependency-check.sh"
+      #     chmod +x "$CLI"
+      #     "$CLI" --project "${{ github.repository }}" --scan "${{ github.workspace }}" --out "${{ github.workspace }}/${{ env.REPORT_DIR }}" --format SARIF,HTML,XML --enableExperimental --failOnCVSS 7
+
+      - name: List generated reports
+        run: ls -la ${{ env.REPORT_DIR }} || true
 
       - name: Upload SARIF to GitHub Code Scanning
-        # sube el archivo SARIF generado para integrarlo en las alertas de seguridad de GitHub
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: ${{ env.REPORT_DIR }}/${{ env.SARIF_FILE }}
         continue-on-error: true
 
-      - name: Upload reports as workflow artifacts (HTML + XML)
+      - name: Upload reports as workflow artifacts (HTML + XML + SARIF)
         uses: actions/upload-artifact@v4
         with:
           name: dependency-check-reports
           path: ${{ env.REPORT_DIR }}
 
-      - name: Fail job if high severity vulnerabilities found (optional safety net)
+      - name: Optional severity fail-safe (CI-level)
         if: always()
         run: |
-          # exit with non-zero if the XML report contains CVSS >= 7 findings
           XML="${{ env.REPORT_DIR }}/dependency-check-report.xml"
           if [ -f "$XML" ]; then
-            # Busca CVSS score >= 7 en el XML (simple check). Ajusta según necesidades.
+            # Exit non-zero if any CVSS >= 7 present (simple awk check)
             if grep -Eo 'cvss:score="([0-9]+\.[0-9]+|[0-9]+)"' "$XML" | awk -F\" '{ if ($2+0 >= 7) exit 1 }'; then
-              echo "No critical/high vulnerabilities with CVSS >= 7 found by check above."
+              echo "No vulnerabilities with CVSS >= 7 found."
             else
               echo "Found vulnerabilities with CVSS >= 7 — failing the job."
               exit 1
